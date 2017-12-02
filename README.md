@@ -44,3 +44,7 @@ MICROSFT_API_KEY = "YOUR API KEY GOES HERE"
 6. If one of the connected papers seems highly relevant you can add it as a seed paper either from the table or network view, expanding the network in order to uncover more papers.
 7. In order to hide less well connected papers from the Network View use the Threshold Slide to select the minimum number of connections to be displayed.
 8. You can switch between viewing the graph with references of the seed papers and a graph with the papers that cite the seed papers by clicking the 'Cited-By' and 'References' buttons.
+
+## Test Case
+
+If you don't have a Microsoft API key try searching the DOI `10.7554/eLife.00471`
