@@ -39,7 +39,7 @@ MICROSFT_API_KEY = "YOUR API KEY GOES HERE"
 1. Open citationExplorer.html
 2. Search for seed papers by title or add directly by DOI
 3. The seed papers added appear in the table in the 'My Seed Papers' tab
-4. The papers connected to these seed papers in the network appear in the 'Connected Papers' tab. This can be sorted by "Seeds Cited" or "Seed cited-By" in order to find highly connected papers.
+4. The papers connected to these seed papers in the network appear in the 'Connected Papers' tab. This can be sorted by "Seeds Cited" or "Seeds Cited-By" in order to find highly connected papers.
 5. The network can be viewed graphically in the Network Viewer tab.
 6. If one of the connected papers seems highly relevant you can add it as a seed paper either from the table or network view, expanding the network in order to uncover more papers.
 7. In order to hide less well connected papers from the Network View use the Threshold Slide to select the minimum number of connections to be displayed.
