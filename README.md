@@ -20,7 +20,7 @@ git clone https://github.com/bjw49/citation-network-explorer.git
 
 ```
 
-2. Get a API key for the Microsoft Academic Graph API from [here](https://azure.microsoft.com/en-gb/try/cognitive-services/?api=academic-knowledge-api)
+2. Get a API key for the Microsoft Academic Knowledge API from [here](https://azure.microsoft.com/en-gb/try/cognitive-services/?api=academic-knowledge-api)
 
 2. Make a file called `apikeys.js`, save into your directory, and add the following line:
 
