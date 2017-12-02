@@ -2,13 +2,34 @@
 
 This is a tool that uses the citation relations between scientific papers to help researchers find interesting and relevant papers.
 
-The user selects several 'seed' papers which define the specific area of the scientific landscape they are interested in.
+The user specifies several 'seed' papers which define the specific area of the scientific landscape they are interested in.
 
 The tool then searches several databases to find the papers that cite or are cited-by the seed papers.
 
 Papers that are cited by a lot of the seed papers are likely to be important foundational papers in the field (or certaintly worth being aware of at least).
 
 Papers that cite a lot of the seed papers are likely to be more recent papers in the same area. 
+
+
+## Getting Set Up
+
+1. Clone the repo.
+
+```
+git clone https://github.com/bjw49/citation-network-explorer.git
+
+```
+
+2. Get a API key for the Microsoft Academic Graph API from [here](https://azure.microsoft.com/en-gb/try/cognitive-services/?api=academic-knowledge-api)
+
+2. Make a file called `apikeys.js`, save into your directory, and add the following line:
+
+```javascript
+
+MICROSFT_API_KEY = myAPIkey
+
+```
+
 
 
 ## Instructions for use

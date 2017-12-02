@@ -2,6 +2,12 @@
 //Functions for sending requests to, and parsing responses from, the Microsoft Academic Graph API
 
 
+if(!window.MICROSOFT_API_KEY){
+
+    MICROSOFT_API_KEY = prompt("For the best results please enter an API key for the Microsoft Academic Graph")
+
+}
+
 var microsoft = {
 
     apiRequest: function(request,callback){
