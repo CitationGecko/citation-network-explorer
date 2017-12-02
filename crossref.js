@@ -82,7 +82,7 @@ var crossref = {
             
             }else{//If it does merge it
                 
-                cited = mergePapers(existingRecord,citer);
+                cited = mergePapers(existingRecord,cited);
             
             }
 

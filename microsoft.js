@@ -1,6 +1,7 @@
 
 //Functions for sending requests to, and parsing responses from, the Microsoft Academic Graph API
 
+//MICROSOFT_API_KEY = undefined;
 
 if(!window.MICROSOFT_API_KEY){
 

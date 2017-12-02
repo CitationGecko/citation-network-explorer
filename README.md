@@ -20,15 +20,17 @@ git clone https://github.com/bjw49/citation-network-explorer.git
 
 ```
 
-2. Get a API key for the Microsoft Academic Knowledge API from [here](https://azure.microsoft.com/en-gb/try/cognitive-services/?api=academic-knowledge-api)
+2. To be able to use the Microsoft Academic Graph you'll need an API key for the Microsoft Academic Knowledge API from [here](https://azure.microsoft.com/en-gb/try/cognitive-services/?api=academic-knowledge-api). You can use it without one but the title search functionality won't work and the coverage of CrossRef and the Open Citation Corpus is much less.
 
 2. Make a file called `apikeys.js`, save into your directory, and add the following line:
 
 ```javascript
 
-MICROSFT_API_KEY = myAPIkey
+MICROSFT_API_KEY = "YOUR API KEY GOES HERE"
 
 ```
+
+3. Add `apikeys.js` to your .gitignore file
 
 
 
