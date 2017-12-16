@@ -159,6 +159,7 @@ function updateInfoBox(selected){
         p = selected.__data__;
 
         d3.select('#info-title').html('<h4>'+p.Title+'</h4>');
+        d3.select('#info-author').html('<b>Author: </b> '+p.Author);
         d3.select('#info-year').html('<b>Year: </b> '+p.Year);
         d3.select('#info-doi').html('<b>DOI: </b> <a href="https://doi.org/'+p.DOI+'">'+p.DOI+'</a>');
 

@@ -72,6 +72,7 @@
        <table id="seedTable" class="table">
             <thead>
                 <th>Title</th>
+                <th>Author</th>
                 <th>Year</th>
                 <th>DOI</th>
                 <th></th>
@@ -84,6 +85,7 @@
         <table id="resultsTable" class="table">
             <thead>
                 <th>Title</th>
+                <th>Author</th>
                 <th>Year</th>
                 <th>DOI</th>
                 <th>Seeds Cited</th>
@@ -165,7 +167,13 @@
                 { "data": "OriginalTitle" },
                 { "data": "PublishYear" },
                 { "data": "DOI","render": function(data,type,row){return "<a href='https://doi.org/"+data+"'>"+data+"</a>"}},
-                { "data": "CellID","render": function(data,type,row){return "<div id='add"+data+"'><button  class='btn btn-info btn-sm' onclick = microsoft.addSeedByID("+data+")>Add</button></div>"}}
+                { "data": "CellID","render": function(data,type,row){
+                    
+                    return "<div id='add"+data+"'><button  class='btn btn-info btn-sm' onclick = addSeedFromSearchTable('"+data+"','"+row.DOI+"')>Add</button></div>"
+                    
+                    }
+                
+                }
 
             ]});
 
@@ -174,9 +182,10 @@
                 data: [],
                 columns: [
                     { "data": "Title" },
+                    { "data": "Author"},
                     { "data": "Year" },
                     { "data": "DOI","render": function(data,type,row){return "<a href='https://doi.org/"+data+"'>"+data+"</a>"}},
-                    { "data": "ID","render": function(data,type,row){return "<button class='btn btn-danger btn-sm' onclick = deleteSeed("+data+")>Delete</button>"}}
+                    { "data": "ID","render": function(data,type,row){return "<button class='btn btn-danger btn-sm' onclick = deleteSeed('"+data+"')>Delete</button>"}}
 
                 ]
     } );
@@ -185,6 +194,7 @@
                 data: [],
                 columns: [
                     { "data": "Title" },
+                    { "data": "Author"},
                     { "data": "Year" },
                     { "data": "DOI","render": function(data,type,row){return "<a href='https://doi.org/"+data+"'>"+data+"</a>"}},
                     { "data": "seedsCited"},

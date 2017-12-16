@@ -37,7 +37,7 @@ var crossref = {
             ID: response.DOI,
             DOI: response.DOI,
             Title: response.title[0],
-            Author: response.author.family,
+            Author: response.author[0].family,
             Year: response.issued['date-parts'][0][0],
             Journal: response['container-title'][0],
             seed: true

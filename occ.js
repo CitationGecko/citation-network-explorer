@@ -203,6 +203,7 @@ var occ = {
             var cited = {
 
                 ID: edge.citedID ? edge.citedID.value : null,
+                Author: null,
                 DOI: edge.citedDOI ? edge.citedDOI.value : null,                            
                 Title: edge.citedTitle ? edge.citedTitle.value : null,
                 Year: edge.citedYear ? edge.citedYear.value : null,
@@ -227,6 +228,7 @@ var occ = {
             var citer = {
 
                 ID: edge.citingID ? edge.citingID.value : null,
+                Author: null,
                 DOI: edge.citingDOI ? edge.citingDOI.value : null,                            
                 Title: edge.citingTitle ? edge.citingTitle.value : null,
                 Year: edge.citingYear ? edge.citingYear.value : null,

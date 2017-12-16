@@ -58,6 +58,24 @@ function addSeedFromRecord(recordID){
 
 }
 
+function addSeedFromSearchTable(id,doi){
+
+    //Send query to microsoft
+
+    microsoft.addSeedByID(id)
+
+    //If DOI present query others as well
+
+    if(doi){
+        
+        crossref.queryRefs(doi)
+        occ.citedByDOI(doi)
+    
+    } 
+
+
+}
+
 function addSeedFromDOI(doi){
     
     //Query CrossRef for DOI and references
@@ -74,7 +92,7 @@ function mergePapers(oldrecord,newrecord){
 
     for(i in newrecord){
 
-        if(oldrecord[i]==undefined){
+        if(oldrecord[i]==undefined || oldrecord[i]==null ){
 
             oldrecord[i]=newrecord[i]
         }
@@ -190,34 +208,56 @@ function updateResultsTable(){
     
 }
 
-
-
-//Removes seed status of a paper
-
-function deleteSeed(ID){
-    
-        
-        Papers.filter(function(p){return p.ID==ID})[0].seed = false; //Set seed status to false
-    
-        Papers = Papers.filter(function(p){return findUniqueChildren(ID).includes(p.ID)}); //Deletes singly connected children
-    
-        //What to do about the edges and metrics?
-        updateMetrics(Papers,Edges);
-    
-        updateSeedTable();
-    
-        updateResultsTable();
-    
-        if((typeof graph !== 'undefined')){updateGraph(Papers,Edges);}
-    
-}
-
 function updateSearchTable(results){
     
         $('#searchTable').DataTable().clear();
         $('#searchTable').DataTable().rows.add(results).draw();    
     
     }
+
+
+//Removes seed status of a paper
+
+function deleteSeed(ID){
+
+        var paper = Papers.filter(function(p){return p.ID==ID})[0];
+    
+        //Set seed status to false
+
+        paper.seed = false; 
+
+        //Delete edges connecting the paper to non-seeds
+
+        Edges = Edges.filter(function(e){
+
+             return !(((e.source == paper)&&(e.target.seed==false))||((e.target==paper)&&(e.source.seed==false)))
+
+        })
+
+        //Remove all non-seed Papers no longer connected to anything
+
+        Papers = Papers.filter(function(p){
+
+            return Edges.map(function(e){return e.source}).includes(p) || Edges.map(function(e){return e.target}).includes(p)
+                
+        })
+    
+        //Edges = Edges.filter(function(e){return Papers.includes(e.source) & Papers.includes(e.target)})
+
+        updateMetrics(Papers,Edges);
+    
+        updateSeedTable();
+    
+        updateResultsTable();
+    
+        updateGraph(Papers,Edges)
+
+        //Change add Seed button back
+
+        $('#add'+paper.MicrosoftID).html("<button  class='btn btn-info btn-sm' onclick = addSeedFromSearchTable('"+paper.MicrosoftID+"','"+paper.DOI+"')>Add</button>")
+    
+}
+
 
 var metrics = {
     

@@ -206,6 +206,7 @@ var microsoft = {
         seedpaper = {
             
             Title: seedpaper.OriginalTitle,
+            Author: null,
             DOI: seedpaper.DOI,
             Year: seedpaper.PublishYear,
             ID: seedpaper.CellID,
@@ -234,6 +235,7 @@ var microsoft = {
             connection = {
                     
                     Title: connection.OriginalTitle,
+                    Author: null,
                     DOI: connection.DOI,
                     Year: connection.PublishYear,
                     ID: connection.CellID,
