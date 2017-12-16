@@ -54,4 +54,4 @@ MICROSFT_API_KEY = "YOUR API KEY GOES HERE"
 
 ## Test Case
 
-If you don't have a Microsoft API key try searching the DOI `10.7554/eLife.00471`
+There is an example BibTex in the repository (exampleBibTex.bib) which you can try importing as a test case.
