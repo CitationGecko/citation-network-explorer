@@ -10,6 +10,8 @@ Papers that are cited by a lot of the seed papers are likely to be important fou
 
 Papers that cite a lot of the seed papers are likely to be more recent papers in the same area. 
 
+The tool allows the user to view these highly connected papers either in a table or in the context of the network.
+
 
 ## Getting Set Up
 
