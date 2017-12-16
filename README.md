@@ -32,7 +32,7 @@ MICROSFT_API_KEY = "YOUR API KEY GOES HERE"
 
 ```
 
-3. Add `apikeys.js` to your .gitignore file
+3. If you're going to be pushing back to the server make sure to add `apikeys.js` to your .gitignore file
 
 
 
