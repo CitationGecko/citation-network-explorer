@@ -283,7 +283,11 @@ function deleteSeed(ID){
 
                 for(let i=0;i<papers.length;i++){
 
-                    addSeedFromDOI(papers[i].entryTags.doi)
+                    if(papers[i].entryTags.doi){
+
+                        addSeedFromDOI(papers[i].entryTags.doi)
+                        
+                    }
 
                 }
 

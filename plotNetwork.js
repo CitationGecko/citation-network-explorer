@@ -1,7 +1,7 @@
 
 var minconnections = 0,
 
-    mode = 'citedBy',
+    mode = 'ref',
 
     selectednode,
 
@@ -32,7 +32,7 @@ var minconnections = 0,
     .on("dblclick.zoom", null);
 
     //Add arrow to end of edges
-    
+
     svg.append("svg:defs").selectAll("marker")
     .data(["end"])      // Different link/path types can be defined here
   .enter().append("svg:marker")    // This section adds in the arrows
