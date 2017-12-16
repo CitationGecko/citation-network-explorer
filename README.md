@@ -1,4 +1,4 @@
-# Citation Network Explorer
+# Local Citation Network Explorer
 
 This is a tool that uses the citation relations between scientific papers to help researchers find interesting and relevant papers.
 
@@ -22,7 +22,7 @@ git clone https://github.com/bjw49/citation-network-explorer.git
 
 ```
 
-2. To be able to use the Microsoft Academic Graph you'll need an API key for the Microsoft Academic Knowledge API from [here](https://azure.microsoft.com/en-gb/try/cognitive-services/?api=academic-knowledge-api). You can use the tool without one but the title search functionality won't work and the coverage of CrossRef and the Open Citation Corpus is much less.
+2. To be able to use the Microsoft Academic Graph you'll need an API key for the Microsoft Academic Knowledge API from [here](https://azure.microsoft.com/en-gb/try/cognitive-services/?api=academic-knowledge-api). You can use the tool without one but the title search functionality won't work and the coverage of the Open Citation Corpus isn't as good yet (though it is growing everyday).
 
 2. If you have an API key, make a file called `apikeys.js`, save into your directory, and add the following line:
 
