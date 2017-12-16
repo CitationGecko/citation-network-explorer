@@ -134,11 +134,11 @@ var microsoft = {
 
             } else {
 
-                alert("Papers with similar titles found, please choose from table...")
+                /* alert("Papers with similar titles found, please choose from table...")
                 
                 updateSearchTable(response.Results.map(function(p){return p[0];}))
                 $('#b').removeClass('active')
-                $('#a').addClass('active')
+                $('#a').addClass('active') */
 
             }
          
@@ -240,6 +240,7 @@ var microsoft = {
                     Year: connection.PublishYear,
                     ID: connection.CellID,
                     MicrosoftID: connection.CellID,
+                    seed: false
     
             }
 

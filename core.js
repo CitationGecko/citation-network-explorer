@@ -1,9 +1,3 @@
-Array.prototype.unique = function() {
-    return this.filter(function (value, index, self) { 
-    return self.indexOf(value) === index;
-    });
-}
-
 var Papers = []  //Array of paper objects with bibliographic information for each paper 
 var Edges = [] //Array of edge objects, each is a pair of paper objects (source and target).
 
@@ -95,7 +89,7 @@ function addSeedFromRecord(recordID){
 
 function matchPapers(paper,Papers){
     
-    
+        //   
         let match = Papers.filter(function(p){return p.ID==paper.ID})[0];
     
         if(!match){
@@ -136,7 +130,7 @@ function mergePapers(oldrecord,newrecord){
 
     }
 
-    oldrecord.seed = newrecord.seed ? newrecord.seed : oldrecord.seed //If either record is marked as a seed make the merged result a seed.
+    oldrecord.seed = newrecord.seed ? newrecord.seed : oldrecord.seed ;//If either record is marked as a seed make the merged result a seed.
 
     return(oldrecord)
 
@@ -268,4 +262,42 @@ function deleteSeed(ID){
 
         $('#add'+paper.MicrosoftID).html("<button  class='btn btn-info btn-sm' onclick = addSeedFromSearchTable('"+paper.MicrosoftID+"','"+paper.DOI+"')>Add</button>")
     
+    }
+
+    //Import Bibtex
+
+    document.getElementById('files').addEventListener('change', handleFileSelect, false);
+
+    function handleFileSelect(evt) {
+        
+        var files = evt.target.files; // FileList object
+
+        for (var i = 0, f; f = files[i]; i++) {
+
+            var reader = new FileReader();
+
+            // Closure to capture the file information.
+            reader.onload = function(e){
+
+                var papers = bibtexParse.toJSON(e.target.result)
+
+                for(let i=0;i<papers.length;i++){
+
+                    addSeedFromDOI(papers[i].entryTags.doi)
+
+                }
+
+            }
+
+            reader.readAsText(f)
+
+        // files is a FileList of File objects. List some properties.
+        var output = [];
+
+            output.push('<li><strong>', escape(f.name), '</strong></li>')
+            
+        }
+        
+        document.getElementById('list').innerHTML = '<ul>' + output.join('') + '</ul>';
+        
     }

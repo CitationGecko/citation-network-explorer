@@ -31,6 +31,21 @@ var minconnections = 0,
     osvg.call(d3.zoom().on("zoom", function () {svg.attr("transform", d3.event.transform)}))
     .on("dblclick.zoom", null);
 
+    //Add arrow to end of edges
+    
+    svg.append("svg:defs").selectAll("marker")
+    .data(["end"])      // Different link/path types can be defined here
+  .enter().append("svg:marker")    // This section adds in the arrows
+    .attr("id", String)
+    .attr("viewBox", "0 -5 10 10")
+    .attr("refX", 15)
+    .attr("refY", -1.5)
+    .attr("markerWidth", 2)
+    .attr("markerHeight", 4)
+    .attr("orient", "auto")
+  .append("svg:path")
+    .attr("d", "M0,-5L10,0L0,5");
+
 
 function updateGraph(Papers,Edges){
 
@@ -90,7 +105,7 @@ function updateGraph(Papers,Edges){
 
     link.exit().remove();
 
-    link = link.enter().append("line")
+    link = link.enter().append("line").attr("marker-end", "url(#end)")
                 .merge(link);
 
     // Update and restart the simulation.

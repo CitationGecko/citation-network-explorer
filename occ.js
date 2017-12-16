@@ -207,7 +207,8 @@ var occ = {
                 DOI: edge.citedDOI ? edge.citedDOI.value : null,                            
                 Title: edge.citedTitle ? edge.citedTitle.value : null,
                 Year: edge.citedYear ? edge.citedYear.value : null,
-                occID: edge.citedID.value
+                occID: edge.citedID.value,
+                seed: false
             }
 
             let existingRecord = matchPapers(cited,Papers); // Search for existing paper
@@ -232,7 +233,8 @@ var occ = {
                 DOI: edge.citingDOI ? edge.citingDOI.value : null,                            
                 Title: edge.citingTitle ? edge.citingTitle.value : null,
                 Year: edge.citingYear ? edge.citingYear.value : null,
-                occID: edge.citingID.value
+                occID: edge.citingID.value,
+                seed: false
             }
     
             existingRecord = matchPapers(citer,Papers); // Search for existing paper

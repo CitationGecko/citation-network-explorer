@@ -43,7 +43,9 @@
             <input id='doiInput' type="text" onkeydown = "if (event.keyCode == 13)
                         document.getElementById('searchButton').click()"></input>
 
-<button class = 'btn btn-default' id="searchButton" type="button" onclick='addSeedFromDOI(doiQuery)'>Add Seeds by DOI</button>
+            <button class = 'btn btn-default' id="searchButton" type="button" onclick='addSeedFromDOI(doiQuery)'>Add Seeds by DOI</button>
+            <div><strong>Add Seeds by BibTex: </strong><input type="file" id="files" name="files[]" multiple />
+            <output id="list"></output></div>
         </div>
 
 
@@ -135,11 +137,12 @@
 </div>
     <script src = "apikeys.js"></script>
     <script src = "core.js"></script>
-    <script src='crossref-master/crossref.min.js'></script>
+    <script src = "crossref-master/crossref.min.js"></script>
     <script src = "crossref.js"></script>
     <script src = "occ.js"></script>
     <script src = "microsoft.js"></script>
     <script src = "plotNetwork.js"></script>
+    <script src = "bibtexParse.js"></script>
 
      <script>
 
