@@ -7,13 +7,13 @@ Array.prototype.unique = function() {
 var Papers = []  //Array of paper objects with bibliographic information for each paper 
 var Edges = [] //Array of edge objects, each is a pair of paper objects (source and target).
 
-var searchQuery; //Place holder for the user input field.
+var doiQuery; //Place holder for the user input field.
 var titleQuery; //Place holder for the user input field.
 
 //Update request based on doi query inputted by the user.
 var doiInput = document.querySelector("#doiInput").addEventListener("input",function(){
     
-    searchQuery=this.value
+    doiQuery=this.value;
 
 });
 
@@ -24,8 +24,41 @@ var titleInput = document.querySelector("#titleInput").addEventListener("input",
 
 }) 
 
+//Attempts to add a seed paper from a MAG title search result
 
-//Attempts to add a seed paper based on the DOI given on input
+function addSeedFromSearchTable(id,doi){
+    
+        //Send query to microsoft
+    
+        microsoft.addSeedByID(id)
+    
+        //If DOI present query others as well
+    
+        if(doi){
+            
+            crossref.queryRefs(doi)
+            occ.citedByDOI(doi)
+        
+        } 
+    
+    
+    }
+
+//Add Seed from DOI input
+
+function addSeedFromDOI(doi){
+    
+    //Query CrossRef for DOI and references
+
+    crossref.queryRefs(doi,true) //second parameter triggers microsoft search after title found by CrossRef
+
+    //Query OCC for citedBy
+
+    occ.citedByDOI(doi)
+
+}
+
+//Makes an existing paper into a seed paper by searching for refs and citations from all three sources
 
 function addSeedFromRecord(recordID){
 
@@ -58,35 +91,39 @@ function addSeedFromRecord(recordID){
 
 }
 
-function addSeedFromSearchTable(id,doi){
+//For a new paper this function tries to find a match in the existing database
 
-    //Send query to microsoft
-
-    microsoft.addSeedByID(id)
-
-    //If DOI present query others as well
-
-    if(doi){
-        
-        crossref.queryRefs(doi)
-        occ.citedByDOI(doi)
+function matchPapers(paper,Papers){
     
-    } 
-
-
-}
-
-function addSeedFromDOI(doi){
     
-    //Query CrossRef for DOI and references
+        let match = Papers.filter(function(p){return p.ID==paper.ID})[0];
+    
+        if(!match){
+    
+            if(paper.DOI){
+    
+                match = Papers.filter(function(p){
+                    
+                        return (paper.DOI.toLowerCase() == (p.DOI ? p.DOI.toLowerCase() : null))
+                            
+                })[0];
+    
+            }
+    
+            if(!match){
+                
+                match = Papers.filter(function(p){return p.Title.toLowerCase()==paper.Title.toLowerCase()})[0];
+                
+            }
+            
+        }
+    
+        return(match)
+    
+    }
+    
 
-    crossref.queryRefs(doi,true)
-
-    //Query OCC for citedBy
-
-    occ.citedByDOI(doi)
-
-}
+//Given two paper objects that are deemed to be matching, this merges the info in the two.
 
 function mergePapers(oldrecord,newrecord){
 
@@ -99,141 +136,13 @@ function mergePapers(oldrecord,newrecord){
 
     }
 
-    oldrecord.seed = newrecord.seed ? newrecord.seed : oldrecord.seed
+    oldrecord.seed = newrecord.seed ? newrecord.seed : oldrecord.seed //If either record is marked as a seed make the merged result a seed.
 
     return(oldrecord)
 
 }
 
-
-
-//Returns an array with the IDs of all Papers in database.
-
-function currentPaperIDs(){
-
-    {return Papers.map(function(p){return p.ID})}
-
-};
-
-//Returns an array with the IDs of all the seed Papers.
-
-function currentSeedIDs(){
-
-    return Papers.filter(function(p){return p.seed}).map(function(p){return p.ID})
-
-};
-
-
-
-function updateMetrics(Papers,Edges){
-                   
-        for(metric in metrics){
-    
-            Papers.forEach(function(p){p[metric] = metrics[metric](p,Edges)})
-    
-        }
- 
-}
-   
-function matchPapers(paper,Papers){
-
-
-    let match = Papers.filter(function(p){return p.ID==paper.ID})[0];
-
-    if(!match){
-
-        if(paper.DOI){
-
-            match = Papers.filter(function(p){
-                
-                    return (paper.DOI.toLowerCase() == (p.DOI ? p.DOI.toLowerCase() : null))
-                        
-            })[0];
-
-        }
-
-        if(!match){
-            
-            match = Papers.filter(function(p){return p.Title.toLowerCase()==paper.Title.toLowerCase()})[0];
-            
-        }
-        
-    }
-
-    return(match)
-
-}
-
-
-function updateSeedTable(){
-    
-        var seedpapers = Papers.filter(function(p){return p.seed});
-    
-        $('#seedTable').DataTable().clear();
-        $('#seedTable').DataTable().rows.add(seedpapers).draw();
-    
-    
-}
-    
-function updateResultsTable(){
-
-        var nonSeeds = Papers.filter(function(p){return(!p.seed)})
-    
-        $('#resultsTable').DataTable().clear();
-        $('#resultsTable').DataTable().rows.add(nonSeeds).draw();
-    
-}
-
-function updateSearchTable(results){
-    
-        $('#searchTable').DataTable().clear();
-        $('#searchTable').DataTable().rows.add(results).draw();    
-    
-    }
-
-
-//Removes seed status of a paper
-
-function deleteSeed(ID){
-
-        var paper = Papers.filter(function(p){return p.ID==ID})[0];
-    
-        //Set seed status to false
-
-        paper.seed = false; 
-
-        //Delete edges connecting the paper to non-seeds
-
-        Edges = Edges.filter(function(e){
-
-             return !(((e.source == paper)&&(e.target.seed==false))||((e.target==paper)&&(e.source.seed==false)))
-
-        })
-
-        //Remove all non-seed Papers no longer connected to anything
-
-        Papers = Papers.filter(function(p){
-
-            return Edges.map(function(e){return e.source}).includes(p) || Edges.map(function(e){return e.target}).includes(p)
-                
-        })
-    
-        //Edges = Edges.filter(function(e){return Papers.includes(e.source) & Papers.includes(e.target)})
-
-        updateMetrics(Papers,Edges);
-    
-        updateSeedTable();
-    
-        updateResultsTable();
-    
-        updateGraph(Papers,Edges)
-
-        //Change add Seed button back
-
-        $('#add'+paper.MicrosoftID).html("<button  class='btn btn-info btn-sm' onclick = addSeedFromSearchTable('"+paper.MicrosoftID+"','"+paper.DOI+"')>Add</button>")
-    
-}
-
+//Collection of metric functions to compute for each paper
 
 var metrics = {
     
@@ -276,3 +185,87 @@ var metrics = {
             }
     
         }        
+
+//Recalculates all metrics
+
+function updateMetrics(Papers,Edges){
+                   
+        for(metric in metrics){
+    
+            Papers.forEach(function(p){p[metric] = metrics[metric](p,Edges)})
+    
+        }
+ 
+}
+
+//Functions for updating HTML tables
+
+
+function updateSeedTable(){
+    
+        var seedpapers = Papers.filter(function(p){return p.seed});
+    
+        $('#seedTable').DataTable().clear();
+        $('#seedTable').DataTable().rows.add(seedpapers).draw();
+    
+    
+}
+    
+function updateResultsTable(){
+
+        var nonSeeds = Papers.filter(function(p){return(!p.seed)})
+    
+        $('#resultsTable').DataTable().clear();
+        $('#resultsTable').DataTable().rows.add(nonSeeds).draw();
+    
+}
+
+function updateSearchTable(results){
+    
+        $('#searchTable').DataTable().clear();
+        $('#searchTable').DataTable().rows.add(results).draw();    
+    
+    }
+
+
+//Removes seed status of a paper, deletes all edges to non-seeds and all now unconnected papers
+
+function deleteSeed(ID){
+
+        var paper = Papers.filter(function(p){return p.ID==ID})[0];
+    
+        //Set seed status to false
+
+        paper.seed = false; 
+
+        //Delete edges connecting the paper to non-seeds
+
+        Edges = Edges.filter(function(e){
+
+             return !(((e.source == paper)&&(e.target.seed==false))||((e.target==paper)&&(e.source.seed==false)))
+
+        })
+
+        //Remove all non-seed Papers no longer connected to anything
+
+        Papers = Papers.filter(function(p){
+
+            return Edges.map(function(e){return e.source}).includes(p) || Edges.map(function(e){return e.target}).includes(p)
+                
+        })
+    
+        //Edges = Edges.filter(function(e){return Papers.includes(e.source) & Papers.includes(e.target)})
+
+        updateMetrics(Papers,Edges);
+    
+        updateSeedTable();
+    
+        updateResultsTable();
+    
+        updateGraph(Papers,Edges)
+
+        //Change add Seed button back
+
+        $('#add'+paper.MicrosoftID).html("<button  class='btn btn-info btn-sm' onclick = addSeedFromSearchTable('"+paper.MicrosoftID+"','"+paper.DOI+"')>Add</button>")
+    
+    }
