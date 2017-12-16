@@ -24,7 +24,7 @@ var titleInput = document.querySelector("#titleInput").addEventListener("input",
 
 }) 
 
-//
+
 //Attempts to add a seed paper based on the DOI given on input
 
 function addSeedFromRecord(recordID){
@@ -105,6 +105,8 @@ function mergePapers(oldrecord,newrecord){
 
 }
 
+
+
 //Returns an array with the IDs of all Papers in database.
 
 function currentPaperIDs(){
@@ -124,9 +126,7 @@ function currentSeedIDs(){
 
 
 function updateMetrics(Papers,Edges){
-               
-        Papers.forEach(function(p){p.seed = isSeed(p.ID)})
-    
+                   
         for(metric in metrics){
     
             Papers.forEach(function(p){p[metric] = metrics[metric](p,Edges)})
@@ -164,30 +164,6 @@ function matchPapers(paper,Papers){
 
 }
 
-
-function isSeed(ID){
-    
-   return(Papers.filter(function(p){return p.seed}).map(function(p){return p.ID}).includes(ID))
-
-};
-
-function findUniqueChildren(nodeid){
-    
-    
-        var allConnected = Edges.filter(function(e){return e.source.ID == nodeid}).map(function(e){return e.target.ID});
-    
-        var allOtherEdges = Edges.filter(function(e){return e.source.ID != nodeid})
-        
-        var otherSources = allOtherEdges.map(function(e){return e.source.ID});
-    
-        var otherTargets = allOtherEdges.map(function(e){return e.target.ID});
-    
-        // unique children are IDs in first array but not second.
-    
-        var uniques = allConnected.filter(function(e){return !(otherSources.includes(e))&!(otherTargets.includes(e))});
-    
-        return uniques;
-}
 
 function updateSeedTable(){
     
@@ -265,7 +241,7 @@ var metrics = {
     
                 //Count number of times cited in the edges list supplied
     
-                var count = Edges.reduce(function(n, edge) {return n + (edge.target.ID == paper.ID)},0) //the 0 is the initial value for the reduce function and is needed to coerce booleans to number
+                var count = Edges.reduce(function(n, edge) {return n + (edge.target == paper)},0) //the 0 is the initial value for the reduce function and is needed to coerce booleans to number
     
                 return count;
             },
@@ -274,7 +250,7 @@ var metrics = {
     
                 //Count number of times a paper cites another paper (in the edge list provided) 
     
-                var count = Edges.reduce(function(n, edge) {return n + (edge.source.ID == paper.ID)},0)
+                var count = Edges.reduce(function(n, edge) {return n + (edge.source == paper)},0)
     
                 return count;
     
@@ -284,7 +260,7 @@ var metrics = {
     
                 //Count number of seed papers that cite the paper.
     
-                var count = Edges.reduce(function(n, edge) {return n + ((edge.target.ID == paper.ID) && isSeed(edge.source.ID))},0) //the 0 is the initial value for the reduce function and is needed to coerce booleans to number
+                var count = Edges.reduce(function(n, edge) {return n + ((edge.target == paper) && edge.source.seed)},0) //the 0 is the initial value for the reduce function and is needed to coerce booleans to number
     
                 return count;
             },
@@ -293,7 +269,7 @@ var metrics = {
     
             //Count number of seed papers the paper cites. 
     
-            var count = Edges.reduce(function(n, edge) {return n + ((edge.source.ID == paper.ID) && isSeed(edge.target.ID))},0)
+            var count = Edges.reduce(function(n, edge) {return n + ((edge.source == paper) && edge.target.seed)},0)
     
             return count;
     
