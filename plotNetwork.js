@@ -3,6 +3,8 @@ var minconnections = 0,
 
     mode = 'ref',
 
+    toggle = 0,
+
     selectednode,
 
     graph = {},
@@ -33,7 +35,7 @@ var minconnections = 0,
 
     //Add arrow to end of edges
 
-    svg.append("svg:defs").selectAll("marker")
+  /*   svg.append("svg:defs").selectAll("marker")
     .data(["end"])      // Different link/path types can be defined here
   .enter().append("svg:marker")    // This section adds in the arrows
     .attr("id", String)
@@ -44,7 +46,7 @@ var minconnections = 0,
     .attr("markerHeight", 4)
     .attr("orient", "auto")
   .append("svg:path")
-    .attr("d", "M0,-5L10,0L0,5");
+    .attr("d", "M0,-5L10,0L0,5"); */
 
 
 function updateGraph(Papers,Edges){
@@ -181,8 +183,37 @@ function updateInfoBox(selected){
         selectednode = p;
 }
 
+function neighboring(a, b) {
+    
+    return (Edges.filter(function(e){return e.source == a | e.target == a})
+                .filter(function(e){return e.source == b | e.target == b})
+                .length)
+    
+}
+
 function highlightNode(){
 
+        
+        if (toggle == 0) {
+    
+            d = d3.select(this).node().__data__;
+
+            node.style("opacity", function (o) {
+                return neighboring(d, o) | neighboring(o, d) ? 1 : 0.15;
+            });
+            toggle = 1;
+
+            link.style("opacity", function(o) {
+                return o.source === d || o.target === d ? 1 : 0.15;
+            });
+
+        } else {
+            node.style("opacity", 1);
+            link.style("opacity",1);
+            toggle = 0;
+        }
+    
+    
     updateInfoBox(this);
 
 }
