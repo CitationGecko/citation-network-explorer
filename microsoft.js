@@ -219,6 +219,8 @@ var microsoft = {
         
         if(!existingRecord){
             
+            oaDOI.accessQuery(seedpaper)
+            
             Papers.push(seedpaper);np++
         
         }else{
@@ -247,6 +249,8 @@ var microsoft = {
             let existingRecord = matchPapers(connection,Papers); // Search for existing paper
 
             if(!existingRecord){
+                
+                oaDOI.accessQuery(connection)
                 
                 Papers.push(connection);np++
             

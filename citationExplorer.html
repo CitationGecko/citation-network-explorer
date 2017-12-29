@@ -105,6 +105,11 @@
             <div class="col-md-9">
                 <svg id="forceGraph" width="800" height="600"></svg>
             </div>
+                <div id = "graphKey" class="panel panel-default col-md-3">
+                    <p><strong> Key:</strong></p>
+                        <svg width = 20 height = 14><circle r=7 fill='#1f77b4' cx =7 cy=7></circle></svg><p>Seed Papers</p>
+                        <svg width = 20 height = 14><circle r=7 fill='#aec7e8' cx =7 cy=7></circle></svg><p id='targetNodeKeyText'>Papers Cited by Seed Papers</p>
+                </div>
                 <div id ="detailBox" class="panel panel-default col-md-3">
                     <div class="panel-body">
                         <p id='info-title'></p>
@@ -112,7 +117,7 @@
                         <p id='info-author'></p>
                         <p id='info-year'></p>
                         <p id='info-abstract'></p>
-                        <div id='addSeed'><button class = 'btn btn-default' type="button" onclick='addSeedFromRecord(selectednode.ID)'>Add Seed</button></div>                
+                        <div id='addSeed'></div>                
                     </div>
                 </div>  
             <div id="controlPanel" class="panel panel-default col-md-3">
@@ -122,9 +127,10 @@
                     <div><b>Threshold Slider:</b></div>
                     <input type="text" id="slider" name="example_name" value="" />
                     <div>
-                    <button onclick ='mode = "citedBy";updateGraph(Papers,Edges)'>Cited-By</button>
-                    <button onclick ='mode = "ref";updateGraph(Papers,Edges)'>References</button>
+                    <button onclick ='mode = "citedBy";updateGraph(Papers,Edges);document.getElementById("targetNodeKeyText").innerHTML="Papers Citing Seed Papers"'>Cited-By</button>
+                    <button onclick ='mode = "ref";updateGraph(Papers,Edges);document.getElementById("targetNodeKeyText").innerHTML="Papers Cited by Seed Papers"'>References</button>
                     </div>
+                    <button onclick='colorByOA()'>Color by OA</button>
                 </div>
             </div>
             
@@ -143,6 +149,7 @@
     <script src = "microsoft.js"></script>
     <script src = "plotNetwork.js"></script>
     <script src = "bibtexParse.js"></script>
+    <script src = "oaDOI.js"></script>
 
      <script>
 
@@ -199,7 +206,7 @@
                     { "data": "Title" },
                     { "data": "Author"},
                     { "data": "Year" },
-                    { "data": "DOI","render": function(data,type,row){return "<a href='https://doi.org/"+data+"'>"+data+"</a>"}},
+                    { "data": "DOI","render": function(data,type,row){return "<a target='_blank' href='https://doi.org/"+data+"'>"+data+"</a>"}},
                     { "data": "seedsCited"},
                     { "data": "seedsCitedBy"},
                     { "data": "ID","render": function(data,type,row){

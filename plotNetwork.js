@@ -95,7 +95,7 @@ function updateGraph(Papers,Edges){
     node = node.enter().append("circle")
                         .merge(node)
                         .attr("r", function(d){return d.seed ? 7 : 5 + d[sizeMetric]})
-                        .attr("fill", function(d) { return color(d.seed); })
+                        .attr("fill", function(d) { return color(d.seed)})                                            
                         .style("visibility", function (d) {return d.hide == 1 ? "hidden" : "visible";})
                         .call(d3.drag()
                             .on("start", dragstarted)
@@ -183,14 +183,23 @@ function updateInfoBox(selected){
         d3.select('#info-title').html('<h4>'+p.Title+'</h4>');
         d3.select('#info-author').html('<b>Author: </b> '+p.Author);
         d3.select('#info-year').html('<b>Year: </b> '+p.Year);
-        d3.select('#info-doi').html('<b>DOI: </b> <a href="https://doi.org/'+p.DOI+'">'+p.DOI+'</a>');
+        d3.select('#info-doi').html('<b>DOI: </b> <a target="_blank" href="https://doi.org/'+p.DOI+'">'+p.DOI+'</a>');
+
+        var addButton = "<button class = 'btn btn-default' type='button' onclick='addSeedFromRecord(selectednode.ID)'>Add Seed</button>"
+        var tick = "<button class='btn btn-success btn-sm'><span class='glyphicon glyphicon-ok'></span></button>"
+
+        if(p.seed){
+            d3.select('#addSeed').html(tick);
+        } else {
+            d3.select('#addSeed').html(addButton);
+        }
 
         selectednode = p;
 }
 
 function neighboring(a, b) {
     
-    return (Edges.filter(function(e){return e.source == a | e.target == a})
+    return (graph.links.filter(function(e){return e.source == a | e.target == a})
                 .filter(function(e){return e.source == b | e.target == b})
                 .length)
     
@@ -275,6 +284,22 @@ function threshold(value){
             return hiddenPapers.includes(e.source.ID) | hiddenPapers.includes(e.target.ID) ? "hidden":"visible";
         
         })
+
+}
+
+function colorByOA(){
+
+    node.attr("fill", function(d) { 
+        
+        if(d.OA==true){
+            return 'green'
+        }else if(d.OA==false){
+            return 'red'
+        }else{
+            return 'grey'
+        }    
+    
+    })                                            
 
 }
   

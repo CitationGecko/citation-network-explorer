@@ -215,6 +215,8 @@ var occ = {
             
             if(!existingRecord){//If it doesn't exist add it
                 
+                oaDOI.accessQuery(cited)
+            
                 Papers.push(cited);np++
             
             }else{//If it does merge it
@@ -241,6 +243,8 @@ var occ = {
             
             if(!existingRecord){//If it doesn't exist add it
                 
+                oaDOI.accessQuery(citer)
+            
                 Papers.push(citer);np++
             
             }else{//If it does merge it

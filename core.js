@@ -82,6 +82,7 @@ function addSeedFromRecord(recordID){
     
     } //this could add Title, author, year info about the paper
     
+    updateInfoBox({__data__:record})
 
 }
 
@@ -305,3 +306,5 @@ function deleteSeed(ID){
         document.getElementById('list').innerHTML = '<ul>' + output.join('') + '</ul>';
         
     }
+
+   

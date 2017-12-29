@@ -51,10 +51,16 @@ input[type=range],
 
 
 #controlPanel {
+    
+    padding: 10px;
+    margin-top: 20px;
+}
+
+#graphKey {
 
     padding: 10px;
     margin-top: 20px;
-
+    
 }
 
 .loader {
