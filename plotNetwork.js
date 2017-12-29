@@ -9,7 +9,12 @@ var minconnections = 0,
 
     graph = {},
 
-    osvg = d3.select('#forceGraph'), //select the svg
+    osvg = d3.select('#forceGraph')
+                .on('click',function(){
+                    node.style("opacity", 1);
+                    link.style("opacity",1);
+                    toggle = 0;
+                }), //select the svg
     
     width = +osvg.attr("width"), //extract the width and height attribute (the + converts to number)
 
@@ -216,6 +221,8 @@ function highlightNode(){
     
     updateInfoBox(this);
 
+    d3.event.stopPropagation();
+
 }
 
 function ticked() {
@@ -235,17 +242,36 @@ function ticked() {
 
 function threshold(value){
 
-        Papers.forEach(function(p){p.hide=false});
-        Papers.filter(function(p){return !(p.citedBy>=value || p.seed)}).forEach(function(p){p.hide=true;}); 
+        switch(mode){
 
+            case 'ref':
+
+                var metric = 'seedsCitedBy';
+
+                break;
+
+            case 'citedBy':
+
+                var metric = 'seedsCited';
+
+                break;
+
+        } 
+
+        Papers.forEach(function(p){
+            
+            p.hide = (p[metric]>=value || p.seed) ? false : true ;
+    
+        });
+       
         node.style("visibility", function (p) {
             return p.hide ? "hidden" : "visible" ;
         });
 
+        var hiddenPapers = Papers.filter(function(p){return p.hide}).map(function(p){return p.ID});        
+
         link.style("visibility", function(e){
             
-            var hiddenPapers = Papers.filter(function(p){return p.hide}).map(function(p){return p.ID});
-
             return hiddenPapers.includes(e.source.ID) | hiddenPapers.includes(e.target.ID) ? "hidden":"visible";
         
         })
