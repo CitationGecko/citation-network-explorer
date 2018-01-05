@@ -185,8 +185,9 @@ function updateInfoBox(selected){
         d3.select('#info-year').html('<b>Year: </b> '+p.Year);
         d3.select('#info-doi').html('<b>DOI: </b> <a target="_blank" href="https://doi.org/'+p.DOI+'">'+p.DOI+'</a>');
 
-        var addButton = "<button class = 'btn btn-default' type='button' onclick='addSeedFromRecord(selectednode.ID)'>Add Seed</button>"
         var tick = "<button class='btn btn-success btn-sm'><span class='glyphicon glyphicon-ok'></span></button>"
+        
+        var addButton = "<button class = 'btn btn-default' type='button' onclick='addSeedFromRecord(selectednode.ID)'>Add Seed</button>"
 
         if(p.seed){
             d3.select('#addSeed').html(tick);
