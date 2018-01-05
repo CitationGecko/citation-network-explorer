@@ -82,7 +82,6 @@ function addSeedFromRecord(recordID){
     
     } //this could add Title, author, year info about the paper
     
-    updateInfoBox({__data__:record})
 
 }
 
