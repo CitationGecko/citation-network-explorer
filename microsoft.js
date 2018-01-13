@@ -204,11 +204,11 @@ var microsoft = {
 
         seedpaper = {
             
+            ID: uniqueID,
             Title: seedpaper.OriginalTitle,
             Author: null,
             DOI: seedpaper.DOI,
             Year: seedpaper.PublishYear,
-            ID: seedpaper.CellID,
             MicrosoftID: seedpaper.CellID,
             seed: true
 
@@ -220,7 +220,7 @@ var microsoft = {
             
             oaDOI.accessQuery(seedpaper)
             
-            Papers.push(seedpaper);np++
+            Papers.push(seedpaper);np++;uniqueID++
         
         }else{
             
@@ -235,13 +235,13 @@ var microsoft = {
             
             connection = {
                     
-                    Title: connection.OriginalTitle,
-                    Author: null,
-                    DOI: connection.DOI,
-                    Year: connection.PublishYear,
-                    ID: connection.CellID,
-                    MicrosoftID: connection.CellID,
-                    seed: false
+                ID: uniqueID,
+                Title: connection.OriginalTitle,
+                Author: null,
+                DOI: connection.DOI,
+                Year: connection.PublishYear,
+                MicrosoftID: connection.CellID,
+                seed: false
     
             }
 
@@ -251,7 +251,7 @@ var microsoft = {
                 
                 oaDOI.accessQuery(connection)
                 
-                Papers.push(connection);np++
+                Papers.push(connection);np++;uniqueID++
             
             }else{
                             

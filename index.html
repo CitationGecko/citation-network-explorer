@@ -46,17 +46,34 @@
                 </div>
                 <h1>connected papers</h1>
                 <div id='networkView'>
-                    <svg id="forceGraph" width="800" height="600"></svg>
+                    <svg id="forceGraph"></svg>
                     <div id='thresholdSlider'>
-                            <input id='thresholdInput' orient ='vertical' type='range' min='0' max='10' value='2'>
-                            <output id="thresholdOutput" for="thresholdInput" >2</output>
+                            <input id='thresholdInput' orient ='vertical' type='range' min='0' max='10' value='1'>
+                            <output id="thresholdOutput" for="thresholdInput">1</output>
                     </div>
                     <div id="controlPanel">
                         <button onclick ='mode = "citedBy";updateGraph(Papers,Edges);document.getElementById("targetNodeKeyText").innerHTML="Papers Citing Seed Papers"'>Cited-By</button>
                         <button onclick ='mode = "ref";updateGraph(Papers,Edges);document.getElementById("targetNodeKeyText").innerHTML="Papers Cited by Seed Papers"'>References</button>
                         <button onclick='colorByOA()'>Color by OA</button>
                     </div>
-                </div> 
+                </div>
+                <div id='tableView'>
+                    <div>
+                        <table id="resultsTable" class='table'>
+                            <thead>
+                                <th>Title</th>
+                                <th>Author</th>
+                                <th>Year</th>
+                                <th>DOI</th>
+                                <th>Seeds Cited</th>
+                                <th>Seeds Cited-By</th>
+                                <th></th>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>              
         </div>
         <div id='addSeedModal' class='modal'>

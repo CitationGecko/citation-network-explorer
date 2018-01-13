@@ -16,9 +16,9 @@ var minconnections = 0,
                     toggle = 0;
                 }), //select the svg
     
-    width = +osvg.attr("width"), //extract the width and height attribute (the + converts to number)
+    width = osvg._groups[0][0].clientWidth, //extract the width and height attribute (the + converts to number)
 
-    height = +osvg.attr("height"),
+    height = osvg._groups[0][0].clientHeight,
 
     svg = osvg.append('g'),
 

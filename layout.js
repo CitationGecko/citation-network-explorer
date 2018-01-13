@@ -1,8 +1,26 @@
+//For connected papers tabs
+
+document.getElementById('tableTab').onclick = function(){
+
+    document.getElementById('networkView').style.display='none';
+    document.getElementById('tableView').style.display='block';
+
+}
+
+document.getElementById('networkTab').onclick = function(){
+
+    document.getElementById('tableView').style.display='none';
+    document.getElementById('networkView').style.display='block';
+
+}
+
 //For threshold slider
 
     document.getElementById('thresholdInput').oninput = function(){
 
         document.querySelector('#thresholdOutput').value = this.value;
+
+        threshold(this.value)
 
 
     }
@@ -154,7 +172,7 @@ function updateSearchTable(results){
         { "data": "DOI","render": function(data,type,row){return "<a href='https://doi.org/"+data+"'>"+data+"</a>"}},
         { "data": "CellID","render": function(data,type,row){
             
-            return "<div id='add"+data+"'><button  class='btn btn-info btn-sm' onclick = addSeedFromSearchTable('"+data+"','"+row.DOI+"')>Add</button></div>"
+            return "<button  class='btn btn-info btn-sm' onclick = addSeedFromSearchTable('"+data+"','"+row.DOI+"')>Add</button>"
             
             }
         
@@ -162,38 +180,24 @@ function updateSearchTable(results){
 
     ]});
 
+    $('#resultsTable').DataTable( {
+        data: [],
+        columns: [
+            { "data": "Title" },
+            { "data": "Author"},
+            { "data": "Year" },
+            { "data": "DOI","render": function(data,type,row){return "<a target='_blank' href='https://doi.org/"+data+"'>"+data+"</a>"}},
+            { "data": "seedsCited"},
+            { "data": "seedsCitedBy"},
+            { "data": "ID","render": function(data,type,row){
+                
+                if(row.seed){return "<button class='btn btn-success btn-sm'><span class='glyphicon glyphicon-ok'></span></button>"}else{
+                    return "<button class='btn btn-info btn-sm' onclick = addSeedFromRecord('"+data+"')>Add</button>"}
+                }      
+            }
+        ]
+} );
+
 })
 
-
-// Data Tables
-    
-
-  /*   $('#seedTable').DataTable( {
-            data: [],
-            columns: [
-                { "data": "Title" },
-                { "data": "Author"},
-                { "data": "Year" },
-                { "data": "DOI","render": function(data,type,row){return "<a href='https://doi.org/"+data+"'>"+data+"</a>"}},
-                { "data": "ID","render": function(data,type,row){return "<button class='btn btn-danger btn-sm' onclick = deleteSeed('"+data+"')>Delete</button>"}}
-
-            ]
-    } ); */
-
-/*     $('#resultsTable').DataTable( {
-            data: [],
-            columns: [
-                { "data": "Title" },
-                { "data": "Author"},
-                { "data": "Year" },
-                { "data": "DOI","render": function(data,type,row){return "<a target='_blank' href='https://doi.org/"+data+"'>"+data+"</a>"}},
-                { "data": "seedsCited"},
-                { "data": "seedsCitedBy"},
-                { "data": "ID","render": function(data,type,row){
-                    
-                    if(row.seed){return "<button class='btn btn-success btn-sm'><span class='glyphicon glyphicon-ok'></span></button>"}else{
-                        return "<div id='add"+data+"'><button  class='btn btn-info btn-sm' onclick = addSeedFromRecord('"+data+"')>Add</button></div>"}
-                    }      
-                }
-            ]
-    } ); */
+ 

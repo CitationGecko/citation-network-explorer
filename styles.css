@@ -169,7 +169,16 @@ h1 {
     display:none;
 }
 
+#networkView {
+    
+    width:100%;
+    height:100%;
+
+}
 #forceGraph {
+
+    width:100%;
+    height:100%;
 
 }
 
@@ -190,25 +199,31 @@ h1 {
 #thresholdSlider {
 
     position:absolute;
-    right:0;
-    top:30%;
+    left:1em;
+    bottom:1em;
+    width:40%;
     
 }
 
 #thresholdInput {
 
-    -webkit-appearance: slider-vertical;
+ /*    -webkit-appearance: slider-vertical;
     width:2em;
-    height:20em;
+    height:20em; */
+
+    width:90%
+
 
 }
 
 
 #thresholdOutput {
 
-    display:block;
-    width:2em;
+   /*  display:block; */    
+    width:10%;
     text-align: center;
+    position:relative;
+    top:-.3em;
 }
 
 #seed-paper-container {
@@ -245,3 +260,12 @@ h1 {
     background-color: rgb(199, 5, 5)
 
 }
+
+#tableView {
+
+    display:none;
+    overflow:auto;
+    height:100%;
+    margin:1em;
+    font-size:60%;
+ }

@@ -1,6 +1,6 @@
 var Papers = []  //Array of paper objects with bibliographic information for each paper 
 var Edges = [] //Array of edge objects, each is a pair of paper objects (source and target).
-
+var uniqueID = 0;
 var doiQuery; //Place holder for the user input field.
 var titleQuery; //Place holder for the user input field.
 
@@ -126,8 +126,12 @@ function addSeedFromRecord(recordID){
 
 function matchPapers(paper,Papers){
     
-        //   
-        let match = Papers.filter(function(p){return p.ID==paper.ID})[0];
+        var match;
+
+        if(paper.MicrosoftID){
+            
+            match = Papers.filter(function(p){return p.ID==paper.ID})[0];
+        }
     
         if(!match){
     
