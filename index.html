@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Gecko Demo</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        
+        <link href="https://fonts.googleapis.com/css?family=Comfortaa" rel="stylesheet"> 
+
+        <link rel="stylesheet" href="styles2.css">
+        <link rel="stylesheet" type="text/css" href='styles.css'/>
+
+        <script defer src="https://use.fontawesome.com/releases/v5.0.4/js/all.js"></script>
+
+
+        <!--DataTables-->
+        <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.15/datatables.min.css"/>
+        <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.15/datatables.min.js"></script>
+
+        
+        <!--D3-->
+        <script src="https://d3js.org/d3.v4.js"></script>
+    </head>
+    <body>
+       
+        <header>
+            <img class='logo' src='logo1.png'/>
+            <div id= 'pageTabs' class='navtabs'>
+                    <button id='appTab' class='tab'>app</button><button id='helpTab' class='tab'>help</button><button id='aboutTab' class='tab'>about</button>
+            </div>
+        </header>
+        <div id='main'>
+            <div id='seedPapers' class='panel'>
+                <h1>seed papers</h1>
+                <div id='seed-paper-container'>
+                </div>
+                <button id='addSeeds' onclick=''><i class="fa fa-2x fa-plus" aria-hidden="true"></i></button>
+            </div>
+            <div id='collapseBar' class='panel'><i id='collapse-seeds-icon' class="fa fa-chevron-left" aria-hidden="true"></i>
+            </div>
+            <div id='connectedPapers' class='panel'>
+                <div id='viewTabs' class='navtabs'>
+                        <button id='networkTab' class='tab'>network view</button><button id='tableTab' class='tab'>table view</button>
+                </div>
+                <h1>connected papers</h1>
+                <div id='networkView'>
+                    <svg id="forceGraph" width="800" height="600"></svg>
+                    <div id='thresholdSlider'>
+                            <input id='thresholdInput' orient ='vertical' type='range' min='0' max='10' value='2'>
+                            <output id="thresholdOutput" for="thresholdInput" >2</output>
+                    </div>
+                    <div id="controlPanel">
+                        <button onclick ='mode = "citedBy";updateGraph(Papers,Edges);document.getElementById("targetNodeKeyText").innerHTML="Papers Citing Seed Papers"'>Cited-By</button>
+                        <button onclick ='mode = "ref";updateGraph(Papers,Edges);document.getElementById("targetNodeKeyText").innerHTML="Papers Cited by Seed Papers"'>References</button>
+                        <button onclick='colorByOA()'>Color by OA</button>
+                    </div>
+                </div> 
+            </div>              
+        </div>
+        <div id='addSeedModal' class='modal'>
+            <div class='modal-content'>
+                <button id='addbyDOI'>add by DOI</button>
+                <button id='searchByTitle'>search by title</button>
+                <button id='uploadBibTex'>upload BibTex</button>                
+            </div>
+        </div>
+        <div id='doiInputModal' class='modal'>
+            <div class='modal-content'>
+                Enter DOI: <input id='doiInput' type="text"></input>
+            </div>
+        </div>
+        <div id='titleInputModal' class='modal'>
+                <div id='titleSearchResults' class='modal-content'>
+                    <i class='fa fa-search'></i>Search by Title: <input id='titleInput' type="text"></input>
+                    <div id='table-container'>
+                        <table id="searchTable" class="table">
+                            <thead>
+                                <th>Title</th>
+                                <th>Year</th>
+                                <th>DOI</th>
+                                <th></th>
+                            </thead>
+                            <tbody>
+                                <tr></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+        </div>
+        <div id='uploadBibTexModal' class='modal'>
+                <div class='modal-content'>
+                    Add Seeds by BibTex: <input type="file" id="files" name="files[]" multiple /><output id="list"></output>
+                </div>
+        </div>
+
+    <script src = 'layout.js'></script>
+    <script src = "core.js"></script>
+    <script src = "bibtexParse.js"></script>
+    <script src = "apikeys.js"></script>
+    <script src = "crossref.min.js"></script>
+    <script src = "crossref.js"></script>
+    <script src = "occ.js"></script>
+    <script src = "microsoft.js"></script>
+    <script src = "plotNetwork.js"></script>
+    <script src = "oaDOI.js"></script>
+
+    </body>
+</html>

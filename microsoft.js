@@ -14,9 +14,10 @@ var microsoft = {
     apiRequest: function(request,callback){
 
         xmlhttp = new XMLHttpRequest();
-        var url = "http://localhost:3000";
+        var url = "https://westus.api.cognitive.microsoft.com/academic/v1.0/graph/search?mode=json" //"http://localhost:3000";
         xmlhttp.open("POST", url, true);
         xmlhttp.setRequestHeader("Content-type", "application/json");
+        xmlhttp.setRequestHeader("Ocp-Apim-Subscription-Key", MICROSOFT_API_KEY);
         xmlhttp.onreadystatechange = function () {
     
             if (this.readyState == 4 && this.status == 200) {
