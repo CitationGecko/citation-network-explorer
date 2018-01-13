@@ -1,0 +1,198 @@
+html,body { 
+    
+    height:100%; 
+    font-size:100%;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+* {
+
+    font-family: 'Comfortaa',serif;
+}
+
+
+header {
+
+    background-color: rgb(190, 192, 196);
+    height: 6em;
+    padding: 1em;
+    border-bottom: 4px solid rgb(94, 93, 93);
+    position: relative;
+}
+
+.logo {
+
+    height: 70%;
+    margin: 2em 2em 1em .5em;
+}
+
+#main {
+    flex:1
+}
+
+.panel {
+
+    border: 1px solid; 
+    border-radius: 10px;
+    margin: 1em;
+    margin-left:0;
+    position: relative;
+}
+
+.main-panel {
+
+    height: 100%;
+}
+
+h1 {
+
+    font-weight: 100;
+    font-size: 1em;
+    margin: .5em;
+
+}
+
+#seedPapers {
+
+    float: left;
+}
+
+#collapseBar {
+
+    float: left;
+    background: rgb(127, 128, 131);
+    height: 100.2%;
+    width: 1em;
+    border-style: none;
+    border-radius: 0 10px 10px 0;
+    margin:2em;
+    z-index: 2;
+}
+
+#toCollapse {
+
+    width:20em;
+}
+
+#icon {
+
+    position: absolute;
+    top:50%;
+    left:10%;
+
+}
+
+
+
+#connectedPapers {
+
+    margin-left: 21em;
+
+}
+
+.navtabs {
+
+    float: right;
+
+}
+
+#pageTabs {
+
+    position: absolute;
+    bottom:0;
+    right:0;
+
+}
+
+.tab {
+
+    border: .5px solid rgb(63, 62, 62);
+    border-radius:.5em .5em 0em 0em;
+    background-color: rgb(104, 104, 104);
+    color: rgb(255, 255, 255);
+    padding: .5em;
+
+}
+
+#addSeeds {
+
+    position:absolute;
+    bottom:0;
+    width:100%;
+    border-style: none;
+    border-radius: 10px;
+    z-index: 1;
+
+}
+
+.fa-plus {
+
+    color:green;
+
+}
+
+#thresholdSlider {
+
+    float: right;
+    position: relative;
+    top: 10em;
+    margin:1em;
+    
+}
+
+#thresholdInput {
+
+    -webkit-appearance: slider-vertical;
+    width:2em;
+    height:20em;
+
+}
+
+
+#thresholdOutput {
+
+    display:block;
+    width:2em;
+    text-align: center;
+}
+
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 3; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+.modal-content {
+
+    background-color: #fefefe;
+    margin: 15% auto; /* 15% from the top and centered */
+    padding: .5em .5em;
+    border: 1px solid #888;
+    width: 40%; 
+    position: relative;
+    border-style:none;
+    border-radius: 1%;
+
+}
+
+#addSeedModal > .modal-content > button {
+
+    display:block;
+    background-color: rgb(104, 104, 104);
+    border-style: none;
+    height: 6em;
+    margin:.5em 0em;
+    width:100%;
+    color:white;
+}

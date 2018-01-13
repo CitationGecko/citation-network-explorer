@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Gecko Demo</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        
+        <link href="https://fonts.googleapis.com/css?family=Comfortaa" rel="stylesheet"> 
+        <link rel="stylesheet" type="text/css" href='styles.css'/>
+        <script defer src="https://use.fontawesome.com/releases/v5.0.4/js/all.js"></script>
+    </head>
+    <body>
+       
+        <header>
+            <img class='logo' src='logo1.png'/>
+            <div id= 'pageTabs' class='navtabs'>
+                    <button id='appTab' class='tab'>app</button><button id='helpTab' class='tab'>help</button><button id='aboutTab' class='tab'>about</button>
+            </div>
+        </header>
+        <div id='main'>
+            <div id='seedPapers' class='panel main-panel'>
+                <h1>seed papers</h1>
+                <button id='addSeeds' onclick=''><i class="fa fa-2x fa-plus" aria-hidden="true"></i></button>
+            </div>
+            <button id='collapseBar'><i id='icon' class="fa fa-chevron-left" aria-hidden="true"></i></button>
+            <div id='connectedPapers' class='panel main-panel'>
+                <div id='viewTabs' class='navtabs'>
+                        <button id='networkTab' class='tab'>network view</button><button id='tableTab' class='tab'>table view</button>
+                </div>
+                <h1>connected papers</h1>
+                <div id='networkView'>
+                    <div id='thresholdSlider'>
+                        <input id='thresholdInput' orient ='vertical' type='range' min='0' max='10' value='2' oninput="updateThreshold(value)">
+                        <output id="thresholdOutput" for="thresholdInput" >2</output>
+                    </div>
+                </div>              
+            </div>
+        </div>
+        <div id='addSeedModal' class='modal'>
+            <div class='modal-content'>
+                <button id='addbyDOI'>add by DOI</button>
+                <button id='searchByTitle'>search by title</button>
+                <button id='uploadBibTex'>upload BibTex</button>                
+            </div>
+        </div>
+        
+    <script src='layout.js'></script>
+    </body>
+</html>

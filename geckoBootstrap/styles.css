@@ -1,0 +1,63 @@
+#header {
+
+    background-color: rgb(190, 192, 196);
+    height: 6em;
+    border-bottom: 4px solid rgb(94, 93, 93)
+}
+
+.logo {
+
+    height: 70%;
+    margin: 1em;
+}
+ 
+.panel {
+
+    border: 1px solid; 
+    border-radius: 10px;
+    margin: 0em;
+    margin-left:0;
+}
+
+.main-panel {
+    padding:.2em;
+}
+
+/*
+.main-panel {
+
+    height: 100%;
+}
+ */
+h1 {
+
+    font-family: 'Comfortaa', cursive;
+    font-weight: 100;
+    font-size: 1em;
+    margin: .5em;
+
+}
+
+#seedPapers {
+
+
+}
+ 
+/* .collapseBar {
+
+    position: absolute;
+    right:0;
+    top:0;
+    background: rgb(127, 128, 131);
+    height: 100%;
+    width: 5%;
+    border-style: none;
+    border-radius: 0 10px 10px 0;
+    margin:0;
+} */
+
+/* #connectedPapers {
+
+    margin-left: 21em;
+
+} */
