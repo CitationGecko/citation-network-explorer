@@ -8,7 +8,6 @@
         
         <link href="https://fonts.googleapis.com/css?family=Comfortaa" rel="stylesheet"> 
 
-        <link rel="stylesheet" href="styles2.css">
         <link rel="stylesheet" type="text/css" href='styles.css'/>
 
         <script defer src="https://use.fontawesome.com/releases/v5.0.4/js/all.js"></script>
@@ -47,8 +46,14 @@
                 <h1>connected papers</h1>
                 <div id='networkView'>
                     <svg id="forceGraph"></svg>
+                    <div id='selected-paper-box' class='panel'>
+                        <p class='paper-title'></p>
+                        <p class='author-year'></p>
+                        <p class='doi-link'></p>
+                        <div class='add-seed'></div>
+                    </div>
                     <div id='thresholdSlider'>
-                            <input id='thresholdInput' orient ='vertical' type='range' min='0' max='10' value='1'>
+                            <input id='thresholdInput' type='range' min='0' max='10' value='1'>
                             <output id="thresholdOutput" for="thresholdInput">1</output>
                     </div>
                     <div id="controlPanel">

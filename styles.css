@@ -193,6 +193,8 @@ h1 {
     position:absolute;
     right:0;
     bottom:0;
+    margin: 1em;
+    height:1em;
 }
 
 
@@ -207,14 +209,9 @@ h1 {
 
 #thresholdInput {
 
- /*    -webkit-appearance: slider-vertical;
-    width:2em;
-    height:20em; */
-
     width:90%
-
-
 }
+
 
 
 #thresholdOutput {
@@ -230,6 +227,13 @@ h1 {
     
     height:90%;
     overflow:auto;
+    font-size: 70%;
+
+}
+
+.seed-paper-box:hover{
+
+    background-color:rgb(255, 199, 0)
 
 }
 
@@ -269,3 +273,32 @@ h1 {
     margin:1em;
     font-size:60%;
  }
+
+.node circle {
+    stroke: #fff;
+    stroke-width: 1px;
+}
+.link line {
+    stroke: #999;
+    stroke-opacity: .6;
+    stroke-width: 1.5px;
+}
+
+.node circle:hover {
+
+    stroke: rgb(97, 97, 97);
+    stroke-width: 2px;
+    
+}
+
+#selected-paper-box {
+
+    display:none;
+    position: absolute;
+    right:0em;
+    bottom:3em;
+    width:30%;
+    background-color: rgb(212, 212, 212);
+
+}
+

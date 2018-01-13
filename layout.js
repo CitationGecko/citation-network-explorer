@@ -118,8 +118,8 @@ function updateSeedTable(){
                     .append('div')
                     .attr('class','seed-paper-box panel')
         
-    paperbox.append('button').attr('class','delete-seed')
-            .html('<i class="fa fa-times" color="white" aria-hidden="true"></i>')
+   /*  paperbox.append('button').attr('class','delete-seed')
+            .html('<i class="fa fa-times" color="white" aria-hidden="true"></i>') */
     
     paperbox.append('p').attr('class','paper-title')
             .html(function(p){
@@ -186,7 +186,9 @@ function updateSearchTable(results){
             { "data": "Title" },
             { "data": "Author"},
             { "data": "Year" },
-            { "data": "DOI","render": function(data,type,row){return "<a target='_blank' href='https://doi.org/"+data+"'>"+data+"</a>"}},
+            { "data": "DOI","render": function(data,type,row){
+                if(data){return ("<a target='_blank' href='https://doi.org/"+data+"'>"+data+"</a>")}else{return('')}
+                }},
             { "data": "seedsCited"},
             { "data": "seedsCitedBy"},
             { "data": "ID","render": function(data,type,row){
@@ -195,7 +197,8 @@ function updateSearchTable(results){
                     return "<button class='btn btn-info btn-sm' onclick = addSeedFromRecord('"+data+"')>Add</button>"}
                 }      
             }
-        ]
+        ],
+        order: [[5,'desc']]
 } );
 
 })
