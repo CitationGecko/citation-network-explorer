@@ -7,6 +7,7 @@ html,body {
 body {
     display: flex;
     flex-direction: column;
+    margin:0em;
 }
 
 * {
@@ -20,7 +21,7 @@ header {
     background-color: rgb(190, 192, 196);
     height: 6em;
     padding: 1em;
-    border-bottom: 4px solid rgb(94, 93, 93);
+    border-bottom: .2em solid rgb(94, 93, 93);
     position: relative;
 }
 
@@ -31,21 +32,16 @@ header {
 }
 
 #main {
-    flex:1
+   display: flex;
+   flex-grow: 1;
 }
 
 .panel {
 
-    border: 1px solid; 
-    border-radius: 10px;
-    margin: 1em;
-    margin-left:0;
+    border: .05em solid; 
+    border-radius: .5em;
+    margin: .5em;
     position: relative;
-}
-
-.main-panel {
-
-    height: 100%;
 }
 
 h1 {
@@ -58,27 +54,24 @@ h1 {
 
 #seedPapers {
 
-    float: left;
+    width: 80em;
+    margin-right:0;
+    border-radius: .5em 0em 0em .5em;
+
 }
 
 #collapseBar {
 
-    float: left;
     background: rgb(127, 128, 131);
-    height: 100.2%;
-    width: 1em;
+    width: 5em;
     border-style: none;
-    border-radius: 0 10px 10px 0;
-    margin:2em;
+    border-radius: 0 .5em .5em 0;
     z-index: 2;
+    position: relative;
+    margin-left: 0em;
 }
 
-#toCollapse {
-
-    width:20em;
-}
-
-#icon {
+#collapse-seeds-icon {
 
     position: absolute;
     top:50%;
@@ -87,10 +80,9 @@ h1 {
 }
 
 
-
 #connectedPapers {
 
-    margin-left: 21em;
+    width:200em;
 
 }
 
@@ -110,7 +102,7 @@ h1 {
 
 .tab {
 
-    border: .5px solid rgb(63, 62, 62);
+    border: .05em solid rgb(63, 62, 62);
     border-radius:.5em .5em 0em 0em;
     background-color: rgb(104, 104, 104);
     color: rgb(255, 255, 255);
@@ -124,7 +116,7 @@ h1 {
     bottom:0;
     width:100%;
     border-style: none;
-    border-radius: 10px;
+    border-radius: 0em 0em 0em .5em;
     z-index: 1;
 
 }
@@ -138,9 +130,6 @@ h1 {
 #thresholdSlider {
 
     float: right;
-    position: relative;
-    top: 10em;
-    margin:1em;
     
 }
 
@@ -178,11 +167,11 @@ h1 {
     background-color: #fefefe;
     margin: 15% auto; /* 15% from the top and centered */
     padding: .5em .5em;
-    border: 1px solid #888;
+    border: .1em solid #888;
     width: 40%; 
     position: relative;
     border-style:none;
-    border-radius: 1%;
+    border-radius: .5em;
 
 }
 

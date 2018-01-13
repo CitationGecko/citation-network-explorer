@@ -19,19 +19,19 @@
             </div>
         </header>
         <div id='main'>
-            <div id='seedPapers' class='panel main-panel'>
+            <div id='seedPapers' class='panel'>
                 <h1>seed papers</h1>
                 <button id='addSeeds' onclick=''><i class="fa fa-2x fa-plus" aria-hidden="true"></i></button>
             </div>
-            <button id='collapseBar'><i id='icon' class="fa fa-chevron-left" aria-hidden="true"></i></button>
-            <div id='connectedPapers' class='panel main-panel'>
+            <div id='collapseBar' class='panel'><i id='collapse-seeds-icon' class="fa fa-chevron-left" aria-hidden="true"></i></div>
+            <div id='connectedPapers' class='panel'>
                 <div id='viewTabs' class='navtabs'>
                         <button id='networkTab' class='tab'>network view</button><button id='tableTab' class='tab'>table view</button>
                 </div>
                 <h1>connected papers</h1>
                 <div id='networkView'>
                     <div id='thresholdSlider'>
-                        <input id='thresholdInput' orient ='vertical' type='range' min='0' max='10' value='2' oninput="updateThreshold(value)">
+                        <input id='thresholdInput' orient ='vertical' type='range' min='0' max='10' value='2'>
                         <output id="thresholdOutput" for="thresholdInput" >2</output>
                     </div>
                 </div>              
@@ -43,6 +43,21 @@
                 <button id='searchByTitle'>search by title</button>
                 <button id='uploadBibTex'>upload BibTex</button>                
             </div>
+        </div>
+        <div id='doiInputModal' class='modal'>
+            <div class='modal-content'>
+                Enter DOI: <input id='doiInput' type="text"></input>
+            </div>
+        </div>
+        <div id='titleInputModal' class='modal'>
+                <div class='modal-content'>
+                    <i class='fa fa-search'></i>Search by Title: <input id='titleInput' type="text"></input>
+                </div>
+        </div>
+        <div id='uploadBibTexModal' class='modal'>
+                <div class='modal-content'>
+                    Add Seeds by BibTex: <input type="file" id="files" name="files[]" multiple /><output id="list"></output>
+                </div>
         </div>
         
     <script src='layout.js'></script>
