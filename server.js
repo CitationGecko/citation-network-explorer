@@ -1,6 +1,4 @@
 
-var MICROSOFT_API_KEY = "53493328d12f4515b510fbfc6a5609d8"
-
 var http = require('http');
 var request = require('request');
 
