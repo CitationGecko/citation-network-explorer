@@ -16,9 +16,9 @@ var minconnections = 0,
                     toggle = 0;
                 }), //select the svg
     
-    width = +osvg.attr("width"), //extract the width and height attribute (the + converts to number)
+    width = document.getElementById('networkView').offsetWidth, //extract the width and height attribute (the + converts to number)
 
-    height = +osvg.attr("height"),
+    height = document.getElementById('networkView').offsetHeight,
 
     svg = osvg.append('g'),
 
@@ -26,7 +26,8 @@ var minconnections = 0,
 
     node = svg.append("g").attr("class", "node").selectAll("circle"),
 
-    color = d3.scaleOrdinal(d3.schemeCategory20),
+    seedcolor = 'rgb(255, 199, 0)';
+    nonseedcolor = 'rgb(94, 94, 94)';
     
     simulation = d3.forceSimulation()
                     .force("link", d3.forceLink().id(function(d) { return d.ID; }))
@@ -95,7 +96,11 @@ function updateGraph(Papers,Edges){
     node = node.enter().append("circle")
                         .merge(node)
                         .attr("r", function(d){return d.seed ? 7 : 5 + d[sizeMetric]})
-                        .attr("fill", function(d) { return color(d.seed)})                                            
+                        .attr("fill", function(d) { 
+                            
+                            if(d.seed){return seedcolor} else {return nonseedcolor}
+                        
+                        })                                            
                         .style("visibility", function (d) {return d.hide == 1 ? "hidden" : "visible";})
                         .call(d3.drag()
                             .on("start", dragstarted)
@@ -103,6 +108,7 @@ function updateGraph(Papers,Edges){
                             .on("end", dragended))
                         .on("dblclick",hideSingles)
                         .on("click",highlightNode)
+                        .on("mouseover",function(){updateInfoBox(this)})
                         
                         
     node.append("title")
@@ -180,19 +186,19 @@ function updateInfoBox(selected){
 
         p = selected.__data__;
 
-        d3.select('#info-title').html('<h4>'+p.Title+'</h4>');
-        d3.select('#info-author').html('<b>Author: </b> '+p.Author);
-        d3.select('#info-year').html('<b>Year: </b> '+p.Year);
-        d3.select('#info-doi').html('<b>DOI: </b> <a target="_blank" href="https://doi.org/'+p.DOI+'">'+p.DOI+'</a>');
+        document.getElementById('selected-paper-box').style.display ='block';
+        
+        var paperbox = d3.select('#selected-paper-box');
 
-        var addButton = "<button class = 'btn btn-default' type='button' onclick='addSeedFromRecord(selectednode.ID)'>Add Seed</button>"
-        var tick = "<button class='btn btn-success btn-sm'><span class='glyphicon glyphicon-ok'></span></button>"
+        paperbox.select('.paper-title').html(p.Title)
 
-        if(p.seed){
-            d3.select('#addSeed').html(tick);
-        } else {
-            d3.select('#addSeed').html(addButton);
-        }
+        paperbox.select('.author-year').html((p.Author ? p.Author:'')+' '+p.Year)
+    
+        paperbox.select('.doi-link').html(p.DOI ? ("<a href='https://doi.org/"+p.DOI+"'>"+p.DOI+"</a>"): '')
+
+        var button = p.seed ? '' : "<button type='button' onclick='addSeedFromRecord(selectednode.ID)'>Add Seed</button>"
+        
+        paperbox.select('.add-seed').html(button)
 
         selectednode = p;
 }

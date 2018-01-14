@@ -34,7 +34,7 @@ var crossref = {
 
         var citer = {
 
-            ID: response.DOI,
+            ID: uniqueID,
             DOI: response.DOI,
             Title: response.title[0],
             Author: response.author[0].family,
@@ -49,7 +49,7 @@ var crossref = {
         if(!existingRecord){//If it doesn't exist add it
             
             oaDOI.accessQuery(citer)
-            Papers.push(citer);np++
+            Papers.push(citer);np++;uniqueID++
         
         }else{//If it does merge it
             
@@ -66,7 +66,7 @@ var crossref = {
 
             let cited = {
 
-                ID: refs[i].DOI ? refs[i].DOI : (refs[i]['article-title'] ? refs[i]['article-title'] : refs[i].author+refs[i].year),
+                ID: uniqueID,
                 DOI: refs[i].DOI ? refs[i].DOI : null,
                 Title: refs[i]['article-title'] ? refs[i]['article-title'] : 'unavailable',
                 Author: refs[i].author ? refs[i].author : null,
@@ -81,7 +81,7 @@ var crossref = {
                 
                 oaDOI.accessQuery(cited)
             
-                Papers.push(cited);np++
+                Papers.push(cited);np++;uniqueID++
             
             }else{//If it does merge it
                 

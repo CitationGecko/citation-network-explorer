@@ -1,6 +1,6 @@
 var Papers = []  //Array of paper objects with bibliographic information for each paper 
 var Edges = [] //Array of edge objects, each is a pair of paper objects (source and target).
-
+var uniqueID = 0;
 var doiQuery; //Place holder for the user input field.
 var titleQuery; //Place holder for the user input field.
 
@@ -17,6 +17,43 @@ var titleInput = document.querySelector("#titleInput").addEventListener("input",
     titleQuery = this.value;
 
 }) 
+
+//Import Bibtex
+
+document.getElementById('files').addEventListener('change', handleFileSelect, false);
+
+function handleFileSelect(evt) {
+    
+    var files = evt.target.files; // FileList object
+
+    for (var i = 0, f; f = files[i]; i++) {
+
+        var reader = new FileReader();
+
+        // Closure to capture the file information.
+        reader.onload = function(e){
+
+            var papers = bibtexParse.toJSON(e.target.result)
+
+            for(let i=0;i<papers.length;i++){
+
+                if(papers[i].entryTags.doi){
+
+                    addSeedFromDOI(papers[i].entryTags.doi)
+                    
+                }
+
+            }
+
+        }
+
+        reader.readAsText(f)
+        
+    }
+    
+    document.getElementById('uploadBibTexModal').style.display = "none";
+
+}
 
 //Attempts to add a seed paper from a MAG title search result
 
@@ -89,8 +126,12 @@ function addSeedFromRecord(recordID){
 
 function matchPapers(paper,Papers){
     
-        //   
-        let match = Papers.filter(function(p){return p.ID==paper.ID})[0];
+        var match;
+
+        if(paper.MicrosoftID){
+            
+            match = Papers.filter(function(p){return p.ID==paper.ID})[0];
+        }
     
         if(!match){
     
@@ -192,34 +233,6 @@ function updateMetrics(Papers,Edges){
  
 }
 
-//Functions for updating HTML tables
-
-
-function updateSeedTable(){
-    
-        var seedpapers = Papers.filter(function(p){return p.seed});
-    
-        $('#seedTable').DataTable().clear();
-        $('#seedTable').DataTable().rows.add(seedpapers).draw();
-    
-    
-}
-    
-function updateResultsTable(){
-
-        var nonSeeds = Papers.filter(function(p){return(!p.seed)})
-    
-        $('#resultsTable').DataTable().clear();
-        $('#resultsTable').DataTable().rows.add(nonSeeds).draw();
-    
-}
-
-function updateSearchTable(results){
-    
-        $('#searchTable').DataTable().clear();
-        $('#searchTable').DataTable().rows.add(results).draw();    
-    
-    }
 
 
 //Removes seed status of a paper, deletes all edges to non-seeds and all now unconnected papers
@@ -264,46 +277,5 @@ function deleteSeed(ID){
     
     }
 
-    //Import Bibtex
-
-    document.getElementById('files').addEventListener('change', handleFileSelect, false);
-
-    function handleFileSelect(evt) {
-        
-        var files = evt.target.files; // FileList object
-
-        for (var i = 0, f; f = files[i]; i++) {
-
-            var reader = new FileReader();
-
-            // Closure to capture the file information.
-            reader.onload = function(e){
-
-                var papers = bibtexParse.toJSON(e.target.result)
-
-                for(let i=0;i<papers.length;i++){
-
-                    if(papers[i].entryTags.doi){
-
-                        addSeedFromDOI(papers[i].entryTags.doi)
-                        
-                    }
-
-                }
-
-            }
-
-            reader.readAsText(f)
-
-        // files is a FileList of File objects. List some properties.
-        var output = [];
-
-            output.push('<li><strong>', escape(f.name), '</strong></li>')
-            
-        }
-        
-        document.getElementById('list').innerHTML = '<ul>' + output.join('') + '</ul>';
-        
-    }
 
    

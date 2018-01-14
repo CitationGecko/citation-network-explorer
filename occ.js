@@ -1,11 +1,11 @@
 
 var occ = {
 
-    callback: function(response){
+    callback: function(response,queryType){
 
         jsonObj = eval('(' + response + ')');
         
-        occ.parseResponse(jsonObj);
+        occ.parseResponse(jsonObj,queryType);
     
         updateMetrics(Papers,Edges); // update citation metrics
         
@@ -19,7 +19,7 @@ var occ = {
 
     sendQuery: function(query,callback){
 
-        var querypart = "query=" + escape(query);
+        var querypart = "query=" + escape(query.string);
         
           // Get our HTTP request object.
         
@@ -36,7 +36,7 @@ var occ = {
              if(this.status == 200) {
                // Do something with the results
                console.log('response from OCC')
-               callback(this.responseText);
+               callback(this.responseText,query.type);
              } else {
                // Some kind of error occurred.
                alert("Sparql query error: " + this.status + " "
@@ -56,10 +56,11 @@ var occ = {
 
     refsByDOI: function(doi){
 
+        var query ={};
+
+        query.type = 'refs'
         
-        //console.log("searching refs for DOI "+doi);
-        
-        var query = 'PREFIX cito: <http://purl.org/spar/cito/>\n\
+        query.string = 'PREFIX cito: <http://purl.org/spar/cito/>\n\
         PREFIX dcterms: <http://purl.org/dc/terms/>\n\
         PREFIX datacite: <http://purl.org/spar/datacite/>\n\
         PREFIX literal: <http://www.essepuntato.it/2010/06/literalreification/>\n\
@@ -91,9 +92,11 @@ var occ = {
     refsByID: function(id){ //Queries OCC SPARQL to find references of the ID specified. Updates Papers and Edges data structures.
         
 
-        //console.log("searching refs for ID "+id);
+        var query = {};
+
+        query.type = 'refs'
         
-        var query = 'PREFIX cito: <http://purl.org/spar/cito/>\n\
+        query.string = 'PREFIX cito: <http://purl.org/spar/cito/>\n\
         PREFIX dcterms: <http://purl.org/dc/terms/>\n\
         PREFIX datacite: <http://purl.org/spar/datacite/>\n\
         PREFIX literal: <http://www.essepuntato.it/2010/06/literalreification/>\n\
@@ -124,9 +127,11 @@ var occ = {
 
     citedByID: function(id){
     
-        //console.log("searching cites for ID "+id);
+        var query = {};
+
+        query.type = 'citedBy'
         
-        var query = 'PREFIX cito: <http://purl.org/spar/cito/>\n\
+        query.string = 'PREFIX cito: <http://purl.org/spar/cito/>\n\
         PREFIX dcterms: <http://purl.org/dc/terms/>\n\
         PREFIX datacite: <http://purl.org/spar/datacite/>\n\
         PREFIX literal: <http://www.essepuntato.it/2010/06/literalreification/>\n\
@@ -157,9 +162,11 @@ var occ = {
 
     citedByDOI: function(doi){
 
-        //console.log("searching cites DOI "+doi);
-            
-        var query = 'PREFIX cito: <http://purl.org/spar/cito/>\n\
+        var query ={};
+
+        query.type = 'refs'
+        
+        query.string = 'PREFIX cito: <http://purl.org/spar/cito/>\n\
         PREFIX dcterms: <http://purl.org/dc/terms/>\n\
         PREFIX datacite: <http://purl.org/spar/datacite/>\n\
         PREFIX literal: <http://www.essepuntato.it/2010/06/literalreification/>\n\
@@ -189,7 +196,7 @@ var occ = {
     },
 
 
-    parseResponse: function(response){
+    parseResponse: function(response,queryType){
 
         var np = 0; //For bean counting only 
         var ne = 0; //For bean counting only
@@ -202,13 +209,13 @@ var occ = {
                             
             var cited = {
 
-                ID: edge.citedID ? edge.citedID.value : null,
+                ID: uniqueID,
                 Author: null,
                 DOI: edge.citedDOI ? edge.citedDOI.value : null,                            
                 Title: edge.citedTitle ? edge.citedTitle.value : null,
                 Year: edge.citedYear ? edge.citedYear.value : null,
                 occID: edge.citedID.value,
-                seed: false
+                seed: queryType=='refs'
             }
 
             let existingRecord = matchPapers(cited,Papers); // Search for existing paper
@@ -217,7 +224,7 @@ var occ = {
                 
                 oaDOI.accessQuery(cited)
             
-                Papers.push(cited);np++
+                Papers.push(cited);np++;uniqueID++
             
             }else{//If it does merge it
                 
@@ -230,13 +237,13 @@ var occ = {
             
             var citer = {
 
-                ID: edge.citingID ? edge.citingID.value : null,
+                ID: uniqueID,
                 Author: null,
                 DOI: edge.citingDOI ? edge.citingDOI.value : null,                            
                 Title: edge.citingTitle ? edge.citingTitle.value : null,
                 Year: edge.citingYear ? edge.citingYear.value : null,
                 occID: edge.citingID.value,
-                seed: false
+                seed: queryType=='citedBy'
             }
     
             existingRecord = matchPapers(citer,Papers); // Search for existing paper
@@ -245,7 +252,7 @@ var occ = {
                 
                 oaDOI.accessQuery(citer)
             
-                Papers.push(citer);np++
+                Papers.push(citer);np++;uniqueID++
             
             }else{//If it does merge it
                 

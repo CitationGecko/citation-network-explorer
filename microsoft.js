@@ -14,10 +14,10 @@ var microsoft = {
     apiRequest: function(request,callback){
 
         xmlhttp = new XMLHttpRequest();
-        var url = "https://westus.api.cognitive.microsoft.com/academic/v1.0/graph/search?mode=json";
+        var url = "https://westus.api.cognitive.microsoft.com/academic/v1.0/graph/search?mode=json" //"http://localhost:3000";
         xmlhttp.open("POST", url, true);
         xmlhttp.setRequestHeader("Content-type", "application/json");
-        xmlhttp.setRequestHeader("Ocp-Apim-Subscription-Key",MICROSOFT_API_KEY);
+        xmlhttp.setRequestHeader("Ocp-Apim-Subscription-Key", MICROSOFT_API_KEY);
         xmlhttp.onreadystatechange = function () {
     
             if (this.readyState == 4 && this.status == 200) {
@@ -29,7 +29,6 @@ var microsoft = {
         xmlhttp.send(JSON.stringify(request.toSend));
 
         console.log('sending request to MAG...')
-
 
     },
 
@@ -205,11 +204,11 @@ var microsoft = {
 
         seedpaper = {
             
+            ID: uniqueID,
             Title: seedpaper.OriginalTitle,
             Author: null,
             DOI: seedpaper.DOI,
             Year: seedpaper.PublishYear,
-            ID: seedpaper.CellID,
             MicrosoftID: seedpaper.CellID,
             seed: true
 
@@ -221,7 +220,7 @@ var microsoft = {
             
             oaDOI.accessQuery(seedpaper)
             
-            Papers.push(seedpaper);np++
+            Papers.push(seedpaper);np++;uniqueID++
         
         }else{
             
@@ -236,13 +235,13 @@ var microsoft = {
             
             connection = {
                     
-                    Title: connection.OriginalTitle,
-                    Author: null,
-                    DOI: connection.DOI,
-                    Year: connection.PublishYear,
-                    ID: connection.CellID,
-                    MicrosoftID: connection.CellID,
-                    seed: false
+                ID: uniqueID,
+                Title: connection.OriginalTitle,
+                Author: null,
+                DOI: connection.DOI,
+                Year: connection.PublishYear,
+                MicrosoftID: connection.CellID,
+                seed: false
     
             }
 
@@ -252,7 +251,7 @@ var microsoft = {
                 
                 oaDOI.accessQuery(connection)
                 
-                Papers.push(connection);np++
+                Papers.push(connection);np++;uniqueID++
             
             }else{
                             
