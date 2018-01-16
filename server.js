@@ -1,49 +1,68 @@
 
+var apikey = require('./apikeys.js');
+
+console.log(apikey.key)
+
 var http = require('http');
 var request = require('request');
 
 var server = http.createServer(function (req, res) {
 
-    if (req.method == 'POST') {
-        var query = '';
+    console.log(req.method + 'Request Recieved')
+
+    if(req.method =='OPTIONS'){
+
+        res.writeHead(201, {'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'Content-type', 'Access-Control-Allow-Methods': 'POST'
+    
+        });
+        res.end();
+
     }
 
-    req.on('data', function (data) {
-        query += data;
-    });
-
-    req.on('end', function () {
+    if (req.method == 'POST') {
         
-        console.log('Request recieved: '+ query)
-        // Set the headers
-        var headers = {
-            "Content-type": "application/json",
-            "Ocp-Apim-Subscription-Key": MICROSOFT_API_KEY
-        }
+        var query = '';
 
-        // Configure the request
-        var options = {
-            url: 'https://westus.api.cognitive.microsoft.com/academic/v1.0/graph/search?mode=json',
-            method: 'POST',
-            headers: headers,
-            body: query
-        }
+        console.log('got here')
 
-        console.log(query)
+        req.on('data', function (data) {
+            query += data;
+        });
 
-        // Start the request
-        request(options, function (error, response, body) {
 
-            console.log('anybody home...')
-            console.log(JSON.stringify(response))
-            if(error) {console.log('Hello'+error.message)}
-            if (!error && response.statusCode == 200) {
-                console.log('Response recieved: ' + body.toString());
-                res.writeHead(200, {'Content-Type': 'application/json'});
-                res.end(body.toString());
+        req.on('end', function () {
+            
+            console.log('Request recieved: '+ query)
+            // Set the headers
+            var headers = {
+                "Content-type": "application/json",
+                "Ocp-Apim-Subscription-Key": apikey.key
             }
-        }) 
-    });
+
+            // Configure the request
+            var options = {
+                url: 'https://westus.api.cognitive.microsoft.com/academic/v1.0/graph/search?mode=json',
+                method: 'POST',
+                headers: headers,
+                body: query
+            }
+
+            console.log(query)
+
+            // Start the request
+            request(options, function (error, response, body) {
+
+                console.log('anybody home...')
+                console.log(JSON.stringify(response))
+                if(error) {console.log('Hello'+error.message)}
+                if (!error && response.statusCode == 200) {
+                    console.log('Response recieved: ' + body.toString());
+                    res.writeHead(200, {'Content-Type': 'application/json','Access-Control-Allow-Origin': '*'});
+                    res.end(body.toString());
+                }
+            }) 
+        });
+    }
 })
 
 server.listen(3000)

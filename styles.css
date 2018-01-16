@@ -271,7 +271,8 @@ h1 {
     border-style:none;
     border-radius: .5em;
     background:none;
-
+/*     background-color: rgb(199, 5, 5)
+ */
 }
 
 #tableView {
