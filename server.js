@@ -84,7 +84,7 @@ var server = http.createServer(function (req, res) {
             // Set the headers
             var headers = {
                 "Content-type": "application/json",
-                "Ocp-Apim-Subscription-Key": MICROSOFT_API_KEY
+                "Ocp-Apim-Subscription-Key": process.env.MICROSOFT_API_KEY
             }
 
             // Configure the request
