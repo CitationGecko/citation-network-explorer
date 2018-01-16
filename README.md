@@ -34,6 +34,8 @@ MICROSFT_API_KEY = "YOUR API KEY GOES HERE"
 
 3. If you're going to be pushing back to the server make sure to add `apikeys.js` to your .gitignore file
 
+Alternatively, you can just open the html file and you will be prompted to enter your API key. If you use this method you will have to re-enter it every time you refresh the page. 
+
 
 
 ## Instructions for use
