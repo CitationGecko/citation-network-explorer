@@ -2,7 +2,7 @@ var http = require('http');
 var path = require('path');
 var request = require('request');
 var fs = require('fs');
-var apikey = require('./apikeys.js');
+//var apikey = require('./apikeys.js');
 
 extensions = {
     ".html" : "text/html",
@@ -84,7 +84,7 @@ var server = http.createServer(function (req, res) {
             // Set the headers
             var headers = {
                 "Content-type": "application/json",
-                "Ocp-Apim-Subscription-Key": apikey.key
+                "Ocp-Apim-Subscription-Key": MICROSOFT_API_KEY
             }
 
             // Configure the request
