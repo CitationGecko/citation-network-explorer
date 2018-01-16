@@ -236,7 +236,7 @@ h1 {
 
 }
 .seed-paper-box{
-    background-color: #dbdada
+    background-color: #dbdada42
 
 }
 .seed-paper-box:hover{
@@ -270,7 +270,7 @@ h1 {
     right:0;
     border-style:none;
     border-radius: .5em;
-    background-color: rgb(199, 5, 5)
+    background:none;
 
 }
 

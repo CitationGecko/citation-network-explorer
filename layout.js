@@ -123,7 +123,7 @@ function updateSeedTable(){
                     .on('click',highlightNode)
         
     paperbox.append('button').attr('class','delete-seed')
-            .html('<i class="fa fa-times" color="white" aria-hidden="true"></i>')
+            .html('<i class="fa fa-times" color="red" aria-hidden="true"></i>')
             .attr('onclick',function(p){return('deleteSeed('+p.ID+')')})
     
     paperbox.append('p').attr('class','paper-title')
