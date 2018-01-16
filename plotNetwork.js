@@ -3,8 +3,6 @@ var minconnections = 0,
 
     mode = 'ref',
 
-    toggle = 0,
-
     selectednode,
 
     graph = {},
@@ -13,7 +11,6 @@ var minconnections = 0,
                 .on('click',function(){
                     node.style("opacity", 1);
                     link.style("opacity",1);
-                    toggle = 0;
                 }), //select the svg
     
     width = document.getElementById('networkView').offsetWidth, //extract the width and height attribute (the + converts to number)
@@ -196,7 +193,7 @@ function updateInfoBox(selected){
     
         paperbox.select('.doi-link').html(p.DOI ? ("<a href='https://doi.org/"+p.DOI+"'>"+p.DOI+"</a>"): '')
 
-        var button = p.seed ? '' : "<button type='button' onclick='addSeedFromRecord(selectednode.ID)'>Add Seed</button>"
+        var button = p.seed ? '' : "<button type='button' onclick='addSeedFromRecord(selectednode.ID)'>Make Seed</button>"
         
         paperbox.select('.add-seed').html(button)
 
@@ -213,27 +210,19 @@ function neighboring(a, b) {
 
 function highlightNode(){
 
-        
-        if (toggle == 0) {
-    
-            d = d3.select(this).node().__data__;
+        d = d3.select(this).node().__data__;
 
-            node.style("opacity", function (o) {
-                return neighboring(d, o) | neighboring(o, d) ? 1 : 0.15;
-            });
-            toggle = 1;
+        node.style("opacity", 1);
+        link.style("opacity",1);
 
-            link.style("opacity", function(o) {
-                return o.source === d || o.target === d ? 1 : 0.15;
-            });
+        node.style("opacity", function (o) {
+            return neighboring(d, o) | neighboring(o, d) ? 1 : 0.15;
+        });
 
-        } else {
-            node.style("opacity", 1);
-            link.style("opacity",1);
-            toggle = 0;
-        }
-    
-    
+        link.style("opacity", function(o) {
+            return o.source === d || o.target === d ? 1 : 0.15;
+        });
+
     updateInfoBox(this);
 
     d3.event.stopPropagation();

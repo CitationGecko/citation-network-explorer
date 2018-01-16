@@ -84,12 +84,15 @@ h1 {
 #connectedPapers {
 
     width:200em;
-
+    display:flex;
+    flex-direction: column;
 }
 
 .navtabs {
 
-    float: right;
+    position: absolute;
+    right:0em;
+    top:0em;
 
 }
 
@@ -252,6 +255,7 @@ h1 {
 .doi-link {
 
     margin:.5em;
+    float:left;
 }
 
 .delete-seed {
@@ -269,8 +273,8 @@ h1 {
 
     display:none;
     overflow:auto;
-    height:100%;
     margin:1em;
+    flex-grow:1;
     font-size:60%;
  }
 
@@ -300,5 +304,10 @@ h1 {
     width:30%;
     background-color: rgb(212, 212, 212);
 
+}
+
+.add-seed {
+
+    text-align: right;
 }
 

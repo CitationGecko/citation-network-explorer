@@ -113,13 +113,18 @@ function updateSeedTable(){
     var seedpapers = Papers.filter(function(p){return p.seed});
 
     var paperbox = d3.select('#seed-paper-container').selectAll('.seed-paper-box')
-                    .data(seedpapers)
-                    .enter()
+                    .data(seedpapers,function(d){return d.ID})
+
+    paperbox.exit().remove()
+    
+    paperbox = paperbox.enter()
                     .append('div')
                     .attr('class','seed-paper-box panel')
+                    .on('click',highlightNode)
         
-   /*  paperbox.append('button').attr('class','delete-seed')
-            .html('<i class="fa fa-times" color="white" aria-hidden="true"></i>') */
+    paperbox.append('button').attr('class','delete-seed')
+            .html('<i class="fa fa-times" color="white" aria-hidden="true"></i>')
+            .attr('onclick',function(p){return('deleteSeed('+p.ID+')')})
     
     paperbox.append('p').attr('class','paper-title')
             .html(function(p){
