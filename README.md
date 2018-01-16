@@ -1,4 +1,4 @@
-# Local Citation Network Explorer
+# Welcome to Gecko!
 
 This is a tool that uses the citation relations between scientific papers to help researchers find interesting and relevant papers.
 
