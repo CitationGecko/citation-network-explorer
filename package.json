@@ -2,10 +2,10 @@
     "name": "gecko-demo",
     "version": "0.0.1",
     "dependencies": {
-        "http": "0.0.0",
-        "request":"^2.0.0",
-        "path": "0.0.0",
-        "fs": "0.0.0"
+        "http": "*",
+        "request":"*",
+        "path": "*",
+        "fs": "*"
       },
       "engine": {
         "node": "*",
