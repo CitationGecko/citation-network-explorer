@@ -179,26 +179,6 @@ function hideSingles(){
 
 }
 
-function updateInfoBox(selected){
-
-        p = selected.__data__;
-
-        document.getElementById('selected-paper-box').style.display ='block';
-        
-        var paperbox = d3.select('#selected-paper-box');
-
-        paperbox.select('.paper-title').html(p.Title)
-
-        paperbox.select('.author-year').html((p.Author ? p.Author:'')+' '+p.Year)
-    
-        paperbox.select('.doi-link').html(p.DOI ? ("<a href='https://doi.org/"+p.DOI+"'>"+p.DOI+"</a>"): '')
-
-        var button = p.seed ? '' : "<button type='button' onclick='addSeedFromRecord(selectednode.ID)'>Make Seed</button>"
-        
-        paperbox.select('.add-seed').html(button)
-
-        selectednode = p;
-}
 
 function neighboring(a, b) {
     

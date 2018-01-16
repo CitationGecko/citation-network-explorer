@@ -43,6 +43,8 @@ header {
     margin: .5em;
     position: relative;
     overflow:hidden;
+    background-color: rgb(255, 255, 255)
+
 }
 
 h1 {
@@ -233,7 +235,10 @@ h1 {
     font-size: 70%;
 
 }
+.seed-paper-box{
+    background-color: #dbdada
 
+}
 .seed-paper-box:hover{
 
     background-color:rgb(255, 199, 0)

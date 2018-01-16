@@ -138,7 +138,7 @@ function updateSeedTable(){
     
     paperbox.append('p').attr('class','doi-link')
             .html(function(p){
-                return("<a href='https://doi.org/"+p.DOI+"'>"+p.DOI+"</a>")
+                return("<a target='_blank' href='https://doi.org/"+p.DOI+"'>"+p.DOI+"</a>")
             })
 }
  
@@ -166,6 +166,28 @@ function updateSearchTable(results){
  
  }
 
+ 
+function updateInfoBox(selected){
+
+    p = selected.__data__;
+
+    document.getElementById('selected-paper-box').style.display ='block';
+    
+    var paperbox = d3.select('#selected-paper-box');
+
+    paperbox.select('.paper-title').html(p.Title)
+
+    paperbox.select('.author-year').html((p.Author ? p.Author:'')+' '+p.Year)
+
+    paperbox.select('.doi-link').html(p.DOI ? ("<a target='_blank' href='https://doi.org/"+p.DOI+"'>"+p.DOI+"</a>"): '')
+
+    var button = p.seed ? '' : "<button type='button' onclick='addSeedFromRecord(selectednode.ID)'>Make Seed</button>"
+    
+    paperbox.select('.add-seed').html(button)
+
+    selectednode = p;
+}
+
  $(document).ready(function() {
 
 
@@ -174,7 +196,7 @@ function updateSearchTable(results){
         columns: [
         { "data": "OriginalTitle" },
         { "data": "PublishYear" },
-        { "data": "DOI","render": function(data,type,row){return "<a href='https://doi.org/"+data+"'>"+data+"</a>"}},
+        { "data": "DOI","render": function(data,type,row){return "<a target='_blank' href='https://doi.org/"+data+"'>"+data+"</a>"}},
         { "data": "CellID","render": function(data,type,row){
             
             return "<button  class='btn btn-info btn-sm' onclick = addSeedFromSearchTable('"+data+"','"+row.DOI+"')>Add</button>"
