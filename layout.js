@@ -18,7 +18,7 @@ document.getElementById('networkTab').onclick = function(){
 
     document.getElementById('thresholdInput').oninput = function(){
 
-        document.querySelector('#thresholdOutput').value = this.value;
+        document.querySelector('#thresholdOutput').value = 'Minimum Connections: ' + this.value;
 
         threshold(this.value)
 

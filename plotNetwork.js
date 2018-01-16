@@ -282,19 +282,5 @@ function threshold(value){
 
 }
 
-function colorByOA(){
 
-    node.attr("fill", function(d) { 
-        
-        if(d.OA==true){
-            return 'green'
-        }else if(d.OA==false){
-            return 'red'
-        }else{
-            return 'grey'
-        }    
-    
-    })                                            
-
-}
   
