@@ -1,11 +1,11 @@
 
 //Functions for sending requests to, and parsing responses from, the Microsoft Academic Graph API
 
-//MICROSOFT_API_KEY = undefined;
+//MICROSOFT_API_KEY = "PUT YOUR API KEY HERE IF YOU HAVE ONE!";
 
 if(!window.MICROSOFT_API_KEY){
 
-    MICROSOFT_API_KEY = prompt("For the best results please enter an API key for the Microsoft Academic Graph")
+    MICROSOFT_API_KEY = prompt("If you have your own API key for the Microsoft Academic Graph, please enter it here as it will speed up the performance")
 
 }
 
@@ -14,10 +14,20 @@ var microsoft = {
     apiRequest: function(request,callback){
 
         xmlhttp = new XMLHttpRequest();
-        var url =  "http://localhost:3000"; //"https://westus.api.cognitive.microsoft.com/academic/v1.0/graph/search?mode=json"
-        xmlhttp.open("POST", url);//, true);
+        
+        var url =  "http://localhost:3000";
+
+        if(MICROSOFT_API_KEY){
+            url = "https://westus.api.cognitive.microsoft.com/academic/v1.0/graph/search?mode=json"
+        }
+
+        xmlhttp.open("POST", url,true);
         xmlhttp.setRequestHeader("Content-type", "application/json");
-       // xmlhttp.setRequestHeader("Ocp-Apim-Subscription-Key", MICROSOFT_API_KEY);
+
+        if(MICROSOFT_API_KEY){
+            xmlhttp.setRequestHeader("Ocp-Apim-Subscription-Key", MICROSOFT_API_KEY);
+        }
+        
         xmlhttp.onreadystatechange = function () {
     
             if (this.readyState == 4 && this.status == 200) {
