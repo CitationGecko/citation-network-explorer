@@ -15,7 +15,7 @@ The tool allows the user to view these highly connected papers either in a table
 
 ## Getting Set Up
 
-1. Clone the repo.
+1. Clone the repo (or just download as a zip)
 
 ```
 git clone https://github.com/bjw49/citation-network-explorer.git
