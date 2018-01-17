@@ -79,7 +79,7 @@ document.getElementById('networkTab').onclick = function(){
         document.getElementById('doiInputModal').style.display = "block";
     }
 
-    document.getElementById("doiInput").onkeydown = function(){
+    document.getElementById("doiInput").onkeydown = function(event){
         
         if (event.keyCode == 13){addSeedFromDOI(doiQuery)}
 
@@ -91,7 +91,7 @@ document.getElementById('networkTab').onclick = function(){
         document.getElementById('titleInputModal').style.display = "block";
     }
 
-    document.getElementById("titleInput").onkeydown = function(){
+    document.getElementById("titleInput").onkeydown = function(event){
         
         if (event.keyCode == 13){
             microsoft.titleSearch(titleQuery)
