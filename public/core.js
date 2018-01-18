@@ -18,6 +18,44 @@ var titleInput = document.querySelector("#titleInput").addEventListener("input",
 
 }) 
 
+//Import DEMO bibtex
+
+function importExampleBibTex(){
+
+    xmlhttp = new XMLHttpRequest();
+         
+    xmlhttp.open('GET', window.location.href+'/exampleBibTex.bib', true); 
+    xmlhttp.setRequestHeader('Content-type', 'text/plain');
+   
+    // Set up callback to get the response asynchronously.
+    xmlhttp.onreadystatechange = function() {
+      if(this.readyState == 4) {
+        if(this.status == 200) {
+          // Do something with the results
+        console.log(this.responseText)
+          var papers = bibtexParse.toJSON(this.responseText)
+
+            for(let i=0;i<papers.length;i++){
+
+                if(papers[i].entryTags.doi){
+
+                    addSeedFromDOI(papers[i].entryTags.doi)
+                    
+                }
+
+            }
+
+        } else {
+          // Some kind of error occurred.
+          alert("Error: " + this.status + " "
+              + this.responseText);
+        }
+      }
+    };
+    // Send the query to the endpoint.
+    xmlhttp.send();
+}
+
 //Import Bibtex
 
 document.getElementById('files').addEventListener('change', handleFileSelect, false);

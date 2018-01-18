@@ -1,3 +1,20 @@
+//For help modal
+
+document.getElementById('helpModal').style.display = "block";
+
+document.getElementById('helpButton').onclick = function(){
+
+    document.getElementById('helpModal').style.display = "block";
+
+}
+
+//For DEMO button
+
+document.getElementById('demoButton').onclick = function(){
+
+    importExampleBibTex()
+}
+
 //For connected papers tabs
 
 document.getElementById('tableTab').onclick = function(){
@@ -16,14 +33,49 @@ document.getElementById('networkTab').onclick = function(){
 
 //For threshold slider
 
-    document.getElementById('thresholdInput').oninput = function(){
+document.getElementById('thresholdInput').oninput = function(){
 
-        document.querySelector('#thresholdOutput').value = 'Minimum Connections: ' + this.value;
+    document.querySelector('#thresholdOutput').value = 'Minimum Connections: ' + this.value;
 
-        threshold(this.value)
+    threshold(this.value)
 
 
-    }
+}
+
+//For Mode Switching Buttons
+
+document.getElementById('citedByMode').onclick = function(){
+
+mode = "citedBy";
+updateGraph(Papers,Edges);
+
+//document.getElementById("targetNodeKeyText").innerHTML="Papers Citing Seed Papers"
+
+}
+
+document.getElementById('refMode').onclick = function(){
+
+    mode = "ref";
+    updateGraph(Papers,Edges);
+    
+    //document.getElementById("targetNodeKeyText").innerHTML="Papers Cited-By Seed Papers"
+    
+}
+
+document.getElementById('colorByOA').onclick = function(){
+
+    node.attr("fill", function(d) { 
+    
+        if(d.OA==true){
+            return 'green'
+        }else if(d.OA==false){
+            return 'red'
+        }else{
+            return 'grey'
+        }    
+    
+    })                
+}
 
 
 //For Seed Papers Side bar

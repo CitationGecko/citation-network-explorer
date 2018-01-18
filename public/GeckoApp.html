@@ -7,6 +7,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         
         <link href="https://fonts.googleapis.com/css?family=Comfortaa" rel="stylesheet"> 
+        <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
 
         <link rel="stylesheet" type="text/css" href='styles.css'/>
 
@@ -25,11 +26,56 @@
     <body>
        
         <header>
+            <button id='helpButton'><i class="fa fa-question-circle fa-2x" color ='green' aria-hidden="true"></i></button>
             <img class='logo' src='logo1.png'/>
             <div id= 'pageTabs' class='navtabs'>
 <!--                     <button id='appTab' class='tab'>app</button><button id='helpTab' class='tab'>help</button><button id='aboutTab' class='tab'>about</button>
  -->            </div>
         </header>
+        <div id='helpModal' class='modal'>
+            <div class='modal-content'>
+                <h2> Welcome to Gecko!</h2>
+                <p>Gecko is here to help you find the most relevant papers to your research 
+                    and give you a more complete sense of the research landscape.</p>
+                <p>Simply provide several 'seed papers' that define an area you are interested
+                     in and Gecko will search out all the papers that they cite and all the papers that cite them.</p>
+                <p>It then builds a network from all of these papers allowing you to quickly 
+                    identify important papers you may have missed.</p>
+                <p> For example, papers that are cited by a all of your seed papers are likely to be important
+                    foundational papers in the field, whilst papers that cite a lot of the seed
+                    papers are likely to be more recent papers in the same area that might be worth reading. 
+                </p>
+                <p>The more seed papers you pick the more you can narrow in on a specific topic.</p>
+
+                <h3>Getting Started</h3>
+                <p>To get started add some seed papers by clicking the big green plus in the 'seed papers' panel.
+                    This will give you three options:
+                    <ul>
+                        <li>Add by DOI</li>
+                        <li>Search by Title</li>
+                        <li>Upload BibteX</li>
+                    </ul>
+                <p>For a demo of what Gecko can do, click Upload BibTex and click DEMO.</p>
+                    <p>The seed papers added appear in the Seed Papers panel. The papers connected to these seed papers in the citation network appear in the 'Connected Papers' panel.</p>
+                There are two ways of viewing the connected papers:
+                
+                <h4>Network View</h4>
+                
+                <p>In this view you can see how each paper connects to the different seed papers graphically.</p>
+                <p>You can switch between viewing a graph showing only references of the seed papers and a graph 
+                    showing only the papers that cite the seed papers by clicking the 'Cited-By' and 'References' buttons respectively.</p>
+                <p>In order to hide less well connected papers from the Network View use the slider to select
+                 the minimum number of connections a paper requires to be displayed.</p>
+
+                <h4>Table View</h4>
+                
+                <p>In the table view papers can sorted by "Seeds Cited" or "Seeds Cited-By" in order to find highly connected papers.</p>
+                <p>If one of the connected papers seems highly relevant you can add it as a 
+                    seed paper by clicking the 'Add' button at the end of the row, expanding the network in order to uncover more papers.</p>
+                    
+                <p>You can also do this in the network view by clicking on the relvant node and then on the 'Make Seed' button.</p>
+            </div>
+        </div>
         <div id='main'>
             <div id='seedPapers' class='panel'>
                 <h1>seed papers</h1>
@@ -57,9 +103,9 @@
                             <output id="thresholdOutput" for="thresholdInput">Minimum Connections: 1</output>
                     </div>
                     <div id="controlPanel">
-                        <button onclick ='mode = "citedBy";updateGraph(Papers,Edges);document.getElementById("targetNodeKeyText").innerHTML="Papers Citing Seed Papers"'>Cited-By</button>
-                        <button onclick ='mode = "ref";updateGraph(Papers,Edges);document.getElementById("targetNodeKeyText").innerHTML="Papers Cited by Seed Papers"'>References</button>
-                        <button onclick='colorByOA()'>Color by OA</button>
+                        <button id='citedByMode'>Cited-By</button>
+                        <button id='refMode'>References</button>
+                        <button id='colorByOA'>Color by OA</button>
                     </div>
                 </div>
                 <div id='tableView'>
@@ -111,7 +157,7 @@
         </div>
         <div id='uploadBibTexModal' class='modal'>
                 <div class='modal-content'>
-                    Add Seeds by BibTex: <input type="file" id="files" name="files[]" multiple /><output id="list"></output>
+                    Add Seeds by BibTex: <input type="file" id="files" name="files[]" multiple /><output id="list"></output><button id='demoButton'>DEMO</button>
                 </div>
         </div>
 

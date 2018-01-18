@@ -25,6 +25,15 @@ header {
     position: relative;
 }
 
+#helpButton {
+
+    background:none;
+    position: absolute;
+    top:.5em;
+    right:.5em;
+    border-style:none;
+}
+
 .logo {
 
     height: 70%;
@@ -47,12 +56,17 @@ header {
 
 }
 
+h1,h2,h3,h4 {
+
+    font-family: 'Comfortaa',serif
+
+}
+
 h1 {
 
     font-weight: 100;
     font-size: 1em;
     margin: .5em;
-
 }
 
 #seedPapers {
@@ -157,6 +171,12 @@ h1 {
     border-style:none;
     border-radius: .5em;
 
+}
+
+#helpModal > .modal-content {
+
+    width:60%;
+    margin:7% auto;
 }
 
 #addSeedModal > .modal-content > button {

@@ -10,7 +10,8 @@ extensions = {
     ".js" : "application/javascript",
     ".png" : "image/png",
     ".gif" : "image/gif",
-    ".jpg" : "image/jpeg"
+    ".jpg" : "image/jpeg",
+    ".bib" : "text/plain"
   };
 
 
@@ -47,6 +48,7 @@ var server = http.createServer(function (req, res) {
 
     if(req.method=='GET'){
 
+        console.log(req.url);
         var fileName = path.basename(req.url) || 'GeckoApp.html';
         var ext = path.extname(fileName);
         var localFolder = __dirname + '/public/';
