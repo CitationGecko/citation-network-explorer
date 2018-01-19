@@ -24,7 +24,7 @@ function importExampleBibTex(){
 
     xmlhttp = new XMLHttpRequest();
          
-    xmlhttp.open('GET', window.location.href+'/exampleBibTex.bib', true); 
+    xmlhttp.open('GET', window.location.href+'exampleBibTex.bib', true); 
     xmlhttp.setRequestHeader('Content-type', 'text/plain');
    
     // Set up callback to get the response asynchronously.

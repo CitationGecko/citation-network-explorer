@@ -99,13 +99,17 @@
                         <div class='add-seed'></div>
                     </div>
                     <div id='thresholdSlider'>
-                            <input id='thresholdInput' type='range' min='0' max='10' value='1'>
+                            <input id='thresholdInput' type='range' min='1' max='10' value='1'>
                             <output id="thresholdOutput" for="thresholdInput">Minimum Connections: 1</output>
                     </div>
                     <div id="controlPanel">
                         <button id='citedByMode'>Cited-By</button>
                         <button id='refMode'>References</button>
                         <button id='colorByOA'>Color by OA</button>
+                    </div>
+                    <div id='networkKey'>
+                        <div><svg class='node-key'><circle class='node'></circle></svg><span>Papers Cited-By Seed Papers</span></div>
+                        <div><svg class='node-key'><circle class='seed-node'></circle></svg><span>Seed Papers</span></div>
                     </div>
                 </div>
                 <div id='tableView'>

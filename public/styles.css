@@ -304,22 +304,62 @@ h1 {
     font-size:60%;
  }
 
-.node circle {
+.node {
     stroke: #fff;
     stroke-width: 1px;
+    fill: rgb(94, 94, 94);
 }
-.link line {
+
+.seed-node {
+
+    stroke: #fff;
+    stroke-width: 1px;
+    fill: rgb(255, 199, 0)
+}
+
+.link {
     stroke: #999;
     stroke-opacity: .6;
     stroke-width: 1.5px;
 }
 
-.node circle:hover {
+.node:hover, .seed-node:hover {
 
     stroke: rgb(97, 97, 97);
     stroke-width: 2px;
     
 }
+
+#networkKey {
+
+    position:absolute;
+    left: 1%;
+    top: 10%;
+    font-size: .5em;
+}
+
+#networkKey svg {
+
+    width: 20px;
+    height: 20px;
+}
+
+#networkKey svg circle{
+
+    r: 7;
+    cx: 10;
+    cy: 10;
+}
+#networkKey div {
+
+    display: table;
+}
+#networkKey span {
+
+    display: table-cell;
+    vertical-align: middle;
+}
+
 
 #selected-paper-box {
 

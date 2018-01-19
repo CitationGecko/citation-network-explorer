@@ -22,9 +22,6 @@ var minconnections = 0,
     link = svg.append("g").attr("class", "link").selectAll("line"),
 
     node = svg.append("g").attr("class", "node").selectAll("circle"),
-
-    seedcolor = 'rgb(255, 199, 0)';
-    nonseedcolor = 'rgb(94, 94, 94)';
     
     simulation = d3.forceSimulation()
                     .force("link", d3.forceLink().id(function(d) { return d.ID; }))
@@ -93,9 +90,9 @@ function updateGraph(Papers,Edges){
     node = node.enter().append("circle")
                         .merge(node)
                         .attr("r", function(d){return d.seed ? 7 : 5 + d[sizeMetric]})
-                        .attr("fill", function(d) { 
+                        .attr("class", function(d) { 
                             
-                            if(d.seed){return seedcolor} else {return nonseedcolor}
+                            if(d.seed){return 'seed-node node'} else {return 'node'}
                         
                         })                                            
                         .style("visibility", function (d) {return d.hide == 1 ? "hidden" : "visible";})
