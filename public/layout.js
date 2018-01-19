@@ -31,6 +31,16 @@ document.getElementById('networkTab').onclick = function(){
 
 }
 
+//For mode toggle
+
+document.getElementById('toggleMode').onchange = function(){
+
+    mode = (mode=='ref') ? 'citedBy' : 'ref';
+
+    updateGraph(Papers,Edges)
+
+} 
+
 //For threshold slider
 
 document.getElementById('thresholdInput').oninput = function(){
@@ -42,26 +52,7 @@ document.getElementById('thresholdInput').oninput = function(){
 
 }
 
-//For Mode Switching Buttons
-
-document.getElementById('citedByMode').onclick = function(){
-
-mode = "citedBy";
-updateGraph(Papers,Edges);
-
-//document.getElementById("targetNodeKeyText").innerHTML="Papers Citing Seed Papers"
-
-}
-
-document.getElementById('refMode').onclick = function(){
-
-    mode = "ref";
-    updateGraph(Papers,Edges);
-    
-    //document.getElementById("targetNodeKeyText").innerHTML="Papers Cited-By Seed Papers"
-    
-}
-
+/* 
 document.getElementById('colorByOA').onclick = function(){
 
     node.attr("fill", function(d) { 
@@ -75,7 +66,7 @@ document.getElementById('colorByOA').onclick = function(){
         }    
     
     })                
-}
+} */
 
 
 //For Seed Papers Side bar

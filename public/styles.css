@@ -177,6 +177,7 @@ h1 {
 
     width:60%;
     margin:7% auto;
+    padding:2%;
 }
 
 #addSeedModal > .modal-content > button {
@@ -228,24 +229,21 @@ h1 {
     position:absolute;
     left:1em;
     bottom:1em;
-    width:40%;
+    width:30%;
     
 }
 
 #thresholdInput {
 
-    width:90%
+    width:90%;
+    margin-bottom:.5em;
 }
-
-
 
 #thresholdOutput {
 
    /*  display:block; */    
     width:10%;
     text-align: center;
-    position:relative;
-    top:-.3em;
 }
 
 #seed-paper-container {
@@ -256,7 +254,7 @@ h1 {
 
 }
 .seed-paper-box{
-    background-color: #dbdada42
+    background-color:rgb(200, 200, 200)
 
 }
 .seed-paper-box:hover{
@@ -338,35 +336,82 @@ h1 {
     font-size: .5em;
 }
 
+.key-icon {
+    float:left;
+    height: 54px; 
+}
+
 #networkKey svg {
 
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 16px;
 }
 
-#networkKey svg circle{
+#networkKey svg circle {
 
-    r: 7;
-    cx: 10;
-    cy: 10;
-}
-#networkKey div {
-
-    display: table;
-}
-#networkKey span {
-
-    display: table-cell;
-    vertical-align: middle;
+    r: 7px;
+    cx: 9px;
+    cy: 9px;
+    stroke:none;
 }
 
+#toggleMode{
+	height: 0;
+	width: 0;
+    visibility: hidden;
+    margin:0;
+}
+
+.toggle {
+	cursor: pointer;
+	text-indent: -9999px;
+	width: 18px;
+	height: 36px;
+	background: rgb(200,200,200);
+	display: block;
+	border-radius: 18px;
+	position: relative;
+}
+
+.toggle:after {
+	content: '';
+	position: absolute;
+	top: 2px;
+	left: 2px;
+	width: 14px;
+	height: 14px;
+	background:rgb(94, 94, 94);
+	border-radius: 14px;
+	transition: 0.3s;
+}
+
+#toggleMode:checked + .toggle:after {
+	top: calc(100% - 2px);
+	transform: translateY(-100%);
+}
+
+.toggle:active:after {
+	height: 20px;
+}
+
+.key-label {
+    position: absolute;
+    left:18px;
+}
+
+.key-label div {
+
+    white-space: nowrap;
+    height:8px;
+    padding:5px;
+}
 
 #selected-paper-box {
 
     display:none;
     position: absolute;
     right:0em;
-    bottom:3em;
+    bottom:.2em;
     width:30%;
     background-color: rgb(212, 212, 212);
 

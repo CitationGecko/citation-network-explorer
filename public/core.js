@@ -45,6 +45,9 @@ function importExampleBibTex(){
 
             }
 
+            document.getElementById('uploadBibTexModal').style.display = "none";
+
+
         } else {
           // Some kind of error occurred.
           alert("Error: " + this.status + " "
