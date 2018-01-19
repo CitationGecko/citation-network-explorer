@@ -11,6 +11,7 @@ var minconnections = 0,
                 .on('click',function(){
                     node.style("opacity", 1);
                     link.style("opacity",1);
+                    node.on('mouseover',function(){updateInfoBox(this)})
                 }), //select the svg
     
     width = document.getElementById('networkView').offsetWidth, //extract the width and height attribute (the + converts to number)
@@ -201,6 +202,8 @@ function highlightNode(){
         });
 
     updateInfoBox(this);
+
+    node.on('mouseover',null)
 
     d3.event.stopPropagation();
 
