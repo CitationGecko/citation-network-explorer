@@ -39,7 +39,7 @@ var occ = {
                callback(this.responseText,query.type);
              } else {
                // Some kind of error occurred.
-               alert("Sparql query error: " + this.status + " "
+               console.log("Sparql query error: " + this.status + " "
                    + this.responseText);
              }
            }
