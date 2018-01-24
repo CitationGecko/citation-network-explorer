@@ -3,6 +3,8 @@ var minconnections = 0,
 
     mode = 'ref',
 
+    sizeMetric = 'seedsCitedBy',
+
     selectednode,
 
     graph = {},
@@ -29,7 +31,8 @@ var minconnections = 0,
                     .force("charge", d3.forceManyBody().strength(-100))
                     .force("center", d3.forceCenter(width / 2, height / 2))
                     .force("xattract",d3.forceX())
-                    .force("yattract",d3.forceY()); 
+                    .force("yattract",d3.forceY())
+                    .force("collide",d3.forceCollide().radius(function(d){return (d.seed ? 7 : 5*d[sizeMetric])}));
 
     osvg.call(d3.zoom().on("zoom", function () {svg.attr("transform", d3.event.transform)}))
     .on("dblclick.zoom", null);
@@ -60,7 +63,7 @@ function updateGraph(Papers,Edges){
         
                 graph.links = Edges.filter(function(e){return(e.source.seed)}).map(function(e){return {source: e.source.ID, target: e.target.ID}});
                 
-                var sizeMetric = 'seedsCitedBy';
+                sizeMetric = 'seedsCitedBy';
 
                 break;
 
@@ -68,7 +71,7 @@ function updateGraph(Papers,Edges){
         
                 graph.links = Edges.filter(function(e){return(e.target.seed)}).map(function(e){return {source: e.source.ID, target: e.target.ID}});
                 
-                var sizeMetric = 'seedsCited';
+                sizeMetric = 'seedsCited';
                 
                 break;
     }
@@ -90,7 +93,7 @@ function updateGraph(Papers,Edges){
             
     node = node.enter().append("circle")
                         .merge(node)
-                        .attr("r", function(d){return d.seed ? 7 : 5 + d[sizeMetric]})
+                        .attr("r", function(d){return d.seed ? 7 : 5*d[sizeMetric]})
                         .attr("class", function(d) { 
                             
                             if(d.seed){return 'seed-node node'} else {return 'node'}
@@ -119,9 +122,12 @@ function updateGraph(Papers,Edges){
     // Update and restart the simulation.
     simulation.nodes(graph.nodes).on("tick", ticked);
     simulation.force("link").links(graph.links);
+    simulation.force("collide").initialize(simulation.nodes());
     simulation.alpha(1).restart();
 
     threshold(minconnections)
+
+
     //center_view();
 
 }   
