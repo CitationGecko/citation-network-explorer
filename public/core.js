@@ -76,13 +76,15 @@ function handleFileSelect(evt) {
 
             var papers = bibtexParse.toJSON(e.target.result)
 
+            if(papers.filter(function(p){return p.entryTags.doi}).length==0){alert("We couldn't find any DOIs in the BibTex you uploaded please check your export settings")}
+
             for(let i=0;i<papers.length;i++){
 
                 if(papers[i].entryTags.doi){
 
                     addSeedFromDOI(papers[i].entryTags.doi)
                     
-                }
+                } 
 
             }
 

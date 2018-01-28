@@ -175,8 +175,8 @@
                 var k = this.key();
                 if (k.match("^[0-9]+$"))
                     return k;
-                else if (this.months.indexOf(k.toLowerCase()) >= 0)
-                    return k.toLowerCase();
+                else if (this.months.indexOf(k.trim().toLowerCase()) >= 0)
+                    return k.trim().toLowerCase();
                 else
                     throw "Value expected: single_value" + this.input.substring(start) + ' for key: ' + k;
 
