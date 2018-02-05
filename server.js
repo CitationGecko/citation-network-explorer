@@ -2,7 +2,16 @@ var http = require('http');
 var path = require('path');
 var request = require('request');
 var fs = require('fs');
-//var apikey = require('./apikeys.js');
+
+try {
+    var apikey = require('./apikeys.js');
+} catch (ex) {
+    console.log('No API key file provided')
+}
+
+var API_KEY = process.env.MICROSOFT_API_KEY || apikey.key;
+
+console.log(API_KEY)
 
 extensions = {
     ".html" : "text/html",
@@ -86,9 +95,8 @@ var server = http.createServer(function (req, res) {
             // Set the headers
             var headers = {
                 "Content-type": "application/json",
-                "Ocp-Apim-Subscription-Key": process.env.MICROSOFT_API_KEY
+                "Ocp-Apim-Subscription-Key": API_KEY
             }
-
             // Configure the request
             var options = {
                 url: 'https://westus.api.cognitive.microsoft.com/academic/v1.0/graph/search?mode=json',
@@ -97,16 +105,12 @@ var server = http.createServer(function (req, res) {
                 body: query
             }
 
-            console.log(query)
-
             // Start the request
             request(options, function (error, response, body) {
 
-                console.log('anybody home...')
                 console.log(JSON.stringify(response))
-                if(error) {console.log('Hello'+error.message)}
+                if(error) {console.log(error.message)}
                 if (!error && response.statusCode == 200) {
-                    console.log('Response recieved: ' + body.toString());
                     res.writeHead(200, {'Content-Type': 'application/json','Access-Control-Allow-Origin': '*'});
                     res.end(body.toString());
                 }
