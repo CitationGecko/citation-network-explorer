@@ -2,6 +2,8 @@ oaDOI = {
 
     accessQuery: function(paper){
 
+      if(paper.DOI){
+
         url = "https://api.oadoi.org/v2/" + paper.DOI;
         xmlhttp = new XMLHttpRequest();
         xmlhttp.open('GET', url,true); 
@@ -20,6 +22,9 @@ oaDOI = {
           }
         };
         xmlhttp.send(null);
+
+      }
+       
 
     },
 
