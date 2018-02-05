@@ -110,8 +110,8 @@ var server = http.createServer(function (req, res) {
 
                 console.log(JSON.stringify(response))
                 if(error) {console.log(error.message)}
-                if (!error && response.statusCode == 200) {
-                    res.writeHead(200, {'Content-Type': 'application/json','Access-Control-Allow-Origin': '*'});
+                if (!error) {
+                    res.writeHead(response.statusCode, {'Content-Type': 'application/json','Access-Control-Allow-Origin': '*'});
                     res.end(body.toString());
                 }
             }) 

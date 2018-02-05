@@ -35,7 +35,8 @@ var microsoft = {
             if (this.readyState == 4 && this.status == 200) {
                 console.log('Response recieved from MAG!')
                 callback(this.responseText)
-            } else if(this.readyState == 4 && this.status==503){
+
+            } else if(this.readyState==4){
 
                 if(MicrosoftStatus == 'good'){
                     MicrosoftStatus = 'bad';
