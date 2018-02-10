@@ -15,6 +15,11 @@ body {
     font-family: 'Comfortaa',serif;
 }
 
+*{
+    min-height: 0;
+    min-width: 0;
+}
+
 
 header {
 
@@ -341,25 +346,22 @@ h1 {
     height: 54px; 
 }
 
-#networkKey svg {
-
-    width: 18px;
-    height: 16px;
-}
-
-#networkKey svg circle {
-
-    r: 7px;
-    cx: 9px;
-    cy: 9px;
-    stroke:none;
-}
-
 #toggleMode{
 	height: 0;
 	width: 0;
     visibility: hidden;
     margin:0;
+}
+
+#seed-key{
+    content: '';
+	position: absolute;
+	top: 2px;
+	left: 2px;
+	width: 14px;
+	height: 14px;
+    background: rgb(255, 199, 0);
+	border-radius: 14px;
 }
 
 .toggle {
@@ -370,7 +372,8 @@ h1 {
 	background: rgb(200,200,200);
 	display: block;
 	border-radius: 18px;
-	position: relative;
+    position: absolute;
+    top:18px;
 }
 
 .toggle:after {
