@@ -3,23 +3,17 @@
 
 MICROSOFT_API_KEY = false ; //IF YOU HAVE YOUR OWN API KEY PUT IT HERE!
 
-/* if(!window.MICROSOFT_API_KEY){
-
-    MICROSOFT_API_KEY = prompt("If you have your own API key for the Microsoft Academic Graph, please enter it here as it will speed up the performance")
-
-} */
-
-MicrosoftStatus = 'good';
+MicrosoftStatus = 'good'; // Once it switches to bad after first failed request it will stop alerting the user when requests fail.
 
 var microsoft = {
 
-    apiRequest: function(request,callback){
+    apiRequest: function(request,callback){ //Send a generic request to the MAG api
 
         xmlhttp = new XMLHttpRequest();
         
-        var url =  window.location.href;
+        var url =  window.location.href; //If no API key is given the request will be sent to an intermediate server which inserts the API and forwards it on to Microsoft.
 
-        if(MICROSOFT_API_KEY){
+        if(MICROSOFT_API_KEY){ //If API key is given, query the API directly
             url = "https://westus.api.cognitive.microsoft.com/academic/v1.0/graph/search?mode=json"
         }
 
@@ -51,7 +45,7 @@ var microsoft = {
 
     },
 
-    refQuery: function(id){
+    refQuery: function(id){ //Query for MAG API to get references of a paper from the Microsoft ID.
 
         return {
             
@@ -74,7 +68,7 @@ var microsoft = {
 
     },
 
-    citedByQuery: function(id){
+    citedByQuery: function(id){//Query for MAG API to get papers citing a paper with a specific Microsoft ID.
 
         return {
             
@@ -98,7 +92,7 @@ var microsoft = {
 
     },
 
-    titleQuery: function(title){
+    titleQuery: function(title){//Query for MAG API that searches for papers with titles containing the string given by 'title'
 
         return {
             

@@ -1,6 +1,7 @@
 var Papers = []  //Array of paper objects with bibliographic information for each paper 
 var Edges = [] //Array of edge objects, each is a pair of paper objects (source and target).
-var uniqueID = 0;
+
+var uniqueID = 0; //Hacky implementation to give a unique ID for each paper as it is added based on the order in which they are added.
 var doiQuery; //Place holder for the user input field.
 var titleQuery; //Place holder for the user input field.
 
@@ -18,13 +19,13 @@ var titleInput = document.querySelector("#titleInput").addEventListener("input",
 
 }) 
 
-//Import DEMO bibtex
+//Importing the DEMO bibtex
 
 function importExampleBibTex(){
 
     xmlhttp = new XMLHttpRequest();
          
-    xmlhttp.open('GET', window.location.href+'exampleBibTex.bib', true); 
+    xmlhttp.open('GET', window.location.href+'examples/exampleBibTex.bib', true); 
     xmlhttp.setRequestHeader('Content-type', 'text/plain');
    
     // Set up callback to get the response asynchronously.
@@ -59,7 +60,7 @@ function importExampleBibTex(){
     xmlhttp.send();
 }
 
-//Import Bibtex
+//Importing user uploaded Bibtex
 
 document.getElementById('files').addEventListener('change', handleFileSelect, false);
 
@@ -71,7 +72,6 @@ function handleFileSelect(evt) {
 
         var reader = new FileReader();
 
-        // Closure to capture the file information.
         reader.onload = function(e){
 
             var papers = bibtexParse.toJSON(e.target.result)
@@ -94,7 +94,7 @@ function handleFileSelect(evt) {
         
     }
     
-    document.getElementById('uploadBibTexModal').style.display = "none";
+    document.getElementById('uploadBibTexModal').style.display = "none"; //Hide modal once file selected
 
 }
 
@@ -275,7 +275,6 @@ function updateMetrics(Papers,Edges){
         }
  
 }
-
 
 
 //Removes seed status of a paper, deletes all edges to non-seeds and all now unconnected papers

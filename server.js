@@ -57,17 +57,17 @@ var server = http.createServer(function (req, res) {
 
     if(req.method=='GET'){
 
-        console.log(req.url);
         var fileName = path.basename(req.url) || 'GeckoApp.html';
         var ext = path.extname(fileName);
-        var localFolder = __dirname + '/public/';
+        var localFolder = __dirname + '/public'+path.dirname(req.url);
+        var location = localFolder +'/'+ fileName;
 
         if(!extensions[ext]){//check if file extension is in list of supported file types.
             res.writeHead(404, {'Content-Type': 'text/html'});
             res.end("&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;The requested file type is not supported&lt;/body&gt;&lt;/html&gt;");
         };
 
-        getFile((localFolder + fileName),res,extensions[ext]);
+        getFile(location,res,extensions[ext]);
 
     }
 
