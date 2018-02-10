@@ -124,7 +124,13 @@ document.getElementById('colorByOA').onclick = function(){
 
     document.getElementById("doiInput").onkeydown = function(event){
         
-        if (event.keyCode == 13){addSeedFromDOI(doiQuery)}
+        if (event.keyCode == 13){
+            
+            addSeedFromDOI(doiQuery)
+            document.getElementById('doiInputLoader').style.display = 'inline-block';
+
+        }
+
 
     }
 
