@@ -35,7 +35,7 @@ MICROSFT_API_KEY = "YOUR API KEY GOES HERE"
 
 ## Instructions for use
 
-1. Go to http://citationgecko.com or open if running locally open GeckoApp.html (in the /public folder)
+1. Go to http://citationgecko.com or for running locally open GeckoApp.html (in the /public folder)
 2. To get started add some seed papers by clicking the big green plus in the seed papers panel.
 2. There are three ways of choosing seed papers to start with:
     1. Add directly by DOI
