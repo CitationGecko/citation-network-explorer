@@ -1,69 +1,41 @@
 //For help modal
-
 document.getElementById('helpModal').style.display = "block";
-
 document.getElementById('helpButton').onclick = function(){
-
     document.getElementById('helpModal').style.display = "block";
-
 }
-
 //For DEMO button
-
 document.getElementById('demoButton').onclick = function(){
-
     importExampleBibTex()
 }
-
 //For connected papers tabs
-
 document.getElementById('tableTab').onclick = function(){
-
     document.getElementById('networkView').style.display='none';
     document.getElementById('timelineView').style.display='none';                
     document.getElementById('tableView').style.display='block';
-
 }
-
 document.getElementById('networkTab').onclick = function(){
-
     document.getElementById('tableView').style.display='none';
     document.getElementById('timelineView').style.display='none';            
     document.getElementById('networkView').style.display='block';
-
 }
-
-document.getElementById('timelineTab').onclick = function(){
-    
-        document.getElementById('networkView').style.display='none';
-        document.getElementById('tableView').style.display='none';        
-        document.getElementById('timelineView').style.display='block';
-    
-    }
-
+document.getElementById('timelineTab').onclick = function(){ 
+    document.getElementById('networkView').style.display='none';
+    document.getElementById('tableView').style.display='none';        
+    document.getElementById('timelineView').style.display='block';
+}
 //For mode toggle
-
 document.getElementById('toggleMode').onchange = function(){
-
-    mode = (mode=='ref') ? 'citedBy' : 'ref';
-
-    updateGraph(Papers,Edges)
-
+    forceGraph.mode = (forceGraph.mode=='ref') ? 'citedBy' : 'ref';
+    forceGraph.update(Papers,Edges)
 } 
-
 //For threshold slider
-
 document.getElementById('thresholdInput').oninput = function(){
-
     document.querySelector('#thresholdOutput').value = 'Minimum Connections: ' + this.value;
-    threshold(this.value)
+    forceGraph.threshold(this.value)
 }
-
 /* 
 document.getElementById('colorByOA').onclick = function(){
-
     node.attr("fill", function(d) { 
-    
         if(d.OA==true){
             return 'green'
         }else if(d.OA==false){
@@ -71,52 +43,31 @@ document.getElementById('colorByOA').onclick = function(){
         }else{
             return 'grey'
         }    
-    
     })                
 } */
-
-
 //For Seed Papers Side bar
-
     document.getElementById('collapseBar').onclick = hideSideBar;
-
     function hideSideBar(){
-
         document.getElementById('seedPapers').style.display='none';
-
         var icon = document.getElementById('collapse-seeds-icon');
-
         icon.classList.remove('fa-chevron-left');
-
         icon.classList.add('fa-chevron-right');
-
         document.getElementById('collapseBar').onclick = showSideBar;
-
     }
-
     function showSideBar(){
-
         document.getElementById('seedPapers').style.display='block';
-
         var icon = document.getElementById('collapse-seeds-icon');
-
         icon.classList.remove('fa-chevron-right');
-
         icon.classList.add('fa-chevron-left');
-
         document.getElementById('collapseBar').onclick = hideSideBar;
-
     }
-
 //For addSeedModals
-
     // When the user clicks anywhere outside of the modal, close it
     window.onclick = function(event) {
         if (event.target.classList.contains('modal')) {
             event.target.style.display = "none";
         }
     } 
-
     // When the user clicks on the button, open the modal
     document.getElementById("addSeeds").onclick = function() {
 
@@ -170,7 +121,7 @@ function updateSeedTable(){
     paperbox = paperbox.enter()
                     .append('div')
                     .attr('class','seed-paper-box panel')
-                    .on('click',highlightNode)
+                    .on('click',forceGraph.highlightNode)
         
     paperbox.append('button').attr('class','delete-seed')
             .html('<i class="fa fa-times" color="red" aria-hidden="true"></i>')
@@ -231,11 +182,11 @@ function updateInfoBox(selected){
 
     paperbox.select('.doi-link').html(p.DOI ? ("<a target='_blank' href='https://doi.org/"+p.DOI+"'>"+p.DOI+"</a>"): '')
 
-    var button = p.seed ? '' : "<button type='button' onclick='addSeedFromRecord(selectednode.ID)'>Make Seed</button>"
+    var button = p.seed ? '' : "<button type='button' onclick='addSeedFromRecord(forceGraph.selectednode.ID)'>Make Seed</button>"
     
     paperbox.select('.add-seed').html(button)
 
-    selectednode = p;
+    forceGraph.selectednode = p;
 }
 
  $(document).ready(function() {
