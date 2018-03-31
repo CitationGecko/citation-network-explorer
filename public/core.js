@@ -7,24 +7,18 @@ var titleQuery; //Place holder for the user input field.
 
 //Update request based on doi query inputted by the user.
 var doiInput = document.querySelector("#doiInput").addEventListener("input",function(){
-    
     doiQuery=this.value;
-
 });
 
 //Update request based on title query inputted by the user.
 var titleInput = document.querySelector("#titleInput").addEventListener("input", function() {
-
     titleQuery = this.value;
-
 }) 
 
 //Importing the DEMO bibtex
 
 function importExampleBibTex(){
-
     xmlhttp = new XMLHttpRequest();
-         
     xmlhttp.open('GET', window.location.href+'examples/exampleBibTex.bib', true); 
     xmlhttp.setRequestHeader('Content-type', 'text/plain');
    

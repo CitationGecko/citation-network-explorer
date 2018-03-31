@@ -20,6 +20,7 @@ document.getElementById('demoButton').onclick = function(){
 document.getElementById('tableTab').onclick = function(){
 
     document.getElementById('networkView').style.display='none';
+    document.getElementById('timelineView').style.display='none';                
     document.getElementById('tableView').style.display='block';
 
 }
@@ -27,9 +28,18 @@ document.getElementById('tableTab').onclick = function(){
 document.getElementById('networkTab').onclick = function(){
 
     document.getElementById('tableView').style.display='none';
+    document.getElementById('timelineView').style.display='none';            
     document.getElementById('networkView').style.display='block';
 
 }
+
+document.getElementById('timelineTab').onclick = function(){
+    
+        document.getElementById('networkView').style.display='none';
+        document.getElementById('tableView').style.display='none';        
+        document.getElementById('timelineView').style.display='block';
+    
+    }
 
 //For mode toggle
 
@@ -46,10 +56,7 @@ document.getElementById('toggleMode').onchange = function(){
 document.getElementById('thresholdInput').oninput = function(){
 
     document.querySelector('#thresholdOutput').value = 'Minimum Connections: ' + this.value;
-
     threshold(this.value)
-
-
 }
 
 /* 

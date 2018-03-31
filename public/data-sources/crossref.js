@@ -7,7 +7,7 @@ var crossref = {
 
             console.log("response from CrossRef!")
 
-            var seed = crossref.parseRefs(res)
+            let seed = crossref.parseRefs(res)
             
             updateMetrics(Papers,Edges); // update citation metrics
             
@@ -29,17 +29,19 @@ var crossref = {
 
     parseRefs: function(response){
 
-        var np = 0; //For bean counting only 
-        var ne = 0; //For bean counting only
+        let np = 0; //For bean counting only 
+        let ne = 0; //For bean counting only
 
-        var citer = {
+        let citer = {
 
             ID: uniqueID,
             DOI: response.DOI,
             Title: response.title[0],
             Author: response.author[0].family,
-            Year: response.issued['date-parts'][0][0],
+            Month: response.created['date-parts'][0][1],
+            Year: response.created['date-parts'][0][0],
             Journal: response['container-title'][0],
+            CitationCount: response['is-referenced-by-count'],
             seed: true
 
         }
@@ -57,12 +59,11 @@ var crossref = {
         
         }  
 
-        if(!response.reference){return(citer)}
+        if(!response.reference){return(citer)} 
 
-        var refs = response.reference
+        let refs = response.reference
 
         for(let i=0;i<refs.length;i++){
-
 
             let cited = {
 
@@ -73,6 +74,12 @@ var crossref = {
                 Year: refs[i].year ? refs[i].year : null ,
                 Journal: refs[i]['journal-title'] ? refs[i]['journal-title'] : null,
                 seed: false
+            }
+
+            //if you have DOI query crossRef for more info.
+
+            if(cited.DOI){
+                crossref.getDetails(cited)
             }
 
             let existingRecord = matchPapers(cited,Papers); // Search for existing paper
@@ -97,16 +104,32 @@ var crossref = {
                 hide: false
 
             }
-
-            if(Edges.filter(function(e){return e.source == newEdge.source & e.target == newEdge.target}).length == 0){Edges.push(newEdge);ne++}
-            
-
+            if(Edges.filter(function(e){
+                return e.source == newEdge.source & e.target == newEdge.target;
+                }).length == 0){
+                    Edges.push(newEdge);ne++
+                }
         }   
     
         console.log(np + " papers and " + ne + " edges added from CrossRef")
 
         return(citer)
 
-    }
+    },
+
+    getDetails: function(paper){
+
+        CrossRef.work(paper.DOI,function(err,response){
+            
+            paper.Title = response.title[0];
+            paper.Author= response.author[0].family;
+            paper.Month= response.created['date-parts'][0][1];
+            paper.Year= response.created['date-parts'][0][0];
+            paper.Journal= response['container-title'][0];
+            paper.CitationCount= response['is-referenced-by-count'];
+
+        })
+
+    } 
 
 }
