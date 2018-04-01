@@ -194,5 +194,5 @@ function refreshGraphics(){
     updateSeedTable(); //update HTML table
     updateResultsTable(); //update HTML table;
     forceGraph.update(Papers,Edges);
-    timeGraph.update();
+    //timeGraph.update();
 };
