@@ -158,24 +158,6 @@ forceGraph.update =  function(Papers,Edges){
     forceGraph.threshold(forceGraph.minconnections);      
 }   
                     
-//Add arrow to end of edges
-
-/*   
-
-forceGraph.svg.append("svg:defs").selectAll("marker")
-.data(["end"])      // Different link/path types can be defined here
-.enter().append("svg:marker")    // This section adds in the arrows
-.attr("id", String)
-.attr("viewBox", "0 -5 10 10")
-.attr("refX", 15)
-.attr("refY", -1.5)
-.attr("markerWidth", 2)
-.attr("markerHeight", 4)
-.attr("orient", "auto")
-.append("svg:path")
-.attr("d", "M0,-5L10,0L0,5"); 
-
-*/
 
 
 
