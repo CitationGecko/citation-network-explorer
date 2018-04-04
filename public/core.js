@@ -180,11 +180,7 @@ function deleteSeed(ID){
         return (Edges.map(function(e){return e.source}).includes(p) || Edges.map(function(e){return e.target}).includes(p));         
     })
     //Edges = Edges.filter(function(e){return Papers.includes(e.source) & Papers.includes(e.target)})
-    updateMetrics(Papers,Edges);
-    updateSeedTable();
-    updateResultsTable();
-    forceGraph.update(Papers,Edges);
-    timeGraph.update();
+    refreshGraphics();
     //Change add Seed button back
     //$('#add'+paper.MicrosoftID).html("<button  class='btn btn-info btn-sm' onclick = addSeedFromSearchTable('"+paper.MicrosoftID+"','"+paper.DOI+"')>Add</button>")
 };
@@ -192,7 +188,7 @@ function deleteSeed(ID){
 function refreshGraphics(){
     updateMetrics(Papers,Edges); // update citation metrics
     updateSeedTable(); //update HTML table
-    updateResultsTable(); //update HTML table;
+    updateResultsTable();
     forceGraph.update(Papers,Edges);
     //timeGraph.update();
 };

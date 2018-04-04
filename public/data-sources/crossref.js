@@ -79,6 +79,7 @@ var crossref = {
             paper.Year= response.created['date-parts'][0][0];
             paper.Journal= response['container-title'][0];
             paper.CitationCount= response['is-referenced-by-count'];
+            updateResultsTable();
         });
     } 
 };

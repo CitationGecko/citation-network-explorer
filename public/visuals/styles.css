@@ -1,3 +1,8 @@
+* {
+    font-family: 'Comfortaa',serif;
+    min-height: 0;
+    min-width: 0;
+}
 html,body { 
     height:100%; 
     font-size:100%;
@@ -7,40 +12,73 @@ body {
     flex-direction: column;
     margin:0em;
 }
-* {
-    font-family: 'Comfortaa',serif;
-    min-height: 0;
-    min-width: 0;
-}
-header {
-    background-color: rgb(190, 192, 196);
-    height: 6em;
-    padding: 1em;
-    border-bottom: .2em solid rgb(94, 93, 93);
+#main {
+    display: flex;
+    flex-direction: row;   
+    flex-grow: 1;
+ }
+ .panel {
+     position: relative;
+     overflow:hidden;
+     background-color: rgb(255, 255, 255)
+ }
+#logoBar {
+    background-color: rgb(255, 255, 255);
+    width: 20em;
     position: relative;
+    margin: .5em;
+}
+#seedPapers {
+    width: 80em;
+    margin-right:0;
+    border: 1px solid;
+    
+}
+#collapseBar {
+    display: none;
+    background: rgb(127, 128, 131);
+    width: 5em;
+    border-style: none;
+    border-radius: 0 .5em .5em 0;
+    z-index: 2;
+    position: relative;
+    margin-left: 0em;
+}
+#connectedPapers {
+    width:200em;
+    display:flex;
+    flex-direction: column;
 }
 #helpButton {
     background:none;
     position: absolute;
-    top:.5em;
-    right:.5em;
+    bottom:.5em;
+    margin-left: auto;
+    margin-right: auto;
     border-style:none;
 }
-.logo {
-    height: 70%;
-    margin: 2em 2em 1em .5em;
-}
-#main {
-   display: flex;
-   flex-grow: 1;
-}
-.panel {
-    border: .05em solid; 
-    border-radius: .5em;
+#tableSwitch {
+    width:auto;
     margin: .5em;
-    position: relative;
-    overflow:hidden;
-    background-color: rgb(255, 255, 255)
+}
+#tableSwitch>button{
+    width:50%;
+    height: 3em; 
+}
+.table-toggle-on {
+    background-color:rgb(255, 255, 255);
+    border:3px solid;
+}
+.table-toggle-off {
+    background-color:rgb(200,200,200);
+    border:1px solid;
+}
+.logo {
+    max-width: 95%;
+    max-height:70%;
+    position: absolute;
+    top: 50%;                         /* 3 */
+    transform: translate(0, -50%);
 }
 h1,h2,h3,h4 {
     font-family: 'Comfortaa',serif
@@ -50,29 +88,10 @@ h1 {
     font-size: 1em;
     margin: .5em;
 }
-#seedPapers {
-    width: 80em;
-    margin-right:0;
-    border-radius: .5em 0em 0em .5em;
-}
-#collapseBar {
-    background: rgb(127, 128, 131);
-    width: 5em;
-    border-style: none;
-    border-radius: 0 .5em .5em 0;
-    z-index: 2;
-    position: relative;
-    margin-left: 0em;
-}
 #collapse-seeds-icon {
     position: absolute;
     top:50%;
     left:10%;
-}
-#connectedPapers {
-    width:200em;
-    display:flex;
-    flex-direction: column;
 }
 .navtabs {
     position: absolute;
@@ -92,15 +111,24 @@ h1 {
     padding: .5em;
 }
 #addSeeds {
-    position:absolute;
-    bottom:0;
-    width:100%;
+    width:95%;
+    margin-right:0;
+    margin-left:auto;
     border-style: none;
-    border-radius: 0em 0em 0em .5em;
+    background-color: white;
     z-index: 1;
+}
+#addSeeds>span {
+    position:relative;
+    margin-left: .5em;
 }
 .fa-plus {
     color:green;
+}
+#connectedControls {
+    margin-right:2em;
+    display:none;
+    text-align:right;
 }
 .modal {
     display: none; /* Hidden by default */
@@ -175,21 +203,31 @@ h1 {
     width:10%;
     text-align: center;
 }
-#seed-paper-container {   
-    height:90%;
+
+#seed-paper-container, #connected-paper-container {   
+    height:85%;
     overflow:auto;
     font-size: 70%;
-
 }
-.seed-paper-box{
-    background-color:rgb(255, 255, 255)
+.inner-paper-box{
+    background-color:rgb(255, 255, 255);
+    border: 1px solid;
+    margin: .5em;
 }
-.seed-paper-box:hover{
+.inner-paper-box:hover{
     background-color:rgb(255, 199, 0)
 }
 .paper-title {
     font-weight: 800;
     margin:1em;
+    margin-right:5em;
+}
+.metric {
+    float:right;
+    position: absolute;
+    top: 0em;
+    right: 0em;
+    margin: 1em;
 }
 .author-year {
     text-align: right;
@@ -201,21 +239,15 @@ h1 {
 }
 .delete-seed {
     position:absolute;
-    top:0;
-    right:0;
+    top:-0.1em;
+    left:-0.3em;
+    z-index: 1;
     border-style:none;
-    border-radius: .5em;
     background:none;
 /*     background-color: rgb(199, 5, 5)
  */
 }
-#tableView {
-    display:none;
-    overflow:auto;
-    margin:1em;
-    flex-grow:1;
-    font-size:60%;
- }
+
  #timelineView {
     display:none;
     margin:1em;
@@ -244,7 +276,7 @@ h1 {
 #networkKey {
     position:absolute;
     left: 1%;
-    top: 10%;
+    top: 1%;
     font-size: .5em;
 }
 .key-icon {
@@ -308,9 +340,10 @@ h1 {
 #selected-paper-box {
     display:none;
     position: absolute;
+    font-size: 70%;
     right:0em;
     bottom:.2em;
-    width:30%;
+    max-width:50%;
     background-color: rgb(212, 212, 212);
 }
 .add-seed {
