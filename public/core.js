@@ -101,6 +101,7 @@ function addSeedFromRecord(recordID){
     if(record.DOI){
         crossref.queryRefs(record.DOI);
     } //this could add Title, author, year info about the paper
+    
 }
 
 //For a new paper this function tries to find a match in the existing database

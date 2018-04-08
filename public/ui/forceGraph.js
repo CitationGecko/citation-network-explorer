@@ -155,7 +155,9 @@ forceGraph.update =  function(Papers,Edges){
     forceGraph.simulation.force("link").links(forceGraph.edges);
     forceGraph.simulation.force("collide").initialize(forceGraph.simulation.nodes());
     forceGraph.simulation.alpha(1).restart();
-    forceGraph.threshold(forceGraph.minconnections);      
+    forceGraph.threshold(forceGraph.minconnections);   
+    forceGraph.circles.style("opacity", 1);
+    forceGraph.lines.style("opacity",1);   
 }   
                     
 

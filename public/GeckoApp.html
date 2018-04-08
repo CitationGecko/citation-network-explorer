@@ -38,13 +38,13 @@
                     </select>
                 </div>
                 <div>                
-                    <button id='addSeeds' onclick=''><i class="fa fa-plus" aria-hidden="true"></i><span>add more seed papers...</span></button>                
+                    <button id='addSeeds' class='button1' onclick=''><i class="fa fa-plus" aria-hidden="true"></i><span>add more seed papers...</span></button>                
                 </div>
                 <div id='seed-paper-container'>
                 </div>
-                <table id='connected-paper-container'>
+                <div id='connected-paper-container'>
                 
-                </table>
+                </div>
             </div>
             <div id='collapseBar' class='panel'>
                 <i id='collapse-seeds-icon' class="fa fa-chevron-left" aria-hidden="true"></i>
@@ -100,16 +100,25 @@
                 <p>The more seed papers you pick the more you can narrow in on a specific topic.</p>
 
                 <h3>Getting Started</h3>
-                <p>To get started add some seed papers by clicking the big green plus in the 'seed papers' panel.
+                <p>To get started add some seed papers by clicking 'add more seed papers' in the left-hand panel.
                     This will give you three options:
                     <ul>
                         <li>Add by DOI</li>
                         <li>Search by Title</li>
                         <li>Upload BibteX</li>
                     </ul>
-                <p>For a demo of what Gecko can do, click Upload BibTex and click DEMO.</p>
-                    <p>The seed papers added appear in the Seed Papers panel. The papers connected to these seed papers in the citation network appear in the 'Connected Papers' panel.</p>
-                There are two ways of viewing the connected papers:
+                <p>For a demo of what Gecko can do, click Upload BibTex and then click DEMO.</p>
+                
+                <p>The papers are displayed in a list in the left-hand panel and as a graph in the right hand panel.</p>
+
+                <h4>List View</h4>
+                
+                <p>In the list view you can switch between a list of your seed papers and the list of papers connected to them
+                    by clicking the 'Seeds' or 'Connected' tabs respectively.</p>
+                <p>Seeds and be removed by clicking the red cross in the top left-hand corner of the box</p>
+                <p>Connected papers can be sorted by either the number of "Seeds Cited" or "Seeds Cited-By" in order to find the highly connected papers.</p>
+                <p>If one of the connected papers seems highly relevant you can add it as a 
+                    seed paper by clicking the green plus in the top left corner of the box. This expands the network in order to uncover more papers.</p>  
                 
                 <h4>Network View</h4>
                 
@@ -118,14 +127,7 @@
                     showing only the papers that cite the seed papers by clicking the grey node in the key to toggle between the two.</p>
                 <p>In order to hide less well connected papers from the Network View use the slider to select
                     the minimum number of connections a paper requires to be displayed.</p>
-
-                <h4>Table View</h4>
-                
-                <p>In the table view papers can sorted by "Seeds Cited" or "Seeds Cited-By" in order to find highly connected papers.</p>
-                <p>If one of the connected papers seems highly relevant you can add it as a 
-                    seed paper by clicking the 'Add' button at the end of the row, expanding the network in order to uncover more papers.</p>
-                    
-                <p>You can also do this in the network view by clicking on the relvant node and then on the 'Make Seed' button.</p>
+                <p>Click on a node to highlight the papers it is connected to. You can turn a connected paper into a seed in the network view by clicking the 'Make Seed' button in the info box that pops up.</p>
 
                 <h2>Feedback</h2>
                 <p>Thank you for using this demo version of Gecko. If you have any feedback i.e. bugs or feature requests drop me an email at <a href='mailto:bjw15@ic.ac.uk'>bjw15@ic.ac.uk</a> or start an issue thread on Github <a href='https://github.com/bjw49/citation-network-explorer'>here</a>.</p>

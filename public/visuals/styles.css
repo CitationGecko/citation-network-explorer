@@ -110,7 +110,7 @@ h1 {
     color: rgb(255, 255, 255);
     padding: .5em;
 }
-#addSeeds {
+.button1 {
     width:95%;
     margin-right:0;
     margin-left:auto;
@@ -118,7 +118,7 @@ h1 {
     background-color: white;
     z-index: 1;
 }
-#addSeeds>span {
+.button1>span {
     position:relative;
     margin-left: .5em;
 }
@@ -208,6 +208,9 @@ h1 {
     height:85%;
     overflow:auto;
     font-size: 70%;
+}
+.outer-paper-box {
+    width: 99%;
 }
 .inner-paper-box{
     background-color:rgb(255, 255, 255);

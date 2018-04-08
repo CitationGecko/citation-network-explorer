@@ -224,12 +224,12 @@ function plotResultsTable(metric,pageNum,replot){
         var paperbox = d3.select('#connected-paper-container').selectAll('.outer-paper-box').remove();
     }
     //
-    paperbox = d3.select('#connected-paper-container').selectAll('tr')
+    paperbox = d3.select('#connected-paper-container').selectAll('.outer-paper-box')
                      .data(nonSeeds,function(d){return d.ID});
                      //.sort((a,b)=>b.seedsCitedBy<a.seedsCitedBy)
     paperbox.exit().remove();
 
-    papers = d3.select('#connected-paper-container').selectAll('tr').select('td').select('.inner-paper-box')
+    papers = d3.select('#connected-paper-container').selectAll('.outer-paper-box').select('.inner-paper-box')
     
     papers.select('.paper-title').html(function(p){
         return(p.Title)
@@ -248,8 +248,7 @@ function plotResultsTable(metric,pageNum,replot){
     })
 
     newpapers = paperbox.enter()
-        .append('tr')
-        .append('td')
+        .append('div')
         .attr('class','outer-paper-box panel')
     newpapers.append('button').attr('class','delete-seed')
         .html('<i class="fa fa-plus" color="green" aria-hidden="true"></i>')
@@ -273,12 +272,11 @@ function plotResultsTable(metric,pageNum,replot){
         .html(function(p){
             return("<a target='_blank' href='https://doi.org/"+p.DOI+"'>"+p.DOI+"</a>")
         })
-    
-    
-    /* d3.select('#moreButton').remove();
+
+    d3.select('#moreButton').remove();
     d3.select('#connected-paper-container').append('div')
-        .html('<button id="moreButton">more...</button>')
-        .attr('onclick','printResultsTable('+metric+','+(pageNum+1)+')') */
+        .html('<button id="moreButton" class = "button1">more...</button>')
+        .attr('onclick','plotResultsTable("'+metric+'",'+(pageNum+1)+')')
    
 }
 
