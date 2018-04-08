@@ -1,89 +1,41 @@
+* {
+    font-family: 'Comfortaa',serif;
+    min-height: 0;
+    min-width: 0;
+}
 html,body { 
-    
     height:100%; 
     font-size:100%;
 }
-
 body {
     display: flex;
     flex-direction: column;
     margin:0em;
 }
-
-* {
-
-    font-family: 'Comfortaa',serif;
-}
-
-*{
-    min-height: 0;
-    min-width: 0;
-}
-
-
-header {
-
-    background-color: rgb(190, 192, 196);
-    height: 6em;
-    padding: 1em;
-    border-bottom: .2em solid rgb(94, 93, 93);
-    position: relative;
-}
-
-#helpButton {
-
-    background:none;
-    position: absolute;
-    top:.5em;
-    right:.5em;
-    border-style:none;
-}
-
-.logo {
-
-    height: 70%;
-    margin: 2em 2em 1em .5em;
-}
-
 #main {
-   display: flex;
-   flex-grow: 1;
-}
-
-.panel {
-
-    border: .05em solid; 
-    border-radius: .5em;
-    margin: .5em;
+    display: flex;
+    flex-direction: row;   
+    flex-grow: 1;
+ }
+ .panel {
+     position: relative;
+     overflow:hidden;
+     background-color: rgb(255, 255, 255)
+ }
+#logoBar {
+    background-color: rgb(255, 255, 255);
+    width: 20em;
     position: relative;
-    overflow:hidden;
-    background-color: rgb(255, 255, 255)
-
-}
-
-h1,h2,h3,h4 {
-
-    font-family: 'Comfortaa',serif
-
-}
-
-h1 {
-
-    font-weight: 100;
-    font-size: 1em;
     margin: .5em;
 }
-
 #seedPapers {
-
     width: 80em;
     margin-right:0;
-    border-radius: .5em 0em 0em .5em;
-
+    border: 1px solid;
+    
 }
-
 #collapseBar {
-
+    display: none;
     background: rgb(127, 128, 131);
     width: 5em;
     border-style: none;
@@ -92,66 +44,92 @@ h1 {
     position: relative;
     margin-left: 0em;
 }
-
-#collapse-seeds-icon {
-
-    position: absolute;
-    top:50%;
-    left:10%;
-
-}
-
-
 #connectedPapers {
-
     width:200em;
     display:flex;
     flex-direction: column;
 }
-
+#helpButton {
+    background:none;
+    position: absolute;
+    bottom:.5em;
+    margin-left: auto;
+    margin-right: auto;
+    border-style:none;
+}
+#tableSwitch {
+    width:auto;
+    margin: .5em;
+}
+#tableSwitch>button{
+    width:50%;
+    height: 3em; 
+}
+.table-toggle-on {
+    background-color:rgb(255, 255, 255);
+    border:3px solid;
+}
+.table-toggle-off {
+    background-color:rgb(200,200,200);
+    border:1px solid;
+}
+.logo {
+    max-width: 95%;
+    max-height:70%;
+    position: absolute;
+    top: 50%;                         /* 3 */
+    transform: translate(0, -50%);
+}
+h1,h2,h3,h4 {
+    font-family: 'Comfortaa',serif
+}
+h1 {
+    font-weight: 100;
+    font-size: 1em;
+    margin: .5em;
+}
+#collapse-seeds-icon {
+    position: absolute;
+    top:50%;
+    left:10%;
+}
 .navtabs {
-
     position: absolute;
     right:0em;
     top:0em;
-
 }
-
 #pageTabs {
-
     position: absolute;
     bottom:0;
     right:0;
-
 }
-
 .tab {
-
     border: .05em solid rgb(63, 62, 62);
     border-radius:.5em .5em 0em 0em;
     background-color: rgb(104, 104, 104);
     color: rgb(255, 255, 255);
     padding: .5em;
-
 }
-
-#addSeeds {
-
-    position:absolute;
-    bottom:0;
-    width:100%;
+.button1 {
+    width:95%;
+    margin-right:0;
+    margin-left:auto;
     border-style: none;
-    border-radius: 0em 0em 0em .5em;
+    background-color: white;
     z-index: 1;
-
 }
-
+.button1>span {
+    position:relative;
+    margin-left: .5em;
+}
 .fa-plus {
-
     color:green;
-
 }
-
+#connectedControls {
+    margin-right:2em;
+    display:none;
+    text-align:right;
+}
 .modal {
     display: none; /* Hidden by default */
     position: fixed; /* Stay in place */
@@ -164,9 +142,7 @@ h1 {
     background-color: rgb(0,0,0); /* Fallback color */
     background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
 }
-
 .modal-content {
-
     background-color: #fefefe;
     margin: 15% auto; /* 15% from the top and centered */
     padding: .5em .5em;
@@ -175,18 +151,13 @@ h1 {
     position: relative;
     border-style:none;
     border-radius: .5em;
-
 }
-
 #helpModal > .modal-content {
-
     width:60%;
     margin:7% auto;
     padding:2%;
 }
-
 #addSeedModal > .modal-content > button {
-
     display:block;
     background-color: rgb(104, 104, 104);
     border-style: none;
@@ -195,164 +166,132 @@ h1 {
     width:100%;
     color:white;
 }
-
 #table-container {
     display:none;
 }
-
-#networkView {
-    
+#networkView, #forceGraph, #timelineView {
     width:100%;
     height:100%;
-
 }
-#forceGraph {
-
-    width:100%;
-    height:100%;
-
+#timelineGraph{
+    width: 100%;
+    height: 1000%;
 }
-
 #graphKey {
-
     position:absolute;
     bottom:1em;
 }
-
 #controlPanel {
-
     position:absolute;
     right:0;
     bottom:0;
     margin: 1em;
     height:1em;
 }
-
-
 #thresholdSlider {
-
     position:absolute;
     left:1em;
     bottom:1em;
     width:30%;
-    
 }
-
 #thresholdInput {
-
     width:90%;
     margin-bottom:.5em;
 }
-
 #thresholdOutput {
-
    /*  display:block; */    
     width:10%;
     text-align: center;
 }
 
-#seed-paper-container {
-    
-    height:90%;
+#seed-paper-container, #connected-paper-container {   
+    height:85%;
     overflow:auto;
     font-size: 70%;
-
 }
-.seed-paper-box{
-    background-color:rgb(255, 255, 255)
-
+.outer-paper-box {
+    width: 99%;
 }
-.seed-paper-box:hover{
-
+.inner-paper-box{
+    background-color:rgb(255, 255, 255);
+    border: 1px solid;
+    margin: .5em;
+}
+.inner-paper-box:hover{
     background-color:rgb(255, 199, 0)
-
 }
-
 .paper-title {
-
     font-weight: 800;
     margin:1em;
+    margin-right:5em;
 }
-
+.metric {
+    float:right;
+    position: absolute;
+    top: 0em;
+    right: 0em;
+    margin: 1em;
+}
 .author-year {
-
     text-align: right;
     margin:.5em;
 } 
-
 .doi-link {
-
     margin:.5em;
     float:left;
 }
-
 .delete-seed {
-
     position:absolute;
-    top:0;
-    right:0;
+    top:-0.1em;
+    left:-0.3em;
+    z-index: 1;
     border-style:none;
-    border-radius: .5em;
     background:none;
 /*     background-color: rgb(199, 5, 5)
  */
 }
 
-#tableView {
-
+ #timelineView {
     display:none;
-    overflow:auto;
     margin:1em;
     flex-grow:1;
     font-size:60%;
  }
-
 .node {
     stroke: #fff;
     stroke-width: 1px;
     fill: rgb(94, 94, 94);
 }
-
 .seed-node {
-
     stroke: #fff;
     stroke-width: 1px;
     fill: rgb(255, 199, 0)
 }
-
 .link {
     stroke: #999;
     stroke-opacity: .6;
     stroke-width: 1.5px;
 }
-
 .node:hover, .seed-node:hover {
-
     stroke: rgb(97, 97, 97);
-    stroke-width: 2px;
-    
+    stroke-width: 2px;  
 }
-
 #networkKey {
-
     position:absolute;
     left: 1%;
-    top: 10%;
+    top: 1%;
     font-size: .5em;
 }
-
 .key-icon {
     float:left;
     height: 54px; 
 }
-
 #toggleMode{
 	height: 0;
 	width: 0;
     visibility: hidden;
     margin:0;
 }
-
 #seed-key{
     content: '';
 	position: absolute;
@@ -363,7 +302,6 @@ h1 {
     background: rgb(255, 199, 0);
 	border-radius: 14px;
 }
-
 .toggle {
 	cursor: pointer;
 	text-indent: -9999px;
@@ -375,7 +313,6 @@ h1 {
     position: absolute;
     top:18px;
 }
-
 .toggle:after {
 	content: '';
 	position: absolute;
@@ -387,41 +324,31 @@ h1 {
 	border-radius: 14px;
 	transition: 0.3s;
 }
-
 #toggleMode:checked + .toggle:after {
 	top: calc(100% - 2px);
 	transform: translateY(-100%);
 }
-
 .toggle:active:after {
 	height: 20px;
 }
-
 .key-label {
     position: absolute;
     left:18px;
 }
-
 .key-label div {
-
     white-space: nowrap;
     height:8px;
     padding:5px;
 }
-
 #selected-paper-box {
-
     display:none;
     position: absolute;
+    font-size: 70%;
     right:0em;
     bottom:.2em;
-    width:30%;
+    max-width:50%;
     background-color: rgb(212, 212, 212);
-
 }
-
 .add-seed {
-
     text-align: right;
 }
-
