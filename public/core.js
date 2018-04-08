@@ -188,7 +188,7 @@ function deleteSeed(ID){
 function refreshGraphics(){
     updateMetrics(Papers,Edges); // update citation metrics
     updateSeedTable(); //update HTML table
-    updateResultsTable();
+    updateResultsTable(forceGraph.sizeMetric);
     forceGraph.update(Papers,Edges);
     //timeGraph.update();
 };

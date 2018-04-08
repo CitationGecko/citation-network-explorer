@@ -33,13 +33,15 @@ document.getElementById('connectedTableButton').onclick = function(){
     document.getElementById('connected-paper-container').style.display = 'block';
     document.getElementById('seed-paper-container').style.display = 'none';
 
-    updateResultsTable();
+    plotResultsTable('seedsCitedBy',1);
 }
 
 //For forceGraph display mode toggling
 document.getElementById('toggleMode').onchange = function(){
     forceGraph.mode = (forceGraph.mode=='ref') ? 'citedBy' : 'ref';
     forceGraph.update(Papers,Edges)
+    document.getElementById('connectedControls').getElementsByTagName('select')[0].value = (forceGraph.mode=='ref') ? 'seedsCitedBy' : 'seedsCited';
+    plotResultsTable(forceGraph.sizeMetric,1,true)
 } 
 //For forceGraph threshold slider
 document.getElementById('thresholdInput').oninput = function(){
@@ -147,8 +149,37 @@ document.getElementById('connectedControls').getElementsByTagName('select')[0].o
     papers.select('.metric').html(function(p){
         return(p[metric]?p[metric]:'0')
     })
-    sortResultsTable(metric)    
+    plotResultsTable(metric,1,true)    
 }
+
+function updateResultsTable(metric){
+    
+    var nonSeeds = Papers.filter(function(p){return(!p.seed)})
+
+    paperbox = d3.select('#connected-paper-container').selectAll('tr')
+                     .data(nonSeeds,function(d){return d.ID});
+                     //.sort((a,b)=>b.seedsCitedBy<a.seedsCitedBy)
+
+    papers = d3.select('#connected-paper-container').selectAll('tr').select('td').select('.inner-paper-box')
+    
+    papers.select('.paper-title').html(function(p){
+        return(p.Title)
+    })
+
+    papers.select('.metric').html(function(p){
+        return(p[metric]?p[metric]:'0')
+    })
+
+    papers.select('.author-year').html(function(p){
+        if(p.Author) {return p.Author+' '+p.Year}else{return(p.Year)}
+    })
+
+    papers.select('.doi-link').html(function(p){
+        return("<a target='_blank' href='https://doi.org/"+p.DOI+"'>"+p.DOI+"</a>")
+    })
+    
+}
+
 function sortResultsTable(metric){
     var table, rows, switching, i, x, y, shouldSwitch;
     table = document.getElementById('connected-paper-container');
@@ -184,12 +215,15 @@ function sortResultsTable(metric){
     }
 }
 
-function updateResultsTable(){
+function plotResultsTable(metric,pageNum,replot){
+    let pageSize = 100;
+    var nonSeeds = Papers.filter(function(p){return(!p.seed)}).sort((a,b)=>b[metric]-a[metric]).slice(0,pageNum*pageSize)
     //Select all non-seeds and sort by metric.
-    let metric = 'seedsCitedBy';
-    var nonSeeds = Papers.filter(function(p){return(!p.seed)})//.sort((a,b)=>b.seedsCitedBy-a.seedsCitedBy)
     //Clear old table
-    //var paperbox = d3.select('#connected-paper-container').selectAll('.outer-paper-box').remove()
+    if(replot){
+        var paperbox = d3.select('#connected-paper-container').selectAll('.outer-paper-box').remove();
+    }
+    //
     paperbox = d3.select('#connected-paper-container').selectAll('tr')
                      .data(nonSeeds,function(d){return d.ID});
                      //.sort((a,b)=>b.seedsCitedBy<a.seedsCitedBy)
@@ -211,8 +245,8 @@ function updateResultsTable(){
 
     papers.select('.doi-link').html(function(p){
         return("<a target='_blank' href='https://doi.org/"+p.DOI+"'>"+p.DOI+"</a>")
-    }) 
-    
+    })
+
     newpapers = paperbox.enter()
         .append('tr')
         .append('td')
@@ -238,8 +272,14 @@ function updateResultsTable(){
     newpapers.append('p').attr('class','doi-link')
         .html(function(p){
             return("<a target='_blank' href='https://doi.org/"+p.DOI+"'>"+p.DOI+"</a>")
-        }) 
-         
+        })
+    
+    
+    /* d3.select('#moreButton').remove();
+    d3.select('#connected-paper-container').append('div')
+        .html('<button id="moreButton">more...</button>')
+        .attr('onclick','printResultsTable('+metric+','+(pageNum+1)+')') */
+   
 }
 
 function updateSearchTable(results){
