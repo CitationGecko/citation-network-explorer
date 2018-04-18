@@ -1,35 +1,18 @@
 
 var occ = {
-
     callback: function(response,queryType){
-
         jsonObj = eval('(' + response + ')');
-        
         occ.parseResponse(jsonObj,queryType);
-    
-        updateMetrics(Papers,Edges); // update citation metrics
-        
-        updateSeedTable(); //update HTML table
-    
-        updateResultsTable(); //update HTML table;
-    
-        updateGraph(Papers,Edges);
-            
+        refreshGraphics();      
     },
-
     sendQuery: function(query,callback){
-
-        var querypart = "query=" + escape(query.string);
-        
+        var querypart = "query=" + escape(query.string);       
           // Get our HTTP request object.
-        
         xmlhttp = new XMLHttpRequest();
-         
          // Set up a POST with JSON result format.
          xmlhttp.open('POST', "http://opencitations.net/sparql", true); // GET can have caching probs, so POST
          xmlhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
          xmlhttp.setRequestHeader("Accept", "application/sparql-results+json");
-        
          // Set up callback to get the response asynchronously.
          xmlhttp.onreadystatechange = function() {
            if(this.readyState == 4) {
@@ -46,20 +29,11 @@ var occ = {
          };
          // Send the query to the endpoint.
          xmlhttp.send(querypart);
-
-         console.log('querying OCC...')
-
-
-
+         console.log('querying OCC...');
     },
-
-
     refsByDOI: function(doi){
-
         var query ={};
-
-        query.type = 'refs'
-        
+        query.type = 'refs'       
         query.string = 'PREFIX cito: <http://purl.org/spar/cito/>\n\
         PREFIX dcterms: <http://purl.org/dc/terms/>\n\
         PREFIX datacite: <http://purl.org/spar/datacite/>\n\
@@ -83,19 +57,11 @@ var occ = {
             ?citingID dcterms:title ?citingTitle.\n\
               ?citingID fabio:hasPublicationYear ?citingYear.}\n\
         }';
-    
         occ.sendQuery(query, occ.callback);
-
     },
-
-
     refsByID: function(id){ //Queries OCC SPARQL to find references of the ID specified. Updates Papers and Edges data structures.
-        
-
         var query = {};
-
-        query.type = 'refs'
-        
+        query.type = 'refs'      
         query.string = 'PREFIX cito: <http://purl.org/spar/cito/>\n\
         PREFIX dcterms: <http://purl.org/dc/terms/>\n\
         PREFIX datacite: <http://purl.org/spar/datacite/>\n\
@@ -120,17 +86,11 @@ var occ = {
                     datacite:usesIdentifierScheme datacite:doi ;\n\
                     literal:hasLiteralValue ?citingDOI ].} \n\
         }';
-    
-        occ.sendQuery(query, occ.callback);
-        
+        occ.sendQuery(query, occ.callback);    
     },
-
     citedByID: function(id){
-    
         var query = {};
-
         query.type = 'citedBy'
-        
         query.string = 'PREFIX cito: <http://purl.org/spar/cito/>\n\
         PREFIX dcterms: <http://purl.org/dc/terms/>\n\
         PREFIX datacite: <http://purl.org/spar/datacite/>\n\
@@ -155,17 +115,11 @@ var occ = {
                     datacite:usesIdentifierScheme datacite:doi ;\n\
                     literal:hasLiteralValue ?citingDOI ].} \n\
         }';
-    
         occ.sendQuery(query, occ.callback);
-        
     },
-
     citedByDOI: function(doi){
-
         var query ={};
-
         query.type = 'refs'
-        
         query.string = 'PREFIX cito: <http://purl.org/spar/cito/>\n\
         PREFIX dcterms: <http://purl.org/dc/terms/>\n\
         PREFIX datacite: <http://purl.org/spar/datacite/>\n\
@@ -190,25 +144,15 @@ var occ = {
                     datacite:usesIdentifierScheme datacite:doi ;\n\
                     literal:hasLiteralValue ?citingDOI ].} \n\
         }';
-    
         occ.sendQuery(query, occ.callback);
-        
     },
-
-
     parseResponse: function(response,queryType){
-
         var np = 0; //For bean counting only 
         var ne = 0; //For bean counting only
-    
         var newEdges = response.results.bindings;
-        
         for(let i=0;i<newEdges.length;i++){
-    
             let edge = newEdges[i]
-                            
             var cited = {
-
                 ID: uniqueID,
                 Author: null,
                 DOI: edge.citedDOI ? edge.citedDOI.value : null,                            
@@ -217,26 +161,15 @@ var occ = {
                 occID: edge.citedID.value,
                 seed: queryType=='refs'
             }
-
             let existingRecord = matchPapers(cited,Papers); // Search for existing paper
-            
             if(!existingRecord){//If it doesn't exist add it
-                
                 oaDOI.accessQuery(cited)
-            
                 Papers.push(cited);np++;uniqueID++
-            
             }else{//If it does merge it
-                
                 cited = mergePapers(existingRecord,cited);
-            
             }
-    
             if(!edge.citingID){break}
-            
-            
             var citer = {
-
                 ID: uniqueID,
                 Author: null,
                 DOI: edge.citingDOI ? edge.citingDOI.value : null,                            
@@ -245,39 +178,21 @@ var occ = {
                 occID: edge.citingID.value,
                 seed: queryType=='citedBy'
             }
-    
             existingRecord = matchPapers(citer,Papers); // Search for existing paper
-            
             if(!existingRecord){//If it doesn't exist add it
-                
                 oaDOI.accessQuery(citer)
-            
                 Papers.push(citer);np++;uniqueID++
-            
             }else{//If it does merge it
-                
                 citer = mergePapers(existingRecord,citer);
-            
-            }
-    
-    
+            };
             let newEdge = {
-
                 source: citer,
                 target: cited,
                 origin: 'occ',
                 hide: false
-
-            }
-    
+            };   
             if(Edges.filter(function(e){return e.source == newEdge.source & e.target == newEdge.target}).length == 0){Edges.push(newEdge);ne++}
-            
         }
-      
         console.log(np + " papers and " + ne + " edges added from OCC")
-
     }
-
-
-
 }

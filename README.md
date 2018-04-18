@@ -36,7 +36,7 @@ MICROSFT_API_KEY = "YOUR API KEY GOES HERE"
 ## Instructions for use
 
 1. Go to http://citationgecko.com or for running locally open GeckoApp.html (in the /public folder)
-2. To get started add some seed papers by clicking the big green plus in the seed papers panel.
+2. To get started add some seed papers by clicking the 'add more seed papers' button in the left-hand panel.
 2. There are three ways of choosing seed papers to start with:
     1. Add directly by DOI
     2. Upload a bibTex file (NOTE: currently only entries with a DOI will be added)
@@ -44,12 +44,10 @@ MICROSFT_API_KEY = "YOUR API KEY GOES HERE"
     3. Search for seed papers by title
         * Papers with titles containing the query words are displayed in a table.
         * Choose which papers to add as seeds by clicking the Add buttons at the end of each row.
-3. The seed papers added appear in the Seed Papers panel.
-4. The papers connected to these seed papers in the citation network appear in the 'Connected Papers' panel. There are two ways of viewing the connected papers:
-    1. In the network view the links between them are shown graphically.
-        * In order to hide less well connected papers from the Network View use the Threshold Slide to select the minimum number of connections to be displayed.
-        * You can switch between viewing a graph showing only references of the seed papers and a graph showing only the papers that cite the seed papers by clicking the toggle between 'Papers Cited-By Seed Papers' and 'Papers Citing Seed Papers' that also acts as a key.
-    2. In the table view papers can sorted by "Seeds Cited" or "Seeds Cited-By" in order to find highly connected papers.
-6. If one of the connected papers seems highly relevant you can add it as a seed paper either from the table or network view, expanding the network in order to uncover more papers.
+3. The seed papers added are listed in the left-hand panel and connections between them shown graphically in the right hand panel.
+4. For a list of the papers connected to these seed papers click the 'Connected' tab in the left-hand panel. Papers can sorted by "Seeds Cited" or "Seeds Cited-By" in order to find highly connected papers.
+5. In order to hide less well connected papers from the Network View use the Threshold Slide to select the minimum number of connections to be displayed.
+6. You can switch between viewing a graph showing only references of the seed papers and a graph showing only the papers that cite the seed papers by clicking the toggle between 'Papers Cited-By Seed Papers' and 'Papers Citing Seed Papers' that also acts as a key.
+6. If one of the connected papers seems highly relevant you can add it as a seed paper either from the list view or network view, expanding the network in order to uncover more papers.
 
 

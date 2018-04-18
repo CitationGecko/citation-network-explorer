@@ -2,9 +2,9 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>Gecko Demo</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Gecko Demo</title>
         
         <link href="https://fonts.googleapis.com/css?family=Comfortaa" rel="stylesheet"> 
         <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
@@ -13,87 +13,43 @@
 
         <script defer src="https://use.fontawesome.com/releases/v5.0.4/js/all.js"></script>
 
-
         <!--DataTables-->
         <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
         <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.15/datatables.min.css"/>
         <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.15/datatables.min.js"></script>
-
-        
         <!--D3-->
         <script src="https://d3js.org/d3.v4.js"></script>
     </head>
     <body>
-       
-        <header>
-            <button id='helpButton'><i class="fa fa-question-circle fa-2x" color ='green' aria-hidden="true"></i></button>
-            <img class='logo' src='visuals/logo1.png'/>
-            <div id= 'pageTabs' class='navtabs'>
-<!--                     <button id='appTab' class='tab'>app</button><button id='helpTab' class='tab'>help</button><button id='aboutTab' class='tab'>about</button>
- -->            </div>
-        </header>
-        <div id='helpModal' class='modal'>
-            <div class='modal-content'>
-                <h2> Welcome to Gecko!</h2>
-                <p>Gecko is here to help you find the most relevant papers to your research 
-                    and give you a more complete sense of the research landscape.</p>
-                <p>Simply provide several 'seed papers' that define an area you are interested
-                     in and Gecko will search out all the papers that they cite and all the papers that cite them.</p>
-                <p>It then builds a network from all of these papers allowing you to quickly 
-                    identify important papers you may have missed.</p>
-                <p> For example, papers that are cited by all of your seed papers are likely to be important
-                    foundational papers in the field, whilst papers that cite a lot of the seed
-                    papers are likely to be more recent papers in the same area that might be worth reading. 
-                </p>
-                <p>The more seed papers you pick the more you can narrow in on a specific topic.</p>
-
-                <h3>Getting Started</h3>
-                <p>To get started add some seed papers by clicking the big green plus in the 'seed papers' panel.
-                    This will give you three options:
-                    <ul>
-                        <li>Add by DOI</li>
-                        <li>Search by Title</li>
-                        <li>Upload BibteX</li>
-                    </ul>
-                <p>For a demo of what Gecko can do, click Upload BibTex and click DEMO.</p>
-                    <p>The seed papers added appear in the Seed Papers panel. The papers connected to these seed papers in the citation network appear in the 'Connected Papers' panel.</p>
-                There are two ways of viewing the connected papers:
-                
-                <h4>Network View</h4>
-                
-                <p>In this view you can see how each paper connects to the different seed papers graphically.</p>
-                <p>You can switch between viewing a graph showing only references of the seed papers and a graph 
-                    showing only the papers that cite the seed papers by clicking the grey node in the key to toggle between the two.</p>
-                <p>In order to hide less well connected papers from the Network View use the slider to select
-                 the minimum number of connections a paper requires to be displayed.</p>
-
-                <h4>Table View</h4>
-                
-                <p>In the table view papers can sorted by "Seeds Cited" or "Seeds Cited-By" in order to find highly connected papers.</p>
-                <p>If one of the connected papers seems highly relevant you can add it as a 
-                    seed paper by clicking the 'Add' button at the end of the row, expanding the network in order to uncover more papers.</p>
-                    
-                <p>You can also do this in the network view by clicking on the relvant node and then on the 'Make Seed' button.</p>
-
-                <h2>Feedback</h2>
-                <p>Thank you for using this demo version of Gecko. If you have any feedback i.e. bugs or feature requests drop me an email at <a href='mailto:bjw15@ic.ac.uk'>bjw15@ic.ac.uk</a> or start an issue thread on Github <a href='https://github.com/bjw49/citation-network-explorer'>here</a>.</p>
-                <p> Enjoy!</p>
-            </div>
-        </div>
         <div id='main'>
+            <div id='logoBar' class='panel'>
+                <button id='helpButton'><i class="fa fa-question-circle fa-2x" color ='green' aria-hidden="true"></i></button>
+                <img class='logo' src='visuals/logo2.png'/>
+            </div>
             <div id='seedPapers' class='panel'>
-                <h1>seed papers</h1>
+                <div id='tableSwitch'>
+                   <button id='seedTableButton'>Seeds</button><button id='connectedTableButton'>Connected</button>
+                </div>
+                <div id='connectedControls'>
+                    <span>Sort By:</span>
+                    <select>
+                        <option value="seedsCitedBy">Seeds Cited-By</option>
+                        <option value="seedsCited">Seeds Cited</option>
+                    </select>
+                </div>
+                <div>                
+                    <button id='addSeeds' class='button1' onclick=''><i class="fa fa-plus" aria-hidden="true"></i><span>add more seed papers...</span></button>                
+                </div>
                 <div id='seed-paper-container'>
                 </div>
-                <button id='addSeeds' onclick=''><i class="fa fa-2x fa-plus" aria-hidden="true"></i></button>
+                <div id='connected-paper-container'>
+                
+                </div>
             </div>
-            <div id='collapseBar' class='panel'><i id='collapse-seeds-icon' class="fa fa-chevron-left" aria-hidden="true"></i>
+            <div id='collapseBar' class='panel'>
+                <i id='collapse-seeds-icon' class="fa fa-chevron-left" aria-hidden="true"></i>
             </div>
             <div id='connectedPapers' class='panel'>
-                <div id='viewTabs' class='navtabs'>
-                        <button id='networkTab' class='tab'>network view</button><button id='tableTab' class='tab'>table view</button>
-                </div>
-                <h1>connected papers</h1>
                 <div id='networkView'>
                     <svg id="forceGraph"></svg>
                     <div id='selected-paper-box' class='panel'>
@@ -112,8 +68,7 @@
                     <div id='networkKey'>
                         <div class='key-icon'>
                             <div id='seed-key'></div>
-<!--                             <svg class='node-key'><circle r=7 cx=9 cy=9 class='seed-node'></circle></svg>
- -->                         <input type="checkbox" id="toggleMode" /><label class='toggle' for="toggleMode">Toggle</label>
+                        <input type="checkbox" id="toggleMode" /><label class='toggle' for="toggleMode">Toggle</label>
                         </div>
                         <div class='key-label'>
                             <div>Seed Papers</div>
@@ -123,22 +78,61 @@
                         
                     </div>
                 </div>
-                <div id='tableView'>
-                    <table id="resultsTable" class='table'>
-                        <thead>
-                            <th>Title</th>
-                            <th>Author</th>
-                            <th>Year</th>
-                            <th>DOI</th>
-                            <th>Seeds Cited</th>
-                            <th>Seeds Cited-By</th>
-                            <th></th>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
+                <div id='timelineView'>
+                    <svg id="timelineGraph"></svg>                    
                 </div>
             </div>              
+        </div>
+
+        <div id='helpModal' class='modal'>
+            <div class='modal-content'>
+                <h2> Welcome to Gecko!</h2>
+                <p>Gecko is here to help you find the most relevant papers to your research 
+                    and give you a more complete sense of the research landscape.</p>
+                <p>Simply provide several 'seed papers' that define an area you are interested
+                        in and Gecko will search out all the papers that they cite and all the papers that cite them.</p>
+                <p>It then builds a network from all of these papers allowing you to quickly 
+                    identify important papers you may have missed.</p>
+                <p> For example, papers that are cited by all of your seed papers are likely to be important
+                    foundational papers in the field, whilst papers that cite a lot of the seed
+                    papers are likely to be more recent papers in the same area that might be worth reading. 
+                </p>
+                <p>The more seed papers you pick the more you can narrow in on a specific topic.</p>
+
+                <h3>Getting Started</h3>
+                <p>To get started add some seed papers by clicking 'add more seed papers' in the left-hand panel.
+                    This will give you three options:
+                    <ul>
+                        <li>Add by DOI</li>
+                        <li>Search by Title</li>
+                        <li>Upload BibteX</li>
+                    </ul>
+                <p>For a demo of what Gecko can do, click Upload BibTex and then click DEMO.</p>
+                
+                <p>The papers are displayed in a list in the left-hand panel and as a graph in the right hand panel.</p>
+
+                <h4>List View</h4>
+                
+                <p>In the list view you can switch between a list of your seed papers and the list of papers connected to them
+                    by clicking the 'Seeds' or 'Connected' tabs respectively.</p>
+                <p>Seeds and be removed by clicking the red cross in the top left-hand corner of the box</p>
+                <p>Connected papers can be sorted by either the number of "Seeds Cited" or "Seeds Cited-By" in order to find the highly connected papers.</p>
+                <p>If one of the connected papers seems highly relevant you can add it as a 
+                    seed paper by clicking the green plus in the top left corner of the box. This expands the network in order to uncover more papers.</p>  
+                
+                <h4>Network View</h4>
+                
+                <p>In this view you can see how each paper connects to the different seed papers graphically.</p>
+                <p>You can switch between viewing a graph showing only references of the seed papers and a graph 
+                    showing only the papers that cite the seed papers by clicking the grey node in the key to toggle between the two.</p>
+                <p>In order to hide less well connected papers from the Network View use the slider to select
+                    the minimum number of connections a paper requires to be displayed.</p>
+                <p>Click on a node to highlight the papers it is connected to. You can turn a connected paper into a seed in the network view by clicking the 'Make Seed' button in the info box that pops up.</p>
+
+                <h2>Feedback</h2>
+                <p>Thank you for using this demo version of Gecko. If you have any feedback i.e. bugs or feature requests drop me an email at <a href='mailto:bjw15@ic.ac.uk'>bjw15@ic.ac.uk</a> or start an issue thread on Github <a href='https://github.com/bjw49/citation-network-explorer'>here</a>.</p>
+                <p> Enjoy!</p>
+            </div>
         </div>
         <div id='addSeedModal' class='modal'>
             <div class='modal-content'>
@@ -173,19 +167,21 @@
         </div>
         <div id='uploadBibTexModal' class='modal'>
                 <div class='modal-content'>
-                    Add Seeds by BibTex: <input type="file" id="files" name="files[]" multiple /><output id="list"></output><button id='demoButton'>DEMO</button>
+                    add seeds from bibTex: <input type="file" id="files" name="files[]" multiple /><output id="list"></output><button id='demoButton'>DEMO</button>
                 </div>
         </div>
 
-    <script src = "core.js"></script>
-    <script src = 'ui/layout.js'></script>
-    <script src = "ui/plotNetwork.js"></script>
-    <script src = "third-party/bibtexParse.js"></script>
-    <script src = "third-party/crossref.min.js"></script>
-    <script src = "data-sources/crossref.js"></script>
-    <script src = "data-sources/occ.js"></script>
-    <script src = "data-sources/microsoft.js"></script>
-    <script src = "data-sources/oaDOI.js"></script>
+        <script src = "core.js"></script>
+        <script src = 'ui/layout.js'></script>
+        <script src = "ui/forceGraph.js"></script>
+        <script src = "ui/timeGraph.js"></script>
+        <script src = "third-party/bibtexParse.js"></script>
+        <script src = "third-party/crossref.min.js"></script>
+        <script src = "data-sources/crossref.js"></script>
+        <script src = "data-sources/occ.js"></script>
+        <script src = "data-sources/microsoft.js"></script>
+        <script src = "data-sources/oaDOI.js"></script>
+        <script src = "apikeys.js"></script>
 
     </body>
 </html>
