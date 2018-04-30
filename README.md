@@ -12,8 +12,6 @@ Papers that cite a lot of the seed papers are likely to be more recent papers in
 
 The tool allows the user to view these highly connected papers either in a table or in the context of the network.
 
-For a demo of Gecko in action go to http://citationgecko.com. Alternatively, follow the instructions below to set it up to run locally.
-
 ## Setting up Gecko to run locally
 
 1. Clone the repo (or just download as a zip)
@@ -35,7 +33,7 @@ MICROSFT_API_KEY = "YOUR API KEY GOES HERE"
 
 ## Instructions for use
 
-1. Go to http://citationgecko.com or for running locally open GeckoApp.html (in the /public folder)
+1. Open GeckoApp.html (in the /public folder)
 2. To get started add some seed papers by clicking the 'add more seed papers' button in the left-hand panel.
 2. There are three ways of choosing seed papers to start with:
     1. Add directly by DOI

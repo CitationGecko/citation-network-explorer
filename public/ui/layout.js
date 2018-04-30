@@ -12,6 +12,8 @@ document.getElementById('demoButton').onclick = function(){
 d3.select('#seedTableButton').attr('class','table-toggle-on');
 d3.select('#connectedTableButton').attr('class','table-toggle-off');
 
+document.getElementById('connected-paper-container').style.display = 'none';
+
 document.getElementById('seedTableButton').onclick = function(){
     d3.select('#seedTableButton').attr('class','table-toggle-on');
     d3.select('#connectedTableButton').attr('class','table-toggle-off');
