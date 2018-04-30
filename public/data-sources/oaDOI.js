@@ -4,7 +4,7 @@ oaDOI = {
 
       if(paper.DOI){
 
-        url = "https://api.oadoi.org/v2/" + paper.DOI;
+        url = "https://api.oadoi.org/v2/" + paper.DOI +"?email=bjw15@ic.ac.uk";
         xmlhttp = new XMLHttpRequest();
         xmlhttp.open('GET', url,true); 
         xmlhttp.onreadystatechange = function() {

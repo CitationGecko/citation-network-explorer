@@ -13,6 +13,7 @@ var occ = {
          xmlhttp.open('POST', "http://opencitations.net/sparql", true); // GET can have caching probs, so POST
          xmlhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
          xmlhttp.setRequestHeader("Accept", "application/sparql-results+json");
+         xmlhttp.setRequestHeader('Access-Control-Allow-Origin', '*')
          // Set up callback to get the response asynchronously.
          xmlhttp.onreadystatechange = function() {
            if(this.readyState == 4) {

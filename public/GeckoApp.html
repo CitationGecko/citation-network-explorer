@@ -52,12 +52,7 @@
             <div id='connectedPapers' class='panel'>
                 <div id='networkView'>
                     <svg id="forceGraph"></svg>
-                    <div id='selected-paper-box' class='panel'>
-                        <p class='paper-title'></p>
-                        <p class='doi-link'></p>
-                        <p class='author-year'></p>
-                        <div class='add-seed'></div>
-                    </div>
+                    
                     <div id='thresholdSlider'>
                             <input id='thresholdInput' type='range' min='1' max='10' value='1'>
                             <output id="thresholdOutput" for="thresholdInput">Minimum Connections: 1</output>
@@ -80,6 +75,12 @@
                 </div>
                 <div id='timelineView'>
                     <svg id="timelineGraph"></svg>                    
+                </div>
+                <div id='selected-paper-box' class='panel'>
+                    <p class='paper-title'></p>
+                    <p class='doi-link'></p>
+                    <p class='author-year'></p>
+                    <div class='add-seed'></div>
                 </div>
             </div>              
         </div>

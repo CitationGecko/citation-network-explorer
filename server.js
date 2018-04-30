@@ -4,7 +4,7 @@ var request = require('request');
 var fs = require('fs');
 
 try {
-    var apikey = require('./apikeys.js');
+    var apikey = require('./public/apikeys.js');
 } catch (ex) {
     console.log('No API key file provided')
 }

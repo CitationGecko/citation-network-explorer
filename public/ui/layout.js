@@ -38,6 +38,15 @@ document.getElementById('connectedTableButton').onclick = function(){
     plotResultsTable('seedsCitedBy',1);
 }
 
+
+function plotTimeGraph(){
+
+    document.getElementById('timelineView').style.display = 'block';
+    document.getElementById('networkView').style.display = 'none';
+
+    timeGraph.update();
+}
+
 //For forceGraph display mode toggling
 document.getElementById('toggleMode').onchange = function(){
     forceGraph.mode = (forceGraph.mode=='ref') ? 'citedBy' : 'ref';
