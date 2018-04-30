@@ -9,7 +9,7 @@ try {
     console.log('No API key file provided')
 }
 
-var API_KEY = process.env.MICROSOFT_API_KEY || apikey.key;
+var API_KEY = apikey.key;
 
 console.log(API_KEY)
 
