@@ -6,16 +6,15 @@ AWS.config.update({region: 'eu-west-2'});
 // Create the DynamoDB service object
 ddb = new AWS.DynamoDB({apiVersion: '2012-10-08'});
 
-
 var params = {
  ExpressionAttributeValues: {
-  ":origin": {
-    S: "item1"
+  ":citeTo": {
+    S: "itemA"
    }
  },
- FilterExpression: "contains (origin, :origin)",
- ProjectionExpression: "id, origin, destination",
- TableName: "citation-test-1"
+ FilterExpression: "contains (citeTo, :citeTo)",
+ ProjectionExpression: "citeFrom, citeTo",
+ TableName: "citation-test-3"
 };
 
 ddb.scan(params, function(err, data) {
@@ -24,7 +23,7 @@ ddb.scan(params, function(err, data) {
   } else {
     // console.log(data);
     data.Items.forEach(function(element, index, array) {
-      console.log(element.origin.S + " -> " + element.destination.S);
+      console.log(element.citeFrom.S + " -> " + element.citeTo.S);
     });
   }
 });
