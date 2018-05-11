@@ -104,7 +104,39 @@ var zotero = {
         root = d3.hierarchy(zotero.parseCollectionTree(collections));
         root.x0 = 0;
         root.y0 = 0;
+
+        root.children.forEach(collapse);
+
         update(root);
+
+        function collapse(d) {
+            if (d.children) {
+              d._children = d.children;
+              d._children.forEach(collapse)
+              d.children = null;
+            } else {
+              d.children = d._children;
+              d._children = null;
+            }
+            update(d);
+        }
+        function click(d) {
+            /* if (d.children) {
+              d._children = d.children;
+              d.children = null;
+            } else {
+              d.children = d._children;
+              d._children = null;
+            }
+            update(d); */
+
+            zotero.getItems(d.data.key)
+            document.getElementById('zoteroModal').style.display = "none";
+          }
+          
+          function color(d) {
+            return d._children ? "rgb(255, 199, 0)" : d.children ? "rgb(155, 155, 155)" : "rgb(250, 250, 250)";
+          }
 
         function update(source) {
 
@@ -141,9 +173,18 @@ var zotero = {
             nodeEnter.append("rect")
                 .attr("y", -barHeight / 2)
                 .attr("height", barHeight)
-                .attr("width", barWidth)
+                .attr("width", 0.9*barWidth)
                 .style("fill", color)
                 .on("click", click);
+            
+            nodeEnter.append('rect')
+                .attr("y", -barHeight / 2)
+                .attr("x", 0.9*barWidth)
+                .attr("height", barHeight)
+                .attr("width", 0.1*barWidth)
+                .style("fill", 'rgb(208, 208, 208)')
+                .on('click',collapse)
+
           
             nodeEnter.append("text")
                 .attr("dy", 3.5)
@@ -177,26 +218,7 @@ var zotero = {
             });
           }
           
-          // Toggle children on click.
-          function click(d) {
-            /* if (d.children) {
-              d._children = d.children;
-              d.children = null;
-            } else {
-              d.children = d._children;
-              d._children = null;
-            }
-            update(d); */
-
-            zotero.getItems(d.data.key)
-            document.getElementById('zoteroModal').style.display = "none";
-          }
-          
-          function color(d) {
-            return d._children ? "rgb(255, 199, 0)" : d.children ? "rgb(155, 155, 155)" : "rgb(250, 250, 250)";
-          }
-
-        /* var paperbox = d3.select('#zoteroModal').select('.modal-content').selectAll('.outer-paper-box')
+                /* var paperbox = d3.select('#zoteroModal').select('.modal-content').selectAll('.outer-paper-box')
                         .data(collections,function(d){return d.key})
         paperbox.exit().remove()
         paperbox = paperbox.enter()
