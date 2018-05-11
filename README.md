@@ -1,12 +1,15 @@
 # Welcome to Gecko!
 
+[![Open Source Love](https://badges.frapsoft.com/os/v2/open-source.svg?v=103)](https://github.com/ellerbrock/open-source-badges/)
+[![MIT Licence](https://badges.frapsoft.com/os/mit/mit.svg?v=103)](https://opensource.org/licenses/mit-license.php)
+
 This is a tool that uses the citation relations between scientific papers to help researchers find interesting and relevant papers.
 
 The user specifies several 'seed' papers which define the specific area of the scientific landscape they are interested in.
 
 The tool then searches several databases to find the papers that cite or are cited-by the seed papers.
 
-Papers that are cited by a lot of the seed papers are likely to be important foundational papers in the field (or certaintly worth being aware of at least).
+Papers that are cited by a lot of the seed papers are likely to be important foundational papers in the field (or certainly worth being aware of at least).
 
 Papers that cite a lot of the seed papers are likely to be more recent papers in the same area that might be worth reading.
 
@@ -47,5 +50,3 @@ MICROSFT_API_KEY = "YOUR API KEY GOES HERE"
 5. In order to hide less well connected papers from the Network View use the Threshold Slide to select the minimum number of connections to be displayed.
 6. You can switch between viewing a graph showing only references of the seed papers and a graph showing only the papers that cite the seed papers by clicking the toggle between 'Papers Cited-By Seed Papers' and 'Papers Citing Seed Papers' that also acts as a key.
 6. If one of the connected papers seems highly relevant you can add it as a seed paper either from the list view or network view, expanding the network in order to uncover more papers.
-
-
