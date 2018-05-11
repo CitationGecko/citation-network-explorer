@@ -6,7 +6,15 @@ import time
 import click
 import requests
 
+# Python 2/3 imports
+try:
+    from urllib import quote_plus
+except:
+    from urllib.parse import quote_plus
+
+
 CROSSREF_API = "https://api.crossref.org/"
+NUMBER_ROWS = 500
 
 
 @click.command()
@@ -35,34 +43,32 @@ def get_crossref_data(inputdate, outputfile):
 
     # url parts
     url_root = CROSSREF_API + "works/?"
-    nrows = 1000
 
     # TODO check if the inputdate is valid
     pars = ["filter=from-index-date:%s,reference-visibility:open" % inputdate,
-            "rows=%s" % str(nrows)]
+            "rows=%s" % str(NUMBER_ROWS)]
 
-    # TODO check the filepath is valid
+    # TODO check if the filepath is valid
     # emptying the file if it had something
     out = open(outputfile, "w")
     out.close()
 
     fetching = True
     icount = 0
-    # next_cursor = ""
-    offset = 0
+    next_cursor = ""
 
     while fetching:
-        # handling the first vs next-cursor signals
-        # if icount > 0 and next_cursor != "":
-        #     url = url_root + "&".join(pars) + "&cursor=%s" % next_cursor
-        # else:
-        #     url = url_root + "&".join(pars) + "&cursor=*"
+        print("Processing cursor #%s" % str(icount + 1))
 
-        # using offset instead of cursor for now
-        url = url_root + "&".join(pars) + "&offset=%s" % str(offset)
+        # handling the first vs next-cursor signals
+        if icount > 0 and next_cursor != "":
+            next_cursor = quote_plus(next_cursor)
+            url = url_root + "&".join(pars) + "&cursor=%s" % next_cursor
+        else:
+            url = url_root + "&".join(pars) + "&cursor=*"
 
         # fetching the data
-        print(url)
+        # print(url)
         data = fetch_from_url_or_retry(url, json=True)
 
         citeFrom = []
@@ -77,7 +83,7 @@ def get_crossref_data(inputdate, outputfile):
         if data["status"] == "ok":
             if "message" in data and "items" in data["message"]:
                 nitems = int(data["message"]["items-per-page"])
-                assert nitems == nrows
+                assert nitems == NUMBER_ROWS
                 nentries = 0
                 for entry in data["message"]["items"]:
                     nentries += 1
@@ -85,28 +91,24 @@ def get_crossref_data(inputdate, outputfile):
                         if "reference" in entry:
                             for subentry in entry["reference"]:
                                 if "DOI" in subentry:
-                                    # print(entry["DOI"], subentry["DOI"])
                                     citeFrom.append(entry["DOI"])
                                     citeTo.append(subentry["DOI"])
                 if nentries < nitems:
                     fetching = False
 
-            # if "next-cursor" in data["message"]:
-            #     next_cursor = data["message"]["next-cursor"]
-            # if next_cursor == "":
-            #     fetching = False
-
-        # increase the offset for the next query
-        offset += nrows
+            if "next-cursor" in data["message"]:
+                next_cursor = data["message"]["next-cursor"]
+            if next_cursor == "":
+                fetching = False
 
         # write (append) to output
         assert len(citeFrom) == len(citeTo)
         with open(outputfile, "a") as outfile:
             lines = ["%s\t%s" % (i, j) for i, j in zip(citeFrom, citeTo)]
-            outfile.write("\n".join(lines))
+            outfile.write("\n".join(lines) + "\n")
 
         icount += 1
-        print("Fetching data: iteration number %s done..." % str(icount))
+        # print("Fetching data: iteration number %s done..." % str(icount))
     return
 
 
