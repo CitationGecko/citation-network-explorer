@@ -371,3 +371,15 @@ h1 {
     100% { transform: rotate(360deg); }
 }
 
+.plot-button {
+    position: absolute;
+    left:0em;
+}
+
+.zotero-collection-name {
+}
+
+.zotero-collection-expand-button {
+    position: absolute;
+    right:0em;
+}

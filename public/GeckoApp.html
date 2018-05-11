@@ -139,7 +139,8 @@
             <div class='modal-content'>
                 <button id='addbyDOI'>add by DOI</button>
                 <button id='searchByTitle'>search by title</button>
-                <button id='uploadBibTex'>upload BibTex</button>                
+                <button id='uploadBibTex'>upload BibTex</button> 
+                <button id='addbyZotero'>add from Zotero Collection</button>               
             </div>
         </div>
         <div id='doiInputModal' class='modal'>
@@ -171,6 +172,11 @@
                     add seeds from bibTex: <input type="file" id="files" name="files[]" multiple /><output id="list"></output><button id='demoButton'>DEMO</button>
                 </div>
         </div>
+        <div id='zoteroModal' class='modal'>
+            <div class='modal-content'>
+                
+            </div>
+        </div>
 
         <script src = "core.js"></script>
         <script src = 'ui/layout.js'></script>
@@ -182,6 +188,7 @@
         <script src = "data-sources/occ.js"></script>
         <script src = "data-sources/microsoft.js"></script>
         <script src = "data-sources/oaDOI.js"></script>
+        <script src = "integrations/zotero.js"></script>
         <script src = "apikeys.js"></script>
 
     </body>
