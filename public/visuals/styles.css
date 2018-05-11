@@ -376,10 +376,22 @@ h1 {
     left:0em;
 }
 
-.zotero-collection-name {
+.zotero-folder rect {
+    cursor: pointer;
+    fill: #fff;
+    fill-opacity: 0.5;
+    stroke: #979797;
+    stroke-width: 1.5px;
 }
 
-.zotero-collection-expand-button {
-    position: absolute;
-    right:0em;
+#zotero-logo {
+    width: 40%
+}
+
+#zotero-square {
+    height:90%
+}
+
+#addByZotero > div{
+    display: inline
 }
