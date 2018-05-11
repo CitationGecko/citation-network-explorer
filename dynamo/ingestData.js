@@ -52,15 +52,24 @@ function processInputData() {
 
          // if batch is large enough or there's nothing more to process - insert
          if (batch.length === 25 ) {
-            pushData(batch);
-            batchIndex++;
-            console.log(batchIndex);
-            // console.log(JSON.stringify(batch, null, 2));
-            batch = [];
+           batchIndex++;
+           console.log('Processing batch #' + batchIndex);
+
+            pushData(batch, function(err, data) {
+              if (err) {
+                console.error('Error occurred when processing batch #' + batchIndex + '. Stopping ingest.');
+                console.error(err);
+                console.log('Batch contents:', JSON.stringify(batch, null, 2));
+              } else {
+                // resume the readstream, possibly from a callback
+                batch = [];
+                s.resume();
+              }
+            });
+         } else {
+           s.resume();
          }
 
-         // resume the readstream, possibly from a callback
-         s.resume();
      })
      .on('error', function(err){
          console.log('Error while reading file.', err);
@@ -72,12 +81,15 @@ function processInputData() {
  );
 }
 
-function pushData(currBatch) {
+function pushData(currBatch, callback) {
   if (currBatch.length) {
     dynamo.batchInsert(currBatch, function (err, data) {
       // console.log('insert err', err);
       // console.log('insert data', data);
+      return callback(err, data);
     });
+  } else {
+    callback();
   }
 }
 
