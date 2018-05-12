@@ -5,7 +5,7 @@ var microsoft = {
     apiRequest: function(request,callback){ //Send a generic request to the MAG api
         xmlhttp = new XMLHttpRequest();
         //If no API key is given the request will be sent to an intermediate server which inserts the API and forwards it on to Microsoft.
-        var url = '/api/v1/query/microsoft';
+        var url = '/api/v1/query/microsoft/search';
         xmlhttp.open('POST', url, true);
         xmlhttp.setRequestHeader('Content-Type', 'application/json');
         xmlhttp.onreadystatechange = function () {

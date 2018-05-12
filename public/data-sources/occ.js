@@ -6,7 +6,7 @@ var occ = {
         refreshGraphics();      
     },
     sendQuery: function(query,callback){
-        var url = '/api/v1/query/occ'
+        var url = '/api/v1/query/occ/sparql';
         var querypart = "query=" + escape(query.string);
 
         // Get our HTTP request object.
