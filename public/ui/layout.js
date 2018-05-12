@@ -95,25 +95,25 @@ document.getElementById('colorByOA').onclick = function(){
         }
     } 
     // When the user clicks on the button, open the modal
+
     document.getElementById("addSeeds").onclick = function() {
         document.getElementById('addSeedModal').style.display = "block";
     }
-   
+    document.getElementById("addbyZotero").onclick = function() {
+        document.getElementById('addSeedModal').style.display = "none";
+        document.getElementById('zoteroModal').style.display = "block";
+        zotero.getCollections();
+    }
     document.getElementById("addbyDOI").onclick = function() {
         document.getElementById('addSeedModal').style.display = "none";
         document.getElementById('doiInputModal').style.display = "block";
     }
 
     document.getElementById("doiInput").onkeydown = function(event){
-        
-        if (event.keyCode == 13){
-            
+        if (event.keyCode == 13){   
             addSeedFromDOI(doiQuery)
             document.getElementById('doiInputLoader').style.display = 'inline-block';
-
         }
-
-
     }
 
     document.getElementById("searchByTitle").onclick = function() {
