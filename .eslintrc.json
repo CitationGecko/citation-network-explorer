@@ -8,6 +8,6 @@
     "no-unreachable": "warn",
     "no-unused-vars": "warn",
     "eqeqeq": "warn",
-    "indent": ["warn", 4]
+    "indent": ["warn", 2]
   }
 }
