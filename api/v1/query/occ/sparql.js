@@ -19,14 +19,15 @@ module.exports = function (req, res) {
   request(options, function (error, response, body) {
     if (error) {
       console.error(error);
-      return res.send('ERR');
+      return res.status(400).json({success: false, error: error, results: {bindings: []}});
+    }
+
+
+    if (response.statusCode === 400) {
+      return res.status(400).json({success: false, error: body, results: {bindings: []}});
     }
 
     console.log('Response from OCC:\n', body);
-
-    if (response.statusCode === 400) {
-      return res.send('')
-    }
 
     res.writeHead(response.statusCode, {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'});
     res.end(body.toString());
