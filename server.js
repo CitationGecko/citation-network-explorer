@@ -4,23 +4,13 @@ var _ = require('lodash');
 var express = require('express');
 var bodyParser = require('body-parser');
 var request = require('request');
+var config = require('./config');
 var dynamo = require('./lib/dynamo');
 
-try {
-  var apikeys = require('./public/apikeys.js');
-} catch (ex) {
-  console.log('No API key file provided');
-}
-
-var API_KEY_MICROSOFT = apikeys.key;
-console.log('API_KEY_MICROSOFT:', API_KEY_MICROSOFT);
-
-if (!API_KEY_MICROSOFT) {
-  console.error('Missing Microsoft Academic API key.');
-  process.exit(1);
-}
+var API_KEY_MICROSOFT = config.get('credentials.microsoft.key');
 
 var app = express();
+app.disable('x-powered-by');
 app.use(bodyParser.json());
 app.use(bodyParser.text());
 app.use(bodyParser.urlencoded({ extended: false }));
