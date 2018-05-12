@@ -9,11 +9,9 @@ var occ = {
         var querypart = "query=" + escape(query.string);       
           // Get our HTTP request object.
         xmlhttp = new XMLHttpRequest();
-         // Set up a POST with JSON result format.
-         xmlhttp.open('POST', "http://opencitations.net/sparql", true); // GET can have caching probs, so POST
-         xmlhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-         xmlhttp.setRequestHeader("Accept", "application/sparql-results+json");
-         xmlhttp.setRequestHeader('Access-Control-Allow-Origin', '*')
+         // Set up a POST with JSON result format (GET can have caching problems in browser)
+         xmlhttp.open('POST', '/api/v1/queryProvider/occ', true);
+
          // Set up callback to get the response asynchronously.
          xmlhttp.onreadystatechange = function() {
            if(this.readyState == 4) {

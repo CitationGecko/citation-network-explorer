@@ -1,32 +1,26 @@
 
 //Functions for sending requests to, and parsing responses from, the Microsoft Academic Graph API
-MICROSOFT_API_KEY = false ; //IF YOU HAVE YOUR OWN API KEY PUT IT HERE!
 MicrosoftStatus = 'good'; // Once it switches to bad after first failed request it will stop alerting the user when requests fail.
 var microsoft = {
     apiRequest: function(request,callback){ //Send a generic request to the MAG api
-        xmlhttp = new XMLHttpRequest();      
-        var url =  window.location.href; //If no API key is given the request will be sent to an intermediate server which inserts the API and forwards it on to Microsoft.
-        if(MICROSOFT_API_KEY){ //If API key is given, query the API directly
-            url = "https://westus.api.cognitive.microsoft.com/academic/v1.0/graph/search?mode=json"
-        }
-        xmlhttp.open("POST", url,true);
-        xmlhttp.setRequestHeader("Content-type", "application/json");
-        if(MICROSOFT_API_KEY){
-            xmlhttp.setRequestHeader("Ocp-Apim-Subscription-Key", MICROSOFT_API_KEY);
-        }
-        xmlhttp.onreadystatechange = function () {   
+        xmlhttp = new XMLHttpRequest();
+        //If no API key is given the request will be sent to an intermediate server which inserts the API and forwards it on to Microsoft.
+        var url = '/api/v1/queryProvider/microsoft';
+        xmlhttp.open('POST', url, true);
+        xmlhttp.setRequestHeader('Content-Type', 'application/json');
+        xmlhttp.onreadystatechange = function () {
             if (this.readyState == 4 && this.status == 200) {
                 console.log('Response recieved from MAG!')
                 callback(this.responseText)
             } else if(this.readyState==4){
                 if(MicrosoftStatus == 'good'){
                     MicrosoftStatus = 'bad';
-                    alert("The Microsoft Academic Graph is unavailable at this time. This will result in reduced coverage, especially in cited-by mode, and search by title won't work. Sorry for the inconvenience, please try again later.")}
+                    alert('The Microsoft Academic Graph is unavailable at this time. This will result in reduced coverage, especially in cited-by mode, and search by title won\'t work. Sorry for the inconvenience, please try again later.')}
                     console.log(this.responseText)
                 }
         }
         xmlhttp.send(JSON.stringify(request.toSend));
-        console.log('sending request to MAG... ')
+        console.log('sending request to MAG... ');
     },
     refQuery: function(id){ //Query for MAG API to get references of a paper from the Microsoft ID.
         return {          

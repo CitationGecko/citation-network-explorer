@@ -1,21 +1,29 @@
-var express = require('express');
-var path = require('path');
-var request = require('request');
 var fs = require('fs');
+var path = require('path');
 var _ = require('lodash');
+var express = require('express');
+var bodyParser = require('body-parser');
+var request = require('request');
 var dynamo = require('./lib/dynamo');
 
 try {
-    var apikey = require('./public/apikeys.js');
+  var apikeys = require('./public/apikeys.js');
 } catch (ex) {
-    console.log('No API key file provided')
+  console.log('No API key file provided');
 }
 
-var API_KEY = apikey.key;
+var API_KEY_MICROSOFT = apikeys.key;
+console.log('API_KEY_MICROSOFT:', API_KEY_MICROSOFT);
 
-console.log(API_KEY)
+if (!API_KEY_MICROSOFT) {
+  console.error('Missing Microsoft Academic API key.');
+  process.exit(1);
+}
 
 var app = express();
+app.use(bodyParser.json());
+app.use(bodyParser.text());
+app.use(bodyParser.urlencoded({ extended: false }));
 
 // main route - gets the html output to the page
 app.get('/', function (req, res) {
@@ -36,6 +44,9 @@ app.get('/', function (req, res) {
 
 app.use(express.static('public'));
 
+/**
+ * API: Get citedBy from DynamoDB
+ */
 app.get('/api/v1/getCitedBy', function (req, res) {
   var doi = req.query.doi;
   if (!doi) {
@@ -57,43 +68,67 @@ app.get('/api/v1/getCitedBy', function (req, res) {
   });
 });
 
+/**
+ * API: Proxy to Microsoft Academic Graph
+ */
+app.post('/api/v1/queryProvider/microsoft', function (req, res) {
+  // console.log('> /api/v1/queryProvider/microsoft:', req.body);
 
-// maintaining this as a legacy endpoint - likely to be phased out shortly
-app.post('/', function (req, res) {
-  var query = '';
-
-  req.on('data', function (data) {
-    query += data;
-  });
-
-  req.on('end', function () {
-    console.log('Request recieved: ' + query);
-    // Set the headers
-    var headers = {
+  // Configure the request
+  var options = {
+    url: 'https://westus.api.cognitive.microsoft.com/academic/v1.0/graph/search?mode=json',
+    method: 'POST',
+    headers: {
       'Content-Type': 'application/json',
-      'Ocp-Apim-Subscription-Key': API_KEY
-    }
-    // Configure the request
-    var options = {
-      url: 'https://westus.api.cognitive.microsoft.com/academic/v1.0/graph/search?mode=json',
-      method: 'POST',
-      headers: headers,
-      body: query
+      'Ocp-Apim-Subscription-Key': API_KEY_MICROSOFT
+    },
+    body: JSON.stringify(req.body)
+  }
+
+  // Start the request
+  request(options, function (error, response, body) {
+    // console.log(JSON.stringify(response))
+    if (error) {
+      console.error(error);
+      return res.send('ERR');
     }
 
-    // Start the request
-    request(options, function (error, response, body) {
-      console.log(JSON.stringify(response))
-      if (error) {
-        console.log(error.message)
-        return res.send('ERR');
-      }
-
-      res.writeHead(response.statusCode, {'Content-Type': 'application/json','Access-Control-Allow-Origin': '*'});
-      res.end(body.toString());
-    })
+    res.writeHead(response.statusCode, {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'});
+    res.end(body.toString());
   });
-})
+});
+
+/**
+ * API: Proxy to OpenCitations sparql
+ */
+app.post('/api/v1/queryProvider/occ', function (req, res) {
+  // console.log('> /api/v1/queryProvider/occ:', req.body);
+
+  // Configure the request
+  var options = {
+    url: 'http://opencitations.net/sparql',
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'Accept': 'application/sparql-results+json',
+      // 'Access-Control-Allow-Origin': '*'
+    },
+    formData: req.body
+  }
+
+  // Start the request
+  request(options, function (error, response, body) {
+    console.log(body);
+    if (error) {
+      console.error(error);
+      return res.send('ERR');
+    }
+
+    res.writeHead(response.statusCode, {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'});
+    res.end(body.toString());
+  });
+
+});
 
 app.listen(3000, function () {
   console.log('Server listening on port 3000');
