@@ -6,11 +6,13 @@ var occ = {
         refreshGraphics();      
     },
     sendQuery: function(query,callback){
-        var querypart = "query=" + escape(query.string);       
-          // Get our HTTP request object.
+        var url = '/api/v1/query/occ'
+        var querypart = "query=" + escape(query.string);
+
+        // Get our HTTP request object.
         xmlhttp = new XMLHttpRequest();
-         // Set up a POST with JSON result format (GET can have caching problems in browser)
-         xmlhttp.open('POST', '/api/v1/queryProvider/occ', true);
+        // Set up a POST with JSON result format (GET can have caching problems in browser)
+        xmlhttp.open('POST', url, true);
 
          // Set up callback to get the response asynchronously.
          xmlhttp.onreadystatechange = function() {
@@ -21,8 +23,7 @@ var occ = {
                callback(this.responseText,query.type);
              } else {
                // Some kind of error occurred.
-               console.log("Sparql query error: " + this.status + " "
-                   + this.responseText);
+               console.log("Sparql query error: " + this.status + " " + this.responseText);
              }
            }
          };

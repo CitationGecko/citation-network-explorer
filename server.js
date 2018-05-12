@@ -61,7 +61,7 @@ app.get('/api/v1/getCitedBy', function (req, res) {
 /**
  * API: Proxy to Microsoft Academic Graph
  */
-app.post('/api/v1/queryProvider/microsoft', function (req, res) {
+app.post('/api/v1/query/microsoft', function (req, res) {
   // console.log('> /api/v1/queryProvider/microsoft:', req.body);
 
   // Configure the request
@@ -77,11 +77,12 @@ app.post('/api/v1/queryProvider/microsoft', function (req, res) {
 
   // Start the request
   request(options, function (error, response, body) {
-    // console.log(JSON.stringify(response))
     if (error) {
       console.error(error);
       return res.send('ERR');
     }
+
+    // console.log('Response from MAG:\n', body);
 
     res.writeHead(response.statusCode, {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'});
     res.end(body.toString());
@@ -91,7 +92,7 @@ app.post('/api/v1/queryProvider/microsoft', function (req, res) {
 /**
  * API: Proxy to OpenCitations sparql
  */
-app.post('/api/v1/queryProvider/occ', function (req, res) {
+app.post('/api/v1/query/occ', function (req, res) {
   // console.log('> /api/v1/queryProvider/occ:', req.body);
 
   // Configure the request
@@ -108,14 +109,45 @@ app.post('/api/v1/queryProvider/occ', function (req, res) {
 
   // Start the request
   request(options, function (error, response, body) {
-    console.log(body);
     if (error) {
       console.error(error);
       return res.send('ERR');
     }
 
+    console.log('Response from OCC:\n', body);
+
     res.writeHead(response.statusCode, {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'});
     res.end(body.toString());
+  });
+
+});
+
+/**
+ * API: Proxy to OA DOI
+ */
+app.get('/api/v1/query/oadoi', function (req, res) {
+  var doi = req.query.doi;
+  if (!doi) {
+    return res.json({success: false, error: 'You need to specify the "doi" parameter.'});
+  }
+
+  var endpointURL = 'https://api.oadoi.org/v2/' + doi + '?email=' + config.get('credentials.oadoi.email');
+
+  // Configure the request
+  var options = {
+    url: endpointURL,
+    method: 'GET'
+  }
+
+  // Start the request
+  request(options, function (error, response, body) {
+    if (error) {
+      return res.json({success: false, error: error});
+    }
+
+    // console.log('Response from OADOI:\n', body);
+
+    res.json({success: true, doi: doi, data: body})
   });
 
 });
