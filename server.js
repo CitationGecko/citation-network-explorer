@@ -3,13 +3,21 @@ var _ = require('lodash');
 var express = require('express');
 var bodyParser = require('body-parser');
 
+var appPort = 3000;
+
+/**
+ * Express server scaffolding
+ */
 var app = express();
 app.disable('x-powered-by');
 app.use(bodyParser.json());
 app.use(bodyParser.text());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-// main route - gets the html output to the page
+/**
+ * Main application route
+ * Gets the html output to the page
+ */
 app.get('/', function (req, res) {
   var filePath = __dirname + '/public/GeckoApp.html';
 
@@ -26,7 +34,9 @@ app.get('/', function (req, res) {
   });
 });
 
-// Registers public path
+/**
+ * Serve static files from 'public' directory
+ */
 app.use(express.static('public'));
 
 /**
@@ -49,7 +59,9 @@ app.post('/api/v1/query/microsoft/search', require('./api/v1/query/microsoft/sea
  */
 app.post('/api/v1/query/occ/sparql', require('./api/v1/query/occ/sparql'));
 
-
-app.listen(3000, function () {
-  console.log('Server listening on port 3000');
+/**
+ * Start Express server
+ */
+app.listen(appPort, function () {
+  console.log('CitationGecko server listening on port', appPort);
 });
