@@ -42,7 +42,6 @@ Currently visible endpoints:
 - **GET** `/api/v1/getCitedBy?doi={articleDOI}`
 - **GET** `/api/v1/query/oadoi?doi={articleDOI}`
 - **POST** `/api/v1/query/microsoft/search` (proxies the request to MAG service)
-- **POST** `/api/v1/query/occ/sparql` (proxies the request to OCC Sparql service)
 
 ## Instructions for use
 
