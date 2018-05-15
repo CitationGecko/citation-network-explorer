@@ -1,6 +1,6 @@
 oaDOI = {
     accessQuery: function(paper) {
-      if (paper.DOI) {
+      /* if (paper.DOI) {
         var url = '/api/v1/query/oadoi?doi=' + paper.DOI;
         xmlhttp = new XMLHttpRequest();
         xmlhttp.open('GET', url, true);
@@ -15,7 +15,7 @@ oaDOI = {
           }
         };
         xmlhttp.send(null);
-      }
+      } */
     },
 
   searchAll: function() {

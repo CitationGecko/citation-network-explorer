@@ -6,29 +6,14 @@ var occ = {
         refreshGraphics();      
     },
     sendQuery: function(query,callback){
-        var url = '/api/v1/query/occ/sparql';
-        var querypart = "query=" + escape(query.string);
 
-        // Get our HTTP request object.
-        xmlhttp = new XMLHttpRequest();
-        // Set up a POST with JSON result format (GET can have caching problems in browser)
-        xmlhttp.open('POST', url, true);
+        let url = 'http://opencitations.net/sparql?query=' + escape(query.string);
+        var res = fetch(url,{
+            headers: {
+                'Accept': 'application/sparql-results+json'
+            }
+        }).then((resp) => resp.text()).then((data)=>callback(data,query.type));
 
-         // Set up callback to get the response asynchronously.
-         xmlhttp.onreadystatechange = function() {
-           if(this.readyState == 4) {
-             if(this.status == 200) {
-               // Do something with the results
-               console.log('response from OCC')
-               callback(this.responseText,query.type);
-             } else {
-               // Some kind of error occurred.
-               console.log("Sparql query error: " + this.status + " " + this.responseText);
-             }
-           }
-         };
-         // Send the query to the endpoint.
-         xmlhttp.send(querypart);
          console.log('querying OCC...');
     },
     refsByDOI: function(doi){

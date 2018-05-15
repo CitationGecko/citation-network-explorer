@@ -1,3 +1,4 @@
+apikeys.js
 public/apikeys.js
 node_modules
 dynamo/*.tsv
