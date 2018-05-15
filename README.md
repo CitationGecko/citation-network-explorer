@@ -1,5 +1,8 @@
 # Welcome to Citation Gecko!
 
+[![Open Source Love](https://badges.frapsoft.com/os/v2/open-source.svg?v=103)](https://github.com/ellerbrock/open-source-badges/)
+[![MIT Licence](https://badges.frapsoft.com/os/mit/mit.svg?v=103)](https://opensource.org/licenses/mit-license.php)
+
 This is a tool that uses the citation relations between scientific papers to help researchers find interesting and relevant papers.
 
 The user specifies several 'seed' papers which define the specific area of the scientific landscape they are interested in.
