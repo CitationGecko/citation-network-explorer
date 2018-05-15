@@ -1,3 +1,4 @@
+var _ = require('lodash');
 var dynamo = require('../../lib/dynamo');
 
 module.exports = function (req, res) {

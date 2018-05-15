@@ -395,3 +395,7 @@ h1 {
 #addByZotero > div{
     display: inline
 }
+
+#doiInput {
+  width:200px
+}

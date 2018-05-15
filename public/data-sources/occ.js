@@ -1,9 +1,8 @@
 
 var occ = {
-    callback: function(response,queryType){
-        jsonObj = eval('(' + response + ')');
-        occ.parseResponse(jsonObj,queryType);
-        refreshGraphics();      
+    callback: function(responseString, queryType){
+        occ.parseResponse(responseString, queryType);
+        refreshGraphics();
     },
     sendQuery: function(query,callback){
 
@@ -18,7 +17,7 @@ var occ = {
     },
     refsByDOI: function(doi){
         var query ={};
-        query.type = 'refs'       
+        query.type = 'refs'
         query.string = 'PREFIX cito: <http://purl.org/spar/cito/>\n\
         PREFIX dcterms: <http://purl.org/dc/terms/>\n\
         PREFIX datacite: <http://purl.org/spar/datacite/>\n\
@@ -46,7 +45,7 @@ var occ = {
     },
     refsByID: function(id){ //Queries OCC SPARQL to find references of the ID specified. Updates Papers and Edges data structures.
         var query = {};
-        query.type = 'refs'      
+        query.type = 'refs'
         query.string = 'PREFIX cito: <http://purl.org/spar/cito/>\n\
         PREFIX dcterms: <http://purl.org/dc/terms/>\n\
         PREFIX datacite: <http://purl.org/spar/datacite/>\n\
@@ -71,7 +70,7 @@ var occ = {
                     datacite:usesIdentifierScheme datacite:doi ;\n\
                     literal:hasLiteralValue ?citingDOI ].} \n\
         }';
-        occ.sendQuery(query, occ.callback);    
+        occ.sendQuery(query, occ.callback);
     },
     citedByID: function(id){
         var query = {};
@@ -131,8 +130,9 @@ var occ = {
         }';
         occ.sendQuery(query, occ.callback);
     },
-    parseResponse: function(response,queryType){
-        var np = 0; //For bean counting only 
+    parseResponse: function(responseString, queryType){
+        var response = JSON.parse(responseString);
+        var np = 0; //For bean counting only
         var ne = 0; //For bean counting only
         var newEdges = response.results.bindings;
         for(let i=0;i<newEdges.length;i++){
@@ -140,7 +140,7 @@ var occ = {
             var cited = {
                 ID: uniqueID,
                 Author: null,
-                DOI: edge.citedDOI ? edge.citedDOI.value : null,                            
+                DOI: edge.citedDOI ? edge.citedDOI.value : null,
                 Title: edge.citedTitle ? edge.citedTitle.value : null,
                 Year: edge.citedYear ? edge.citedYear.value : null,
                 occID: edge.citedID.value,
@@ -157,7 +157,7 @@ var occ = {
             var citer = {
                 ID: uniqueID,
                 Author: null,
-                DOI: edge.citingDOI ? edge.citingDOI.value : null,                            
+                DOI: edge.citingDOI ? edge.citingDOI.value : null,
                 Title: edge.citingTitle ? edge.citingTitle.value : null,
                 Year: edge.citingYear ? edge.citingYear.value : null,
                 occID: edge.citingID.value,
@@ -175,7 +175,7 @@ var occ = {
                 target: cited,
                 origin: 'occ',
                 hide: false
-            };   
+            };
             if(Edges.filter(function(e){return e.source == newEdge.source & e.target == newEdge.target}).length == 0){Edges.push(newEdge);ne++}
         }
         console.log(np + " papers and " + ne + " edges added from OCC")
