@@ -57,7 +57,7 @@ app.post('/api/v1/query/microsoft/search', require('./api/v1/query/microsoft/sea
 /**
  * API: Proxy to OpenCitations sparql
  */
-app.post('/api/v1/query/occ/sparql', require('./api/v1/query/occ/sparql'));
+//app.post('/api/v1/query/occ/sparql', require('./api/v1/query/occ/sparql'));
 
 /**
  * Start Express server
