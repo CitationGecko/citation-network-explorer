@@ -4,9 +4,9 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Gecko Demo</title>
-        
-        <link href="https://fonts.googleapis.com/css?family=Comfortaa" rel="stylesheet"> 
+        <title>Citation Gecko</title>
+
+        <link href="https://fonts.googleapis.com/css?family=Comfortaa" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
 
         <link rel="stylesheet" type="text/css" href='visuals/styles.css'/>
@@ -37,13 +37,13 @@
                         <option value="seedsCited">Seeds Cited</option>
                     </select>
                 </div>
-                <div>                
-                    <button id='addSeeds' class='button1' onclick=''><i class="fa fa-plus" aria-hidden="true"></i><span>add more seed papers...</span></button>                
+                <div>
+                    <button id='addSeeds' class='button1' onclick=''><i class="fa fa-plus" aria-hidden="true"></i><span>add more seed papers...</span></button>
                 </div>
                 <div id='seed-paper-container'>
                 </div>
                 <div id='connected-paper-container'>
-                
+
                 </div>
             </div>
             <div id='collapseBar' class='panel'>
@@ -52,7 +52,7 @@
             <div id='connectedPapers' class='panel'>
                 <div id='networkView'>
                     <svg id="forceGraph"></svg>
-                    
+
                     <div id='thresholdSlider'>
                             <input id='thresholdInput' type='range' min='1' max='10' value='1'>
                             <output id="thresholdOutput" for="thresholdInput">Minimum Connections: 1</output>
@@ -70,11 +70,11 @@
                             <div>Papers Cited-By Seed Papers</div>
                             <div>Papers Citing Seed Papers</div>
                         </div>
-                        
+
                     </div>
                 </div>
                 <div id='timelineView'>
-                    <svg id="timelineGraph"></svg>                    
+                    <svg id="timelineGraph"></svg>
                 </div>
                 <div id='selected-paper-box' class='panel'>
                     <p class='paper-title'></p>
@@ -82,21 +82,21 @@
                     <p class='author-year'></p>
                     <div class='add-seed'></div>
                 </div>
-            </div>              
+            </div>
         </div>
 
         <div id='helpModal' class='modal'>
             <div class='modal-content'>
-                <h2> Welcome to Gecko!</h2>
-                <p>Gecko is here to help you find the most relevant papers to your research 
+                <h2> Welcome to Citation Gecko!</h2>
+                <p>Gecko is here to help you find the most relevant papers to your research
                     and give you a more complete sense of the research landscape.</p>
                 <p>Simply provide several 'seed papers' that define an area you are interested
                         in and Gecko will search out all the papers that they cite and all the papers that cite them.</p>
-                <p>It then builds a network from all of these papers allowing you to quickly 
+                <p>It then builds a network from all of these papers allowing you to quickly
                     identify important papers you may have missed.</p>
                 <p> For example, papers that are cited by all of your seed papers are likely to be important
                     foundational papers in the field, whilst papers that cite a lot of the seed
-                    papers are likely to be more recent papers in the same area that might be worth reading. 
+                    papers are likely to be more recent papers in the same area that might be worth reading.
                 </p>
                 <p>The more seed papers you pick the more you can narrow in on a specific topic.</p>
 
@@ -109,29 +109,31 @@
                         <li>Upload BibteX</li>
                     </ul>
                 <p>For a demo of what Gecko can do, click Upload BibTex and then click DEMO.</p>
-                
+
                 <p>The papers are displayed in a list in the left-hand panel and as a graph in the right hand panel.</p>
 
                 <h4>List View</h4>
-                
+
                 <p>In the list view you can switch between a list of your seed papers and the list of papers connected to them
                     by clicking the 'Seeds' or 'Connected' tabs respectively.</p>
                 <p>Seeds and be removed by clicking the red cross in the top left-hand corner of the box</p>
                 <p>Connected papers can be sorted by either the number of "Seeds Cited" or "Seeds Cited-By" in order to find the highly connected papers.</p>
-                <p>If one of the connected papers seems highly relevant you can add it as a 
-                    seed paper by clicking the green plus in the top left corner of the box. This expands the network in order to uncover more papers.</p>  
-                
+                <p>If one of the connected papers seems highly relevant you can add it as a
+                    seed paper by clicking the green plus in the top left corner of the box. This expands the network in order to uncover more papers.</p>
+
                 <h4>Network View</h4>
-                
+
                 <p>In this view you can see how each paper connects to the different seed papers graphically.</p>
-                <p>You can switch between viewing a graph showing only references of the seed papers and a graph 
+                <p>You can switch between viewing a graph showing only references of the seed papers and a graph
                     showing only the papers that cite the seed papers by clicking the grey node in the key to toggle between the two.</p>
                 <p>In order to hide less well connected papers from the Network View use the slider to select
                     the minimum number of connections a paper requires to be displayed.</p>
                 <p>Click on a node to highlight the papers it is connected to. You can turn a connected paper into a seed in the network view by clicking the 'Make Seed' button in the info box that pops up.</p>
 
                 <h2>Feedback</h2>
-                <p>Thank you for using this demo version of Gecko. If you have any feedback i.e. bugs or feature requests drop me an email at <a href='mailto:bjw15@ic.ac.uk'>bjw15@ic.ac.uk</a> or start an issue thread on Github <a href='https://github.com/bjw49/citation-network-explorer'>here</a>.</p>
+                <p>Thank you for using this demo version of Gecko. If you have any feedback i.e.
+                  bugs or feature requests drop me an email at <a href='mailto:bjw15@ic.ac.uk'>bjw15@ic.ac.uk</a>
+                  or <a href='https://github.com/CitationGecko/citation-network-explorer'>start an issue thread on Github</a>.</p>
                 <p> Enjoy!</p>
             </div>
         </div>
@@ -139,13 +141,14 @@
             <div class='modal-content'>
                 <button id='addbyDOI'>add by DOI</button>
                 <button id='searchByTitle'>search by title</button>
-                <button id='uploadBibTex'>upload BibTex</button>                
+                <button id='uploadBibTex'>upload BibTex</button>
+                <button id='addbyZotero'><img id='zotero-square' src='visuals/zotero2.png'></button>
             </div>
         </div>
         <div id='doiInputModal' class='modal'>
             <div class='modal-content'>
                 Enter DOI: <input id='doiInput' type="text"><div id='doiInputLoader' class='loader'></div></input>
-                
+
             </div>
         </div>
         <div id='titleInputModal' class='modal'>
@@ -171,6 +174,12 @@
                     add seeds from bibTex: <input type="file" id="files" name="files[]" multiple /><output id="list"></output><button id='demoButton'>DEMO</button>
                 </div>
         </div>
+        <div id='zoteroModal' class='modal'>
+            <div class='modal-content'>
+                <div><img id='zotero-logo' src='visuals/zotero-logo.png'></div>
+                <svg id='zotero-collections'></svg>
+            </div>
+        </div>
 
         <script src = "core.js"></script>
         <script src = 'ui/layout.js'></script>
@@ -182,7 +191,7 @@
         <script src = "data-sources/occ.js"></script>
         <script src = "data-sources/microsoft.js"></script>
         <script src = "data-sources/oaDOI.js"></script>
-        <script src = "apikeys.js"></script>
+        <script src = "integrations/zotero.js"></script>
 
     </body>
 </html>

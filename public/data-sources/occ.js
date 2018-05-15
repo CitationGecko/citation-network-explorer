@@ -1,40 +1,23 @@
 
 var occ = {
-    callback: function(response,queryType){
-        jsonObj = eval('(' + response + ')');
-        occ.parseResponse(jsonObj,queryType);
-        refreshGraphics();      
+    callback: function(responseString, queryType){
+        occ.parseResponse(responseString, queryType);
+        refreshGraphics();
     },
     sendQuery: function(query,callback){
-        var querypart = "query=" + escape(query.string);       
-          // Get our HTTP request object.
-        xmlhttp = new XMLHttpRequest();
-         // Set up a POST with JSON result format.
-         xmlhttp.open('POST', "http://opencitations.net/sparql", true); // GET can have caching probs, so POST
-         xmlhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-         xmlhttp.setRequestHeader("Accept", "application/sparql-results+json");
-         xmlhttp.setRequestHeader('Access-Control-Allow-Origin', '*')
-         // Set up callback to get the response asynchronously.
-         xmlhttp.onreadystatechange = function() {
-           if(this.readyState == 4) {
-             if(this.status == 200) {
-               // Do something with the results
-               console.log('response from OCC')
-               callback(this.responseText,query.type);
-             } else {
-               // Some kind of error occurred.
-               console.log("Sparql query error: " + this.status + " "
-                   + this.responseText);
-             }
-           }
-         };
-         // Send the query to the endpoint.
-         xmlhttp.send(querypart);
+
+        let url = 'http://opencitations.net/sparql?query=' + escape(query.string);
+        var res = fetch(url,{
+            headers: {
+                'Accept': 'application/sparql-results+json'
+            }
+        }).then((resp) => resp.text()).then((data)=>callback(data,query.type));
+
          console.log('querying OCC...');
     },
     refsByDOI: function(doi){
         var query ={};
-        query.type = 'refs'       
+        query.type = 'refs'
         query.string = 'PREFIX cito: <http://purl.org/spar/cito/>\n\
         PREFIX dcterms: <http://purl.org/dc/terms/>\n\
         PREFIX datacite: <http://purl.org/spar/datacite/>\n\
@@ -62,7 +45,7 @@ var occ = {
     },
     refsByID: function(id){ //Queries OCC SPARQL to find references of the ID specified. Updates Papers and Edges data structures.
         var query = {};
-        query.type = 'refs'      
+        query.type = 'refs'
         query.string = 'PREFIX cito: <http://purl.org/spar/cito/>\n\
         PREFIX dcterms: <http://purl.org/dc/terms/>\n\
         PREFIX datacite: <http://purl.org/spar/datacite/>\n\
@@ -87,7 +70,7 @@ var occ = {
                     datacite:usesIdentifierScheme datacite:doi ;\n\
                     literal:hasLiteralValue ?citingDOI ].} \n\
         }';
-        occ.sendQuery(query, occ.callback);    
+        occ.sendQuery(query, occ.callback);
     },
     citedByID: function(id){
         var query = {};
@@ -147,8 +130,9 @@ var occ = {
         }';
         occ.sendQuery(query, occ.callback);
     },
-    parseResponse: function(response,queryType){
-        var np = 0; //For bean counting only 
+    parseResponse: function(responseString, queryType){
+        var response = JSON.parse(responseString);
+        var np = 0; //For bean counting only
         var ne = 0; //For bean counting only
         var newEdges = response.results.bindings;
         for(let i=0;i<newEdges.length;i++){
@@ -156,7 +140,7 @@ var occ = {
             var cited = {
                 ID: uniqueID,
                 Author: null,
-                DOI: edge.citedDOI ? edge.citedDOI.value : null,                            
+                DOI: edge.citedDOI ? edge.citedDOI.value : null,
                 Title: edge.citedTitle ? edge.citedTitle.value : null,
                 Year: edge.citedYear ? edge.citedYear.value : null,
                 occID: edge.citedID.value,
@@ -173,7 +157,7 @@ var occ = {
             var citer = {
                 ID: uniqueID,
                 Author: null,
-                DOI: edge.citingDOI ? edge.citingDOI.value : null,                            
+                DOI: edge.citingDOI ? edge.citingDOI.value : null,
                 Title: edge.citingTitle ? edge.citingTitle.value : null,
                 Year: edge.citingYear ? edge.citingYear.value : null,
                 occID: edge.citingID.value,
@@ -191,7 +175,7 @@ var occ = {
                 target: cited,
                 origin: 'occ',
                 hide: false
-            };   
+            };
             if(Edges.filter(function(e){return e.source == newEdge.source & e.target == newEdge.target}).length == 0){Edges.push(newEdge);ne++}
         }
         console.log(np + " papers and " + ne + " edges added from OCC")

@@ -1,18 +1,23 @@
-{   
-    "name": "gecko-demo",
-    "version": "0.0.1",
-    "dependencies": {
-        "http": "*",
-        "request":"*",
-        "path": "*",
-        "fs": "*"
-      },
-      "engine": {
+{
+    "name": "citationgecko",
+    "version": "0.1.0",
+    "scripts": {
+        "start": "node server.js",
+        "lint": "./node_modules/.bin/eslint ."
+    },
+    "main": "server.js",
+    "engine": {
         "node": "*",
         "npm": "*"
     },
-    "scripts": {
-        "start": "node server.js"
-      },
-    "main": "server.js"
+    "dependencies": {
+        "aws-sdk": "^2.236.1",
+        "body-parser": "^1.18.2",
+        "express": "^4.16.3",
+        "lodash": "^4.17.10",
+        "request": "^2.85.0"
+    },
+    "devDependencies": {
+        "eslint": "^4.19.1"
+    }
 }

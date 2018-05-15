@@ -371,3 +371,31 @@ h1 {
     100% { transform: rotate(360deg); }
 }
 
+.plot-button {
+    position: absolute;
+    left:0em;
+}
+
+.zotero-folder rect {
+    cursor: pointer;
+    fill: #fff;
+    fill-opacity: 0.5;
+    stroke: #979797;
+    stroke-width: 1.5px;
+}
+
+#zotero-logo {
+    width: 40%
+}
+
+#zotero-square {
+    height:90%
+}
+
+#addByZotero > div{
+    display: inline
+}
+
+#doiInput {
+  width:200px
+}
