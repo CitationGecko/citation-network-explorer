@@ -14,6 +14,24 @@ var titleInput = document.querySelector("#titleInput").addEventListener("input",
     titleQuery = this.value;
 });
 
+//Array for holding functions to run when a new seed is added.
+var addSeedFunctions = [];
+//Array for holding functions to run when a new info on a seed is added.
+var updateSeedFunctions = [];
+
+
+function makeSeed(paper){
+    for(let i=0;i<addSeedFunctions.length;i++){
+        addSeedFunctions[i].call(this,paper)
+    }
+}
+
+function updateSeed(paper){
+     for(let i=0;i<updateSeedFunctions.length;i++){
+        updateSeedFunctions[i].call(this,paper)
+     }
+ }
+
 function addPaper(paper){
     let match = matchPapers(paper,Papers)
     if(!match){
@@ -35,38 +53,6 @@ function addEdge(newEdge){
         merge(edge[0],newEdge)
     };
 }
-
-function makeSeed(paper){
-    paper.seed = true;
-    let newSeed = new Event('newSeed');
-    newSeed.paper = paper;
-    window.dispatchEvent(newSeed);
-}
-
-function updateSeed(paper){
-    let update = new Event('seedUpdated');
-    update.paper = paper;
-    window.dispatchEvent(update);
-}
-
-//Attempts to add a seed paper from a MAG title search result
-function addSeedFromSearchTable(id,doi){
-    //Send query to microsoft
-    microsoft.addSeedByID(id);
-    //If DOI present query others as well
-    if(doi){
-        crossref.addSeed(doi);
-        occ.citedByDOI(doi);
-    }
-};
-
-//Add Seed from DOI input
-function addSeedFromDOI(doi){
-    //Query CrossRef for DOI and references
-    crossref.addSeed(doi,true); //second parameter triggers microsoft search after title found by CrossRef
-    //Query OCC for citedBy
-    occ.citedByDOI(doi);
-};
 
 //For a new paper this function tries to find a match in the existing database
 function matchPapers(paper,Papers){

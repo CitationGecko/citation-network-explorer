@@ -1,12 +1,3 @@
-window.addEventListener('newSeed', function(e){
-    occ.addSeed(e.paper)
-})
-
-window.addEventListener('seedUpdated', function(e){
-    if(!e.paper.occID){
-        occ.addSeed(e.paper)
-    }
-})
 
 var occ = {
     addSeed: function(paper){
@@ -147,7 +138,6 @@ var occ = {
     },
     parseResponse: function(responseString, queryType){
         var response = JSON.parse(responseString);
-        var np = 0; //For bean counting only
         var ne = 0; //For bean counting only
         var newEdges = response.results.bindings;
         for(let i=0;i<newEdges.length;i++){
@@ -182,3 +172,10 @@ var occ = {
         console.log('OCC found ' + ne + " citations")
     }
 }
+
+addSeedFunctions.push(occ.addSeed);
+updateSeedFunctions.push(function(paper){
+    if(!paper.occID){
+        occ.addSeed(paper)
+    }
+})

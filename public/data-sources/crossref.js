@@ -1,12 +1,3 @@
-window.addEventListener('newSeed', function(e){
-    crossref.addSeed(e.paper)
-})
-
-window.addEventListener('seedUpdated', function(e){
-    if(!e.paper.crossref){
-        crossref.addSeed(e.paper)
-    }
-})
 
 var crossref = {
     //Sends a query (queryStr) to endpoint and executes callback on response
@@ -23,7 +14,6 @@ var crossref = {
           
     },   
     parseResponse: function(response){
-        let np = 0; //For bean counting only 
         let ne = 0; //For bean counting only
         let citer = {
             DOI: response.DOI,
@@ -80,3 +70,5 @@ var crossref = {
         });
     } 
 };
+
+addSeedFunctions.push(crossref.addSeed)

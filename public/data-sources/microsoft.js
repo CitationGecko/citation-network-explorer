@@ -1,16 +1,6 @@
 
 //Functions for sending requests to, and parsing responses from, the Microsoft Academic Graph API
 
-window.addEventListener('newSeed', function(e){
-    microsoft.addSeed(e.paper)
-})
-
-window.addEventListener('seedUpdated', function(e){
-    if(!e.paper.MicrosoftID){
-        microsoft.addSeed(e.paper)
-    }
-})
-
 MicrosoftStatus = 'good'; // Once it switches to bad after first failed request it will stop alerting the user when requests fail.
 
 var microsoft = {
@@ -137,7 +127,6 @@ var microsoft = {
         })
     },
     parseResponse: function(response,request){
-        var np = 0; //For bean counting only 
         var ne = 0; //For bean counting only
         var seedpaper = response.Results[0][0];
         seedpaper = {           
@@ -180,3 +169,9 @@ var microsoft = {
     },
 }
 
+addSeedFunctions.push(microsoft.addSeed);
+updateSeedFunctions.push(function(paper){
+    if(!paper.MicrosoftID){
+        microsoft.addSeed(paper)
+    }
+})
