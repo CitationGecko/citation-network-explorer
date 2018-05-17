@@ -2,6 +2,12 @@ window.addEventListener('newSeed', function(e){
     occ.addSeed(e.paper)
 })
 
+window.addEventListener('seedUpdated', function(e){
+    if(!e.paper.occID){
+        occ.addSeed(e.paper)
+    }
+})
+
 var occ = {
     addSeed: function(paper){
         if(paper.occID){
@@ -164,7 +170,7 @@ var occ = {
                 occID: edge.citingID.value,
                 seed: (queryType=='citedBy')
             }
-            citer = addPaper(cited);
+            citer = addPaper(citer);
             let newEdge = {
                 source: citer,
                 target: cited,

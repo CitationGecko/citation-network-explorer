@@ -43,6 +43,12 @@ function makeSeed(paper){
     window.dispatchEvent(newSeed);
 }
 
+function updateSeed(paper){
+    let update = new Event('seedUpdated');
+    update.paper = paper;
+    window.dispatchEvent(update);
+}
+
 //Attempts to add a seed paper from a MAG title search result
 function addSeedFromSearchTable(id,doi){
     //Send query to microsoft

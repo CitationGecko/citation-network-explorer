@@ -2,6 +2,12 @@ window.addEventListener('newSeed', function(e){
     crossref.addSeed(e.paper)
 })
 
+window.addEventListener('seedUpdated', function(e){
+    if(!e.paper.crossref){
+        crossref.addSeed(e.paper)
+    }
+})
+
 var crossref = {
     //Sends a query (queryStr) to endpoint and executes callback on response
     addSeed: function(paper){
@@ -9,7 +15,8 @@ var crossref = {
         if(paper.DOI){
             CrossRef.work(paper.DOI,function(err,res){
                 console.log("response from CrossRef!")
-                let seed = crossref.parseResponse(res)          
+                let seed = crossref.parseResponse(res);
+                updateSeed(seed);//Could put in merge function instead...          
                 refreshGraphics();         
             });  
         }
@@ -27,7 +34,8 @@ var crossref = {
             Timestamp: response.created.timestamp,
             Journal: response['container-title'][0],
             CitationCount: response['is-referenced-by-count'],
-            seed: true
+            seed: true,
+            crossref: true
         };
         citer = addPaper(citer);
         if(!response.reference){return(citer)};
