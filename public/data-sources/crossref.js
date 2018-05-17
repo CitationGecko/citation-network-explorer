@@ -1,21 +1,24 @@
+window.addEventListener('newSeed', function(e){
+    crossref.addSeed(e.paper)
+})
+
 var crossref = {
     //Sends a query (queryStr) to endpoint and executes callback on response
-    queryRefs: function(doi,followup){
+    addSeed: function(paper){
         console.log("querying crossRef for references...")
-        CrossRef.work(doi,function(err,res){
-            console.log("response from CrossRef!")
-            let seed = crossref.parseRefs(res)          
-            refreshGraphics();
-            if(followup){
-                microsoft.titleMatch(seed);
-            }          
-        });    
+        if(paper.DOI){
+            CrossRef.work(paper.DOI,function(err,res){
+                console.log("response from CrossRef!")
+                let seed = crossref.parseResponse(res)          
+                refreshGraphics();         
+            });  
+        }
+          
     },   
-    parseRefs: function(response){
+    parseResponse: function(response){
         let np = 0; //For bean counting only 
         let ne = 0; //For bean counting only
         let citer = {
-            ID: uniqueID,
             DOI: response.DOI,
             Title: response.title[0],
             Author: response.author[0].family,
@@ -26,18 +29,13 @@ var crossref = {
             CitationCount: response['is-referenced-by-count'],
             seed: true
         };
-        let existingRecord = matchPapers(citer,Papers); // Search for existing paper
-        if(!existingRecord){//If it doesn't exist add it  
-            oaDOI.accessQuery(citer) //This is bad modularity. Needs to be addressed.
-            Papers.push(citer);np++;uniqueID++
-        }else{//If it does merge it   
-            citer = mergePapers(existingRecord,citer);
-        }  
-        if(!response.reference){return(citer)} 
+        citer = addPaper(citer);
+        if(!response.reference){return(citer)};
+
         let refs = response.reference;
         for(let i=0;i<refs.length;i++){
+
             let cited = {
-                ID: uniqueID,
                 DOI: refs[i].DOI ? refs[i].DOI : null,
                 Title: refs[i]['article-title'] ? refs[i]['article-title'] : 'unavailable',
                 Author: refs[i].author ? refs[i].author : null,
@@ -49,26 +47,17 @@ var crossref = {
             if(cited.DOI){
                 crossref.getDetails(cited)
             };
-            let existingRecord = matchPapers(cited,Papers); // Search for existing paper
-            if(!existingRecord){//If it doesn't exist add it
-                oaDOI.accessQuery(cited); //Poor modularity. Needs addressing
-                Papers.push(cited);np++;uniqueID++;
-            }else{//If it does merge it
-                cited = mergePapers(existingRecord,cited);
-            };
+            cited = addPaper(cited);
             let newEdge = {
                 source: citer,
                 target: cited,
-                origin: "crossref",
+                crossref: true,
                 hide: false
             }
-            if(Edges.filter(function(e){
-                    return e.source == newEdge.source & e.target == newEdge.target;
-            }).length == 0){
-                Edges.push(newEdge);ne++
-            };
+            addEdge(newEdge);
+            ne++;//bean counting
         };   
-        console.log(np + " papers and " + ne + " edges added from CrossRef")
+        console.log('CrossRef found ' + ne + " citations")
         return(citer)
     },
     getDetails: function(paper){

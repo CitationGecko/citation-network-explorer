@@ -1,17 +1,26 @@
+window.addEventListener('newSeed', function(e){
+    occ.addSeed(e.paper)
+})
 
 var occ = {
-    callback: function(responseString, queryType){
-        occ.parseResponse(responseString, queryType);
-        refreshGraphics();
+    addSeed: function(paper){
+        if(paper.occID){
+            occ.citedByID(paper.occID)
+        } else if(paper.DOI){
+            occ.citedByDOI(paper.DOI)
+        }
     },
-    sendQuery: function(query,callback){
+    sendQuery: function(query){
 
         let url = 'http://opencitations.net/sparql?query=' + escape(query.string);
-        var res = fetch(url,{
+        fetch(url,{
             headers: {
                 'Accept': 'application/sparql-results+json'
             }
-        }).then((resp) => resp.text()).then((data)=>callback(data,query.type));
+        }).then((resp) => resp.text()).then((data)=> {
+            occ.parseResponse(data, query.type);
+            refreshGraphics();
+        });
 
          console.log('querying OCC...');
     },
@@ -138,46 +147,32 @@ var occ = {
         for(let i=0;i<newEdges.length;i++){
             let edge = newEdges[i]
             var cited = {
-                ID: uniqueID,
                 Author: null,
                 DOI: edge.citedDOI ? edge.citedDOI.value : null,
                 Title: edge.citedTitle ? edge.citedTitle.value : null,
                 Year: edge.citedYear ? edge.citedYear.value : null,
                 occID: edge.citedID.value,
-                seed: queryType=='refs'
+                seed: (queryType=='refs')
             }
-            let existingRecord = matchPapers(cited,Papers); // Search for existing paper
-            if(!existingRecord){//If it doesn't exist add it
-                oaDOI.accessQuery(cited)
-                Papers.push(cited);np++;uniqueID++
-            }else{//If it does merge it
-                cited = mergePapers(existingRecord,cited);
-            }
+            cited = addPaper(cited);
             if(!edge.citingID){break}
             var citer = {
-                ID: uniqueID,
                 Author: null,
                 DOI: edge.citingDOI ? edge.citingDOI.value : null,
                 Title: edge.citingTitle ? edge.citingTitle.value : null,
                 Year: edge.citingYear ? edge.citingYear.value : null,
                 occID: edge.citingID.value,
-                seed: queryType=='citedBy'
+                seed: (queryType=='citedBy')
             }
-            existingRecord = matchPapers(citer,Papers); // Search for existing paper
-            if(!existingRecord){//If it doesn't exist add it
-                oaDOI.accessQuery(citer)
-                Papers.push(citer);np++;uniqueID++
-            }else{//If it does merge it
-                citer = mergePapers(existingRecord,citer);
-            };
+            citer = addPaper(cited);
             let newEdge = {
                 source: citer,
                 target: cited,
-                origin: 'occ',
+                occ: true,
                 hide: false
             };
-            if(Edges.filter(function(e){return e.source == newEdge.source & e.target == newEdge.target}).length == 0){Edges.push(newEdge);ne++}
+            addEdge(newEdge);ne++
         }
-        console.log(np + " papers and " + ne + " edges added from OCC")
+        console.log('OCC found ' + ne + " citations")
     }
 }

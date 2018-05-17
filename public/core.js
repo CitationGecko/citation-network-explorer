@@ -1,7 +1,6 @@
 var Papers = []  //Array of paper objects with bibliographic information for each paper 
 var Edges = [] //Array of edge objects, each is a pair of paper objects (source and target).
 
-var uniqueID = 0; //Hacky implementation to give a unique ID for each paper as it is added based on the order in which they are added.
 var doiQuery; //Place holder for the user input field.
 var titleQuery; //Place holder for the user input field.
 
@@ -15,57 +14,34 @@ var titleInput = document.querySelector("#titleInput").addEventListener("input",
     titleQuery = this.value;
 });
 
-//Importing the DEMO bibtex
-function importExampleBibTex(){
-    xmlhttp = new XMLHttpRequest();
-    xmlhttp.open('GET', window.location.href+'examples/exampleBibTex.bib', true); 
-    xmlhttp.setRequestHeader('Content-type', 'text/plain');
-    // Set up callback to get the response asynchronously.
-    xmlhttp.onreadystatechange = function() {
-      if(this.readyState == 4) {
-        if(this.status == 200) {
-            // Do something with the results
-            console.log(this.responseText);
-            var papers = bibtexParse.toJSON(this.responseText);
-            for(let i=0;i<papers.length;i++){
-                if(papers[i].entryTags.doi){
-                    addSeedFromDOI(papers[i].entryTags.doi);    
-                };
-            };
-            document.getElementById('uploadBibTexModal').style.display = "none";
-        }else{
-            // Some kind of error occurred.
-            alert("Error: " + this.status + " " + this.responseText);
-        };
-      };
-    };
-    // Send the query to the endpoint.
-    xmlhttp.send();
-};
+function addPaper(paper){
+    let match = matchPapers(paper,Papers)
+    if(!match){
+        paper.ID = Papers.length;
+        Papers.push(paper)
+    } else {
+        paper = merge(match,paper)
+    }
+    return(paper)
+}
 
-//Importing user uploaded Bibtex
-document.getElementById('files').addEventListener('change', handleFileSelect, false);
-function handleFileSelect(evt) {
-    let files = evt.target.files; // FileList object
-    for (var i = 0, f; f = files[i]; i++) {
-        var reader = new FileReader();
-        reader.onload = function(e){
-            var papers = bibtexParse.toJSON(e.target.result);
-            if(papers.filter(function(p){
-                return p.entryTags.doi;
-            }).length==0){
-                alert("We couldn't find any DOIs in the BibTex you uploaded please check your export settings");
-            };
-            for(let i=0;i<papers.length;i++){
-                if(papers[i].entryTags.doi){
-                    addSeedFromDOI(papers[i].entryTags.doi);             
-                }; 
-            };
-        };
-        reader.readAsText(f);       
+function addEdge(newEdge){
+    let edge = Edges.filter(function(e){
+        return e.source == newEdge.source & e.target == newEdge.target;
+    })
+    if(edge.length==0){
+        Edges.push(newEdge);
+    } else {
+        merge(edge[0],newEdge)
     };
-    document.getElementById('uploadBibTexModal').style.display = "none"; //Hide modal once file selected
-};
+}
+
+function makeSeed(paper){
+    paper.seed = true;
+    let newSeed = new Event('newSeed');
+    newSeed.paper = paper;
+    window.dispatchEvent(newSeed);
+}
 
 //Attempts to add a seed paper from a MAG title search result
 function addSeedFromSearchTable(id,doi){
@@ -73,7 +49,7 @@ function addSeedFromSearchTable(id,doi){
     microsoft.addSeedByID(id);
     //If DOI present query others as well
     if(doi){
-        crossref.queryRefs(doi);
+        crossref.addSeed(doi);
         occ.citedByDOI(doi);
     }
 };
@@ -81,28 +57,10 @@ function addSeedFromSearchTable(id,doi){
 //Add Seed from DOI input
 function addSeedFromDOI(doi){
     //Query CrossRef for DOI and references
-    crossref.queryRefs(doi,true); //second parameter triggers microsoft search after title found by CrossRef
+    crossref.addSeed(doi,true); //second parameter triggers microsoft search after title found by CrossRef
     //Query OCC for citedBy
     occ.citedByDOI(doi);
 };
-
-//Makes an existing paper into a seed paper by searching for refs and citations from all three sources
-function addSeedFromRecord(recordID){
-    var record = Papers.filter(function(p){return(p.ID==recordID)})[0];
-    if(record.MicrosoftID){
-        microsoft.sendQuery(microsoft.citedByQuery(record.MicrosoftID));
-        microsoft.sendQuery(microsoft.refQuery(record.MicrosoftID));
-    }//if it has microsoft id this isn't going to add any new info about the paper
-    if(record.occID){
-        occ.citedByID(record.occID); //if it has occID this isn't going to add any new info about the paper
-    }else if(record.DOI){
-        occ.citedByDOI(record.DOI); //this could add Title, author, year info about the paper
-    }
-    if(record.DOI){
-        crossref.queryRefs(record.DOI);
-    } //this could add Title, author, year info about the paper
-    
-}
 
 //For a new paper this function tries to find a match in the existing database
 function matchPapers(paper,Papers){
@@ -119,20 +77,24 @@ function matchPapers(paper,Papers){
     };
     if(!match && paper.Title && paper.Author){
         match = Papers.filter(function(p){
-            return (p.Title.toLowerCase()==paper.Title.toLowerCase()) && (paper.Author.toLowerCase()==(p.Author ? p.Author.toLowerCase() : null))
+            if(p.Title){
+                return (p.Title.toLowerCase()==paper.Title.toLowerCase()) && (paper.Author.toLowerCase()==(p.Author ? p.Author.toLowerCase() : null))
+            } 
         })[0]; 
     };  
     return(match);  
 };
 
-//Given two paper objects that are deemed to be matching, this merges the info in the two.
-function mergePapers(oldrecord,newrecord){
+//Given two paper/edge objects that are deemed to be matching, this merges the info in the two.
+function merge(oldrecord,newrecord){
     for(i in newrecord){
         if(oldrecord[i]==undefined || oldrecord[i]==null ){
             oldrecord[i]=newrecord[i];
         }
     }
-    oldrecord.seed = newrecord.seed ? newrecord.seed : oldrecord.seed ;//If either record is marked as a seed make the merged result a seed.
+    if(newrecord.seed){
+        oldrecord.seed = true;
+    };//If either record is marked as a seed make the merged result a seed.
     return(oldrecord)
 };
 
@@ -168,8 +130,7 @@ function updateMetrics(Papers,Edges){
 }
 
 //Removes seed status of a paper, deletes all edges to non-seeds and all now unconnected papers
-function deleteSeed(ID){
-    var paper = Papers.filter(function(p){return p.ID==ID})[0];
+function deleteSeed(paper){
     //Set seed status to false
     paper.seed = false; 
     //Delete edges connecting the paper to non-seeds
@@ -180,10 +141,7 @@ function deleteSeed(ID){
     Papers = Papers.filter(function(p){
         return (Edges.map(function(e){return e.source}).includes(p) || Edges.map(function(e){return e.target}).includes(p));         
     })
-    //Edges = Edges.filter(function(e){return Papers.includes(e.source) & Papers.includes(e.target)})
     refreshGraphics();
-    //Change add Seed button back
-    //$('#add'+paper.MicrosoftID).html("<button  class='btn btn-info btn-sm' onclick = addSeedFromSearchTable('"+paper.MicrosoftID+"','"+paper.DOI+"')>Add</button>")
 };
 
 function refreshGraphics(){

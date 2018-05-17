@@ -13,10 +13,6 @@
 
         <script defer src="https://use.fontawesome.com/releases/v5.0.4/js/all.js"></script>
 
-        <!--DataTables-->
-        <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
-        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.15/datatables.min.css"/>
-        <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.15/datatables.min.js"></script>
         <!--D3-->
         <script src="https://d3js.org/d3.v4.js"></script>
     </head>
@@ -80,8 +76,7 @@
                     <p class='paper-title'></p>
                     <p class='doi-link'></p>
                     <p class='author-year'></p>
-                    <div class='add-seed'></div>
-                </div>
+                    <button type='button' class='add-seed'>Make Seed</button>
             </div>
         </div>
 
@@ -154,18 +149,8 @@
         <div id='titleInputModal' class='modal'>
                 <div id='titleSearchResults' class='modal-content'>
                     <i class='fa fa-search'></i>Search by Title: <input id='titleInput' type="text"><div id='titleInputLoader' class='loader'></div></input>
-                    <div id='table-container'>
-                        <table id="searchTable" class="table">
-                            <thead>
-                                <th>Title</th>
-                                <th>Year</th>
-                                <th>DOI</th>
-                                <th></th>
-                            </thead>
-                            <tbody>
-                                <tr></tr>
-                            </tbody>
-                        </table>
+                    <div id='title-search-container'>
+                        
                     </div>
                 </div>
         </div>
@@ -191,7 +176,7 @@
         <script src = "data-sources/occ.js"></script>
         <script src = "data-sources/microsoft.js"></script>
         <script src = "data-sources/oaDOI.js"></script>
-        <script src = "integrations/zotero.js"></script>
-
+        <script src = "import-modules/bibTex.js"></script>
+        <script src = "import-modules/zotero.js"></script>
     </body>
 </html>

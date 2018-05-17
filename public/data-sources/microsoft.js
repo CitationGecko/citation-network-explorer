@@ -1,7 +1,47 @@
 
 //Functions for sending requests to, and parsing responses from, the Microsoft Academic Graph API
+
+window.addEventListener('newSeed', function(e){
+    microsoft.addSeed(e.paper)
+})
+
+window.addEventListener('seedUpdated', function(e){
+    if(!e.paper.MicrosoftID){
+        microsoft.addSeed(e.paper)
+    }
+})
+
 MicrosoftStatus = 'good'; // Once it switches to bad after first failed request it will stop alerting the user when requests fail.
+
 var microsoft = {
+    addSeed: function(paper){  
+        if(paper.MicrosoftID){
+            microsoft.sendQuery(microsoft.citedByQuery(paper.MicrosoftID));       
+            microsoft.sendQuery(microsoft.refQuery(paper.MicrosoftID));
+        } else if(paper.Title){
+            var request = microsoft.titleQuery(paper.Title)       
+            microsoft.apiRequest(request,function(response){
+                var response = JSON.parse(response)
+                //check for DOI matches
+                var match = response.Results.filter(function(p){
+                    if(p[0].DOI){
+                        return (p[0].DOI.toLowerCase()==paper.DOI.toLowerCase())
+                    } else {
+                        return(false)
+                    }
+                })[0];
+                if(match){
+                    var ID = response.Results[0][0].CellID;               
+                    microsoft.sendQuery(microsoft.citedByQuery(ID))
+                    microsoft.sendQuery(microsoft.refQuery(ID))
+                } else {
+                    /* alert("Papers with similar titles found, please choose from table...")
+                    updateSearchTable(response.Results.map(function(p){return p[0];}))
+                 */
+                }
+            })
+        }
+    },
     apiRequest: function(request,callback){ //Send a generic request to the MAG api
         xmlhttp = new XMLHttpRequest();
         //If no API key is given the request will be sent to an intermediate server which inserts the API and forwards it on to Microsoft.
@@ -74,51 +114,25 @@ var microsoft = {
             }
         }
     },
-    titleMatch: function(paper){
-        var request = microsoft.titleQuery(paper.Title)       
-        microsoft.apiRequest(request,function(response){
-            var response = JSON.parse(response)
-            //check for DOI matches
-            var match = response.Results.filter(function(p){
-                if(p[0].DOI){
-                    return (p[0].DOI.toLowerCase()==paper.DOI.toLowerCase())
-                } else {
-                    return(false)
-                }
-            })[0];
-            if(match){
-                var ID = response.Results[0][0].CellID;               
-                microsoft.sendQuery(microsoft.citedByQuery(ID))
-                microsoft.sendQuery(microsoft.refQuery(ID))
-            } else {
-                /* alert("Papers with similar titles found, please choose from table...")
-                updateSearchTable(response.Results.map(function(p){return p[0];}))
-                $('#b').removeClass('active')
-                $('#a').addClass('active') */
-            }
-        })
-    },
     titleSearch: function(query){
         var request = microsoft.titleQuery(query)
-        $('#titleSearchButton').html('Searching...')
+        d3.select('#titleSearchButton').html('Searching...')
         microsoft.apiRequest(request,function(response){
             var response = JSON.parse(response)
-            updateSearchTable(response.Results.map(function(p){return p[0];}))
-            $('#titleSearchButton').html('Search for Seed Papers')
-            $('#b').removeClass('active')
-            $('#a').addClass('active')
+            updateSearchTable(response.Results.map(function(p){return p[0];}),1,true)
+            d3.select('#titleSearchButton').html('Search for Seed Papers')
+            d3.select('#b').attr('class','inactive')
+            d3.select('#a').attr('class','active')
         })
     },
     sendQuery: function(request){
         microsoft.apiRequest(request,function(response){
             var response = JSON.parse(response)
                 if(response.Results.length){
-                    $('#add'+request.toSend.paper.id[0]).html("<button class='btn btn-success btn-sm'><span class='glyphicon glyphicon-ok'></span></button>")
                     microsoft.parseResponse(response,request); //add Papers found by request to Papers array
                     refreshGraphics();
                 } else {
                     console.log("No connecting papers found");
-                    $('#add'+request.toSend.paper.id[0]).html("<button class='btn btn-warning btn-sm'><span class='glyphicon glyphicon-exclamation-sign'></span></button>")
                 }
         })
     },
@@ -127,7 +141,6 @@ var microsoft = {
         var ne = 0; //For bean counting only
         var seedpaper = response.Results[0][0];
         seedpaper = {           
-            ID: uniqueID,
             Title: seedpaper.OriginalTitle,
             Author: null,
             DOI: seedpaper.DOI,
@@ -135,17 +148,10 @@ var microsoft = {
             MicrosoftID: seedpaper.CellID,
             seed: true
         }
-        let existingRecord = matchPapers(seedpaper,Papers); // Search for existing paper
-        if(!existingRecord){
-            oaDOI.accessQuery(seedpaper)
-            Papers.push(seedpaper);np++;uniqueID++
-        }else{
-            seedpaper = mergePapers(existingRecord,seedpaper);
-        }
+        seedpaper = addPaper(seedpaper);
         for (let i=0; i < response.Results.length; i++) {
             var connection = response.Results[i][1];
             connection = {
-                ID: uniqueID,
                 Title: connection.OriginalTitle,
                 Author: null,
                 DOI: connection.DOI,
@@ -153,38 +159,24 @@ var microsoft = {
                 MicrosoftID: connection.CellID,
                 seed: false
             }
-            let existingRecord = matchPapers(connection,Papers); // Search for existing paper
-            if(!existingRecord){
-                oaDOI.accessQuery(connection)
-                Papers.push(connection);np++;uniqueID++
-            }else{
-                connection= mergePapers(existingRecord,connection);
-            } //for seed make sure seed status is set to true
+            connection = addPaper(connection);
             //Define the edges depending on request
             var edges =[];
             switch(request.type){
                 case 'ref':
-                    edges = [{"source": seedpaper, "target": connection, "origin":"mag"}];
+                    edges = [{"source": seedpaper, "target": connection, "MAG":true, hide: false}];
                     break;
                 case 'citedBy':
-                    edges = [{"source": connection, "target": seedpaper,"origin":"mag"}];
+                    edges = [{"source": connection, "target": seedpaper,"MAG":true, hide: false}];
                     break;    
             }
+
             edges.forEach(function(edge){   
-                if(Edges.filter(function(e){
-                    return e.source.ID == edge.source.ID & e.target.ID == edge.target.ID
-                }).length == 0){
-                    Edges.push(edge);ne++
-                }
-                edge.hide=false
+                addEdge(edge);
+                ne++; //bean counting
             });
         }
-        console.log(np + " papers and " + ne + " edges added from MAG")
+        console.log('MAG found '  + ne + " citations")
     },
-    addSeedByID: function(ID){      
-        $('#add'+ID).html("<button  class='btn btn-info btn-sm'><div class='loader'</div></button>")
-        microsoft.sendQuery(microsoft.citedByQuery(ID));       
-        microsoft.sendQuery(microsoft.refQuery(ID));
-    }
 }
 

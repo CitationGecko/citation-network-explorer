@@ -5,7 +5,7 @@ document.getElementById('helpButton').onclick = function(){
 }
 //For DEMO button
 document.getElementById('demoButton').onclick = function(){
-    importExampleBibTex()
+    bibtex.importExampleBibTex()
 }
 
 //For paper details panel switching. 
@@ -37,7 +37,6 @@ document.getElementById('connectedTableButton').onclick = function(){
 
     plotResultsTable('seedsCitedBy',1);
 }
-
 
 function plotTimeGraph(){
 
@@ -111,7 +110,7 @@ document.getElementById('colorByOA').onclick = function(){
 
     document.getElementById("doiInput").onkeydown = function(event){
         if (event.keyCode == 13){   
-            addSeedFromDOI(doiQuery)
+            makeSeed(addPaper({DOI:doiQuery}))
             document.getElementById('doiInputLoader').style.display = 'inline-block';
         }
     }
@@ -138,13 +137,29 @@ function updateSeedTable(){
     var seedpapers = Papers.filter(function(p){return p.seed});
     var paperbox = d3.select('#seed-paper-container').selectAll('.outer-paper-box')
                     .data(seedpapers,function(d){return d.ID})
+                    
     paperbox.exit().remove()
+
+    oldpapers = d3.select('#seed-paper-container').selectAll('.outer-paper-box').select('.inner-paper-box')
+    oldpapers.select('.paper-title').html(function(p){
+        return(p.Title)
+    })
+    oldpapers.select('.metric').html(function(p){
+        return(p[metric]?p[metric]:'0')
+    })
+    oldpapers.select('.author-year').html(function(p){
+        if(p.Author) {return p.Author+' '+p.Year}else{return(p.Year)}
+    })
+    oldpapers.select('.doi-link').html(function(p){
+        return("<a target='_blank' href='https://doi.org/"+p.DOI+"'>"+p.DOI+"</a>")
+    })
+
     paperbox = paperbox.enter()
         .append('div')
         .attr('class','outer-paper-box panel')
     paperbox.append('button').attr('class','delete-seed')
         .html('<i class="fa fa-times" color="red" aria-hidden="true"></i>')
-        .attr('onclick',function(p){return('deleteSeed('+p.ID+')')})
+        .on('click',function(p){deleteSeed(p)})
     paperbox = paperbox.append('div')
         .attr('class','inner-paper-box panel')
         .on('click',forceGraph.highlightNode)
@@ -174,29 +189,23 @@ document.getElementById('connectedControls').getElementsByTagName('select')[0].o
 function updateResultsTable(metric){
     
     var nonSeeds = Papers.filter(function(p){return(!p.seed)})
-
     paperbox = d3.select('#connected-paper-container').selectAll('tr')
                      .data(nonSeeds,function(d){return d.ID});
                      //.sort((a,b)=>b.seedsCitedBy<a.seedsCitedBy)
-
+    paperbox.exit().remove();
     papers = d3.select('#connected-paper-container').selectAll('tr').select('td').select('.inner-paper-box')
-    
     papers.select('.paper-title').html(function(p){
         return(p.Title)
     })
-
     papers.select('.metric').html(function(p){
         return(p[metric]?p[metric]:'0')
     })
-
     papers.select('.author-year').html(function(p){
         if(p.Author) {return p.Author+' '+p.Year}else{return(p.Year)}
     })
-
     papers.select('.doi-link').html(function(p){
         return("<a target='_blank' href='https://doi.org/"+p.DOI+"'>"+p.DOI+"</a>")
     })
-    
 }
 
 function sortResultsTable(metric){
@@ -236,42 +245,36 @@ function sortResultsTable(metric){
 
 function plotResultsTable(metric,pageNum,replot){
     let pageSize = 100;
-    var nonSeeds = Papers.filter(function(p){return(!p.seed)}).sort((a,b)=>b[metric]-a[metric]).slice(0,pageNum*pageSize)
+    let nonSeeds = Papers.filter(function(p){return(!p.seed)}).sort((a,b)=>b[metric]-a[metric]).slice(0,pageNum*pageSize)
     //Select all non-seeds and sort by metric.
     //Clear old table
     if(replot){
-        var paperbox = d3.select('#connected-paper-container').selectAll('.outer-paper-box').remove();
+        d3.select('#connected-paper-container').selectAll('.outer-paper-box').remove();
     }
-    //
-    paperbox = d3.select('#connected-paper-container').selectAll('.outer-paper-box')
+    let paperboxes = d3.select('#connected-paper-container').selectAll('.outer-paper-box')
                      .data(nonSeeds,function(d){return d.ID});
                      //.sort((a,b)=>b.seedsCitedBy<a.seedsCitedBy)
-    paperbox.exit().remove();
+    paperboxes.exit().remove();
 
-    papers = d3.select('#connected-paper-container').selectAll('.outer-paper-box').select('.inner-paper-box')
-    
-    papers.select('.paper-title').html(function(p){
+    oldpapers = d3.select('#connected-paper-container').selectAll('.outer-paper-box').select('.inner-paper-box')
+    oldpapers.select('.paper-title').html(function(p){
         return(p.Title)
     })
-
-    papers.select('.metric').html(function(p){
+    oldpapers.select('.metric').html(function(p){
         return(p[metric]?p[metric]:'0')
     })
-
-    papers.select('.author-year').html(function(p){
+    oldpapers.select('.author-year').html(function(p){
         if(p.Author) {return p.Author+' '+p.Year}else{return(p.Year)}
     })
-
-    papers.select('.doi-link').html(function(p){
+    oldpapers.select('.doi-link').html(function(p){
         return("<a target='_blank' href='https://doi.org/"+p.DOI+"'>"+p.DOI+"</a>")
     })
-
-    newpapers = paperbox.enter()
+    newpapers = paperboxes.enter()
         .append('div')
         .attr('class','outer-paper-box panel')
     newpapers.append('button').attr('class','delete-seed')
         .html('<i class="fa fa-plus" color="green" aria-hidden="true"></i>')
-        .attr('onclick',function(p){return('addSeedFromRecord('+p.ID+')')})
+        .on('click',function(p){makeSeed(p)})
     newpapers = newpapers.append('div')
         .attr('class','inner-paper-box panel')
         .on('click',forceGraph.highlightNode)
@@ -299,12 +302,55 @@ function plotResultsTable(metric,pageNum,replot){
    
 }
 
-function updateSearchTable(results){
-     $('#searchTable').DataTable().clear();
-     $('#searchTable').DataTable().rows.add(results).draw();   
-     document.getElementById('table-container').style.display = "block";
-     document.getElementById('titleSearchResults').style.width = '70%';
-     document.getElementById('searchTable').style.width = '100%';
+function updateSearchTable(results,pageNum,replot){
+    
+    let pageSize=50;
+    papers = results.slice(0,pageNum*pageSize);
+ 
+    document.getElementById('title-search-container').style.display = "block";
+    document.getElementById('titleSearchResults').style.width = '70%';
+
+    if(replot){
+        d3.select('#title-search-container').selectAll('.outer-paper-box').remove();
+    }
+    let paperboxes = d3.select('#title-search-container').selectAll('.outer-paper-box')
+                     .data(papers,function(d){return d.CellID});
+                     //.sort((a,b)=>b.seedsCitedBy<a.seedsCitedBy)
+    newpapers = paperboxes.enter()
+        .append('div')
+        .attr('class','outer-paper-box panel')
+    newpapers.append('button').attr('class','delete-seed')
+        .html('<i class="fa fa-plus" color="green" aria-hidden="true"></i>')
+        .on('click',function(p){
+            let newSeed = {
+                Title: p.OriginalTitle,
+                Author: null,
+                DOI: p.DOI,
+                Year: p.PublishYear,
+                MicrosoftID: p.CellID,
+                seed: true
+            };
+            makeSeed(addPaper(newSeed));
+        })
+    newpapers = newpapers.append('div')
+        .attr('class','inner-paper-box panel')
+    newpapers.append('p').attr('class','paper-title')
+        .html(function(p){
+            return(p.OriginalTitle)
+        })
+    newpapers.append('p').attr('class','author-year')
+        .html(function(p){
+            if(p.Author) {return p.Author+' '+p.Year}else{return(p.Year)}
+        })
+    newpapers.append('p').attr('class','doi-link')
+        .html(function(p){
+            return("<a target='_blank' href='https://doi.org/"+p.DOI+"'>"+p.DOI+"</a>")
+        })
+
+    d3.select('#moreButton2').remove();
+    d3.select('#title-search-container').append('div')
+        .html('<button id="moreButton2" class = "button1">more...</button>')
+        .on('click',function(){updateSearchTable(results,(pageNum+1))})
  }
 
  
@@ -315,23 +361,10 @@ function updateInfoBox(selected){
     paperbox.select('.paper-title').html(p.Title)
     paperbox.select('.author-year').html((p.Author ? p.Author:'')+' '+p.Year)
     paperbox.select('.doi-link').html(p.DOI ? ("<a target='_blank' href='https://doi.org/"+p.DOI+"'>"+p.DOI+"</a>"): '')
-    var button = p.seed ? '' : "<button type='button' onclick='addSeedFromRecord(forceGraph.selectednode.ID)'>Make Seed</button>"
-    paperbox.select('.add-seed').html(button)
+    paperbox.select('.add-seed').html(p.seed ? 'Delete Seed':'Make Seed')
+            .on('click', function(){p.seed ? deleteSeed(p) : makeSeed(p)})
     forceGraph.selectednode = p;
 }
 
- $(document).ready(function() {
-    $('#searchTable').DataTable({
-        data: [],
-        columns: [
-        { "data": "OriginalTitle" },
-        { "data": "PublishYear" },
-        { "data": "DOI","render": function(data,type,row){return "<a target='_blank' href='https://doi.org/"+data+"'>"+data+"</a>"}},
-        { "data": "CellID","render": function(data,type,row){
-            return "<button  class='btn btn-info btn-sm' onclick = addSeedFromSearchTable('"+data+"','"+row.DOI+"')>Add</button>"
-            }
-        }
-    ]});
-})
 
  
