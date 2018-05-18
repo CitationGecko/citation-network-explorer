@@ -1,18 +1,34 @@
 
-var crossref = {
+newDataModule('crossref', {
     //Sends a query (queryStr) to endpoint and executes callback on response
-    addSeed: function(paper){
-        console.log("querying crossRef for references...")
-        if(paper.DOI){
-            CrossRef.work(paper.DOI,function(err,res){
-                console.log("response from CrossRef!")
-                let seed = crossref.parseResponse(res);
-                updateSeed(seed);//Could put in merge function instead...          
-                refreshGraphics();         
-            });  
+    eventResponses: {
+
+        newSeed: function(paper){
+            console.log("querying crossRef for references...")
+            if(paper.DOI){
+                CrossRef.work(paper.DOI,function(err,res){
+                    console.log("response from CrossRef!")
+                    let seed = crossref.parseResponse(res);
+                    triggerEvent('seedUpdate',seed); //Could put in merge function instead...
+                    refreshGraphics();         
+                });  
+            }    
+        },   
+        newPaper: function(paper){
+            if(paper.DOI){
+                CrossRef.work(paper.DOI,function(err,response){          
+                    paper.Title = response.title[0];
+                    paper.Author= response.author[0].family;
+                    paper.Month= response.created['date-parts'][0][1];
+                    paper.Year= response.created['date-parts'][0][0];
+                    paper.Journal= response['container-title'][0];
+                    paper.CitationCount= response['is-referenced-by-count'];
+                    updateResultsTable(forceGraph.sizeMetric);
+                });
+            };  
         }
-          
-    },   
+    },
+    
     parseResponse: function(response){
         let ne = 0; //For bean counting only
         let citer = {
@@ -42,9 +58,7 @@ var crossref = {
                 seed: false
             };
             //if you have DOI query crossRef for more info.
-            if(cited.DOI){
-                crossref.getDetails(cited)
-            };
+            
             cited = addPaper(cited);
             let newEdge = {
                 source: citer,
@@ -57,18 +71,5 @@ var crossref = {
         };   
         console.log('CrossRef found ' + ne + " citations")
         return(citer)
-    },
-    getDetails: function(paper){
-        CrossRef.work(paper.DOI,function(err,response){          
-            paper.Title = response.title[0];
-            paper.Author= response.author[0].family;
-            paper.Month= response.created['date-parts'][0][1];
-            paper.Year= response.created['date-parts'][0][0];
-            paper.Journal= response['container-title'][0];
-            paper.CitationCount= response['is-referenced-by-count'];
-            updateResultsTable(forceGraph.sizeMetric);
-        });
     } 
-};
-
-addSeedFunctions.push(crossref.addSeed)
+})

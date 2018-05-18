@@ -42,7 +42,6 @@ function plotTimeGraph(){
 
     document.getElementById('timelineView').style.display = 'block';
     document.getElementById('networkView').style.display = 'none';
-
     timeGraph.update();
 }
 
@@ -137,7 +136,7 @@ function updateSeedTable(){
     var seedpapers = Papers.filter(function(p){return p.seed});
     var paperbox = d3.select('#seed-paper-container').selectAll('.outer-paper-box')
                     .data(seedpapers,function(d){return d.ID})
-                    
+
     paperbox.exit().remove()
 
     oldpapers = d3.select('#seed-paper-container').selectAll('.outer-paper-box').select('.inner-paper-box')
@@ -274,7 +273,9 @@ function plotResultsTable(metric,pageNum,replot){
         .attr('class','outer-paper-box panel')
     newpapers.append('button').attr('class','delete-seed')
         .html('<i class="fa fa-plus" color="green" aria-hidden="true"></i>')
-        .on('click',function(p){makeSeed(p)})
+        .on('click',function(p){
+            triggerEvent('newSeed',p)
+        })
     newpapers = newpapers.append('div')
         .attr('class','inner-paper-box panel')
         .on('click',forceGraph.highlightNode)
@@ -330,7 +331,8 @@ function updateSearchTable(results,pageNum,replot){
                 MicrosoftID: p.CellID,
                 seed: true
             };
-            makeSeed(addPaper(newSeed));
+            addPaper(newSeed);
+            triggerEvent('newSeed',newSeed);      
         })
     newpapers = newpapers.append('div')
         .attr('class','inner-paper-box panel')
@@ -351,9 +353,8 @@ function updateSearchTable(results,pageNum,replot){
     d3.select('#title-search-container').append('div')
         .html('<button id="moreButton2" class = "button1">more...</button>')
         .on('click',function(){updateSearchTable(results,(pageNum+1))})
- }
+}
 
- 
 function updateInfoBox(selected){
     p = selected.__data__;
     document.getElementById('selected-paper-box').style.display ='block';
@@ -362,7 +363,7 @@ function updateInfoBox(selected){
     paperbox.select('.author-year').html((p.Author ? p.Author:'')+' '+p.Year)
     paperbox.select('.doi-link').html(p.DOI ? ("<a target='_blank' href='https://doi.org/"+p.DOI+"'>"+p.DOI+"</a>"): '')
     paperbox.select('.add-seed').html(p.seed ? 'Delete Seed':'Make Seed')
-            .on('click', function(){p.seed ? deleteSeed(p) : makeSeed(p)})
+            .on('click', function(){p.seed ? deleteSeed(p) : triggerEvent('newSeed',p)})
     forceGraph.selectednode = p;
 }
 

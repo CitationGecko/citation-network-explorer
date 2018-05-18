@@ -1,11 +1,53 @@
+newDataModule('occ', {
 
-var occ = {
-    addSeed: function(paper){
-        if(paper.occID){
-            occ.citedByID(paper.occID)
-        } else if(paper.DOI){
-            occ.citedByDOI(paper.DOI)
+    eventResponses:{
+        newSeed: function(paper){
+            if(paper.occID){
+                occ.citedByID(paper.occID)
+            } else if(paper.DOI){
+                occ.citedByDOI(paper.DOI)
+            }
+        },
+        seedUpdate: function(paper){
+            if(!paper.occID & paper.DOI){
+                occ.citedByDOI(paper.DOI)
+            }
         }
+    },
+    parseResponse: function(responseString, queryType){
+        var response = JSON.parse(responseString);
+        var ne = 0; //For bean counting only
+        var newEdges = response.results.bindings;
+        for(let i=0;i<newEdges.length;i++){
+            let edge = newEdges[i]
+            var cited = {
+                Author: null,
+                DOI: edge.citedDOI ? edge.citedDOI.value : null,
+                Title: edge.citedTitle ? edge.citedTitle.value : null,
+                Year: edge.citedYear ? edge.citedYear.value : null,
+                occID: edge.citedID.value,
+                seed: (queryType=='refs')
+            }
+            cited = addPaper(cited);
+            if(!edge.citingID){break}
+            var citer = {
+                Author: null,
+                DOI: edge.citingDOI ? edge.citingDOI.value : null,
+                Title: edge.citingTitle ? edge.citingTitle.value : null,
+                Year: edge.citingYear ? edge.citingYear.value : null,
+                occID: edge.citingID.value,
+                seed: (queryType=='citedBy')
+            }
+            citer = addPaper(citer);
+            let newEdge = {
+                source: citer,
+                target: cited,
+                occ: true,
+                hide: false
+            };
+            addEdge(newEdge);ne++
+        }
+        console.log('OCC found ' + ne + " citations")
     },
     sendQuery: function(query){
 
@@ -136,46 +178,4 @@ var occ = {
         }';
         occ.sendQuery(query, occ.callback);
     },
-    parseResponse: function(responseString, queryType){
-        var response = JSON.parse(responseString);
-        var ne = 0; //For bean counting only
-        var newEdges = response.results.bindings;
-        for(let i=0;i<newEdges.length;i++){
-            let edge = newEdges[i]
-            var cited = {
-                Author: null,
-                DOI: edge.citedDOI ? edge.citedDOI.value : null,
-                Title: edge.citedTitle ? edge.citedTitle.value : null,
-                Year: edge.citedYear ? edge.citedYear.value : null,
-                occID: edge.citedID.value,
-                seed: (queryType=='refs')
-            }
-            cited = addPaper(cited);
-            if(!edge.citingID){break}
-            var citer = {
-                Author: null,
-                DOI: edge.citingDOI ? edge.citingDOI.value : null,
-                Title: edge.citingTitle ? edge.citingTitle.value : null,
-                Year: edge.citingYear ? edge.citingYear.value : null,
-                occID: edge.citingID.value,
-                seed: (queryType=='citedBy')
-            }
-            citer = addPaper(citer);
-            let newEdge = {
-                source: citer,
-                target: cited,
-                occ: true,
-                hide: false
-            };
-            addEdge(newEdge);ne++
-        }
-        console.log('OCC found ' + ne + " citations")
-    }
-}
-
-addSeedFunctions.push(occ.addSeed);
-updateSeedFunctions.push(function(paper){
-    if(!paper.occID){
-        occ.addSeed(paper)
-    }
 })

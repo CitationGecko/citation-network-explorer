@@ -1,11 +1,13 @@
 
-var gecko = {
+newDataModule('gecko', {
 
-    addSeed: function(paper){
-        let url = '/api/v1/getCitedBy?doi='+paper.DOI
-        fetch(url).then(resp=>resp.json()).then(data => {
-            gecko.parseResponse(data,paper);
-        })
+    eventResponses:{
+        newSeed: function(paper){
+            let url = '/api/v1/getCitedBy?doi='+paper.DOI
+            fetch(url).then(resp=>resp.json()).then(data => {
+                gecko.parseResponse(data,paper);
+            })
+        },
     },
     parseResponse: function(response,paper){
         let ne = 0; //For bean counting only
@@ -26,8 +28,6 @@ var gecko = {
             ne++;//bean counting
         };   
         console.log('GeckoDB found ' + ne + " citations")
-        return(citer)
+        return(cited)
     }
-}
-
-addSeedFunctions.push(gecko.addSeed)
+})

@@ -1,44 +1,71 @@
 var Papers = []  //Array of paper objects with bibliographic information for each paper 
 var Edges = [] //Array of edge objects, each is a pair of paper objects (source and target).
 
-var doiQuery; //Place holder for the user input field.
-var titleQuery; //Place holder for the user input field.
-
-//Update request based on doi query inputted by the user.
-var doiInput = document.querySelector("#doiInput").addEventListener("input",function(){
-    doiQuery=this.value;
-});
-
-//Update request based on title query inputted by the user.
-var titleInput = document.querySelector("#titleInput").addEventListener("input", function() {
-    titleQuery = this.value;
-});
-
-//Array for holding functions to run when a new seed is added.
-var addSeedFunctions = [];
-//Array for holding functions to run when a new info on a seed is added.
-var updateSeedFunctions = [];
-
-
-function makeSeed(paper){
-    for(let i=0;i<addSeedFunctions.length;i++){
-        addSeedFunctions[i].call(this,paper)
+//Collection of metric functions to compute for each paper
+var metrics = {  
+    "citedBy": function(paper,Edges){
+        //Count number of times cited in the edges list supplied
+        var count = Edges.reduce(function(n, edge) {return n + (edge.target == paper)},0); //the 0 is the initial value for the reduce function and is needed to coerce booleans to number
+        return count;
+    },
+    "references": function(paper,Edges){
+        //Count number of times a paper cites another paper (in the edge list provided) 
+        var count = Edges.reduce(function(n, edge) {return n + (edge.source == paper)},0);
+        return count;
+    },
+    "seedsCitedBy": function(paper,Edges){
+        //Count number of seed papers that cite the paper.
+        var count = Edges.reduce(function(n, edge) {return n + ((edge.target == paper) && edge.source.seed)},0); //the 0 is the initial value for the reduce function and is needed to coerce booleans to number
+        return count;
+    },
+    "seedsCited": function(paper,Edges){
+        //Count number of seed papers the paper cites. 
+        var count = Edges.reduce(function(n, edge) {return n + ((edge.source == paper) && edge.target.seed)},0);
+        return count;
     }
+};        
+
+//Events are triggered when something interesting happens.
+
+var events = {}; //Object of events comprising an array of methods to run when the event is triggered.
+
+//Function for defining new events.
+function defineEvent(name){
+    events[name] = {};
+    events[name].methods = [];
+}
+//Function for triggering a named event and passing the subject of the event.
+function triggerEvent(name,subject){
+    for(let i=0;i<events[name].methods.length;i++){
+        events[name].methods[i].call(null,subject)
+     }
 }
 
-function updateSeed(paper){
-     for(let i=0;i<updateSeedFunctions.length;i++){
-        updateSeedFunctions[i].call(this,paper)
-     }
- }
+defineEvent('newSeed'); //Event triggered when a new seed is added.
+defineEvent('seedUpdate'); //Event triggered when more info is found on a seed i.e. title or DOI.
+defineEvent('newPaper'); //Event triggered when a new (non-seed) paper is added.
+defineEvent('paperUpdate') //Event trigger when non-seed paper is updated with more info. 
+
+
+//Builds a new data source module.
+function newDataModule(name,methods){
+    window[name] = methods; //add methods of module to there own namespace.
+    for(event in events){
+        if(methods.eventResponses[event]){ 
+            events[event].methods.push(methods.eventResponses[event]); //if module has event response methods add them to the appropriate array.
+        }
+    } 
+}
 
 function addPaper(paper){
     let match = matchPapers(paper,Papers)
     if(!match){
         paper.ID = Papers.length;
         Papers.push(paper)
+        triggerEvent('newPaper',paper)
     } else {
         paper = merge(match,paper)
+        //triggerEvent('paperUpdated',paper) // Ideally only triggers if there is new info.
     }
     return(paper)
 }
@@ -90,30 +117,6 @@ function merge(oldrecord,newrecord){
     return(oldrecord)
 };
 
-//Collection of metric functions to compute for each paper
-var metrics = {  
-    "citedBy": function(paper,Edges){
-        //Count number of times cited in the edges list supplied
-        var count = Edges.reduce(function(n, edge) {return n + (edge.target == paper)},0); //the 0 is the initial value for the reduce function and is needed to coerce booleans to number
-        return count;
-    },
-    "references": function(paper,Edges){
-        //Count number of times a paper cites another paper (in the edge list provided) 
-        var count = Edges.reduce(function(n, edge) {return n + (edge.source == paper)},0);
-        return count;
-    },
-    "seedsCitedBy": function(paper,Edges){
-        //Count number of seed papers that cite the paper.
-        var count = Edges.reduce(function(n, edge) {return n + ((edge.target == paper) && edge.source.seed)},0); //the 0 is the initial value for the reduce function and is needed to coerce booleans to number
-        return count;
-    },
-    "seedsCited": function(paper,Edges){
-        //Count number of seed papers the paper cites. 
-        var count = Edges.reduce(function(n, edge) {return n + ((edge.source == paper) && edge.target.seed)},0);
-        return count;
-    }
-};        
-
 //Recalculates all metrics
 function updateMetrics(Papers,Edges){                   
     for(metric in metrics){
@@ -143,3 +146,16 @@ function refreshGraphics(){
     forceGraph.update(Papers,Edges);
     //timeGraph.update();
 };
+
+var doiQuery; //Place holder for the user input field.
+var titleQuery; //Place holder for the user input field.
+
+//Update request based on doi query inputted by the user.
+var doiInput = document.querySelector("#doiInput").addEventListener("input",function(){
+    doiQuery=this.value;
+});
+
+//Update request based on title query inputted by the user.
+var titleInput = document.querySelector("#titleInput").addEventListener("input", function() {
+    titleQuery = this.value;
+});

@@ -7,7 +7,7 @@ module.exports = function (req, res) {
     return res.json({success: false, error: 'You need to specify the "doi" parameter.'});
   }
 
-  dynamo.getArticlesCitedBy(doi, function (err, data) {
+  dynamo.getArticlesCiting(doi, function (err, data) {
     if (err) {
       return res.json({success: false, error: err});
     }

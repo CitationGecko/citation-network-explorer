@@ -3,34 +3,21 @@
 
 MicrosoftStatus = 'good'; // Once it switches to bad after first failed request it will stop alerting the user when requests fail.
 
-var microsoft = {
-    addSeed: function(paper){  
-        if(paper.MicrosoftID){
-            microsoft.sendQuery(microsoft.citedByQuery(paper.MicrosoftID));       
-            microsoft.sendQuery(microsoft.refQuery(paper.MicrosoftID));
-        } else if(paper.Title){
-            var request = microsoft.titleQuery(paper.Title)       
-            microsoft.apiRequest(request,function(response){
-                var response = JSON.parse(response)
-                //check for DOI matches
-                var match = response.Results.filter(function(p){
-                    if(p[0].DOI){
-                        return (p[0].DOI.toLowerCase()==paper.DOI.toLowerCase())
-                    } else {
-                        return(false)
-                    }
-                })[0];
-                if(match){
-                    var ID = response.Results[0][0].CellID;               
-                    microsoft.sendQuery(microsoft.citedByQuery(ID))
-                    microsoft.sendQuery(microsoft.refQuery(ID))
-                } else {
-                    /* alert("Papers with similar titles found, please choose from table...")
-                    updateSearchTable(response.Results.map(function(p){return p[0];}))
-                 */
-                }
-            })
-        }
+newDataModule('microsoft', {
+    eventResponses:{
+        newSeed: function(paper){  
+            if(paper.MicrosoftID){
+                microsoft.sendQuery(microsoft.citedByQuery(paper.MicrosoftID));       
+                microsoft.sendQuery(microsoft.refQuery(paper.MicrosoftID));
+            } else if(paper.Title){
+               microsoft.titleMatchSearch(paper);
+            }
+        },
+        seedUpdate: function(paper){
+            if(!paper.MicrosoftID){
+                microsoft.titleMatchSearch(paper);
+            }
+        },
     },
     apiRequest: function(request,callback){ //Send a generic request to the MAG api
         xmlhttp = new XMLHttpRequest();
@@ -115,6 +102,29 @@ var microsoft = {
             d3.select('#a').attr('class','active')
         })
     },
+    titleMatchSearch: function(paper){
+        var request = microsoft.titleQuery(paper.Title)       
+        microsoft.apiRequest(request,function(response){
+            var response = JSON.parse(response)
+            //check for DOI matches
+            var match = response.Results.filter(function(p){
+                if(p[0].DOI){
+                    return (p[0].DOI.toLowerCase()==paper.DOI.toLowerCase())
+                } else {
+                    return(false)
+                }
+            })[0];
+            if(match){
+                var ID = response.Results[0][0].CellID;               
+                microsoft.sendQuery(microsoft.citedByQuery(ID))
+                microsoft.sendQuery(microsoft.refQuery(ID))
+            } else {
+                /* alert("Papers with similar titles found, please choose from table...")
+                updateSearchTable(response.Results.map(function(p){return p[0];}))
+             */
+            }
+        })
+    },
     sendQuery: function(request){
         microsoft.apiRequest(request,function(response){
             var response = JSON.parse(response)
@@ -167,11 +177,4 @@ var microsoft = {
         }
         console.log('MAG found '  + ne + " citations")
     },
-}
-
-addSeedFunctions.push(microsoft.addSeed);
-updateSeedFunctions.push(function(paper){
-    if(!paper.MicrosoftID){
-        microsoft.addSeed(paper)
-    }
 })

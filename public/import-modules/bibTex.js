@@ -13,8 +13,9 @@ var bibtex = {
                 };
                 for(let i=0;i<papers.length;i++){
                     if(papers[i].entryTags.doi){
-                        let newSeed = {DOI: papers[i].entryTags.doi}
-                        makeSeed(addPaper(newSeed));             
+                        let newSeed = {DOI: papers[i].entryTags.doi,seed:true}
+                        addPaper(newSeed);
+                        triggerEvent('newSeed',newSeed);             
                     }; 
                 };
             };
@@ -28,8 +29,9 @@ var bibtex = {
         fetch(url).then((resp) => resp.text()).then((data)=> {
                 var papers = bibtexParse.toJSON(data);
                 for(let i=0;i<papers.length;i++){
-                    let newSeed = {DOI: papers[i].entryTags.doi}
-                    makeSeed(addPaper(newSeed));    
+                    let newSeed = {DOI: papers[i].entryTags.doi,seed:true}
+                    addPaper(newSeed);
+                    triggerEvent('newSeed',newSeed);                 
                 };
                 document.getElementById('uploadBibTexModal').style.display = "none";
             }
