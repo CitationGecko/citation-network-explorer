@@ -1,3 +1,16 @@
+//For forceGraph display mode toggling
+document.getElementById('toggleMode').onchange = function(){
+    forceGraph.mode = (forceGraph.mode=='ref') ? 'citedBy' : 'ref';
+    forceGraph.update(Papers,Edges)
+    document.getElementById('connectedControls').getElementsByTagName('select')[0].value = (forceGraph.mode=='ref') ? 'seedsCitedBy' : 'seedsCited';
+    plotResultsTable(forceGraph.sizeMetric,1,true)
+} 
+//For forceGraph threshold slider
+document.getElementById('thresholdInput').oninput = function(){
+    document.querySelector('#thresholdOutput').value = 'Minimum Connections: ' + this.value;
+    forceGraph.threshold(this.value)
+}
+
 let forceGraph = {};
 
 forceGraph.minconnections = 0;

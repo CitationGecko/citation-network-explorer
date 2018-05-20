@@ -1,6 +1,22 @@
 var ZOTERO_USER_ID;
 var ZOTERO_USER_API_KEY;
 
+d3.select('#addSeedModal').select('div').append('button').attr('id','addByZotero')
+    .html("<img id='zotero-square' src='visuals/zotero2.png'>")
+
+var modal = d3.select('body').append('div').attr('id','zoteroModal').attr('class','modal')
+    .append('div').attr('class','modal-content')
+    
+    modal.append('div').html("<img id='zotero-logo' src='visuals/zotero-logo.png'>");
+    modal.append('svg').attr('id','zotero-collections');
+
+d3.select("#addbyZotero").attr('onclick', function() {
+    console.log('clicked')
+    document.getElementById('addSeedModal').style.display = "none";
+    document.getElementById('zoteroModal').style.display = "block";
+    zotero.getCollections();
+})
+
 var zotero = {
 
     getCollections: function(){

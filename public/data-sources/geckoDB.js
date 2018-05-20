@@ -3,7 +3,7 @@ newDataModule('gecko', {
 
     eventResponses:{
         newSeed: function(paper){
-            let url = '/api/v1/getCitedBy?doi='+paper.DOI
+            let url = '/api/v1/getCitingArticles?doi='+paper.DOI
             fetch(url).then(resp=>resp.json()).then(data => {
                 gecko.parseResponse(data,paper);
             })

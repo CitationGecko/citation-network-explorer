@@ -42,7 +42,7 @@ app.use(express.static('public'));
 /**
  * API: Get citedBy from DynamoDB
  */
-app.get('/api/v1/getCitedBy', require('./api/v1/getCitedBy'));
+app.get('/api/v1/getCitedBy', require('./api/v1/getCitingArticles'));
 
 /**
 * API: Proxy to OA DOI

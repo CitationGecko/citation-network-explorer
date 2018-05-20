@@ -56,9 +56,7 @@ newDataModule('crossref', {
                 Year: refs[i].year ? refs[i].year : null ,
                 Journal: refs[i]['journal-title'] ? refs[i]['journal-title'] : null,
                 seed: false
-            };
-            //if you have DOI query crossRef for more info.
-            
+            };            
             cited = addPaper(cited);
             let newEdge = {
                 source: citer,

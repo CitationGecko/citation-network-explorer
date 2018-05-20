@@ -3,10 +3,6 @@ document.getElementById('helpModal').style.display = "block";
 document.getElementById('helpButton').onclick = function(){
     document.getElementById('helpModal').style.display = "block";
 }
-//For DEMO button
-document.getElementById('demoButton').onclick = function(){
-    bibtex.importExampleBibTex()
-}
 
 //For paper details panel switching. 
 d3.select('#seedTableButton').attr('class','table-toggle-on');
@@ -38,25 +34,6 @@ document.getElementById('connectedTableButton').onclick = function(){
     plotResultsTable('seedsCitedBy',1);
 }
 
-function plotTimeGraph(){
-
-    document.getElementById('timelineView').style.display = 'block';
-    document.getElementById('networkView').style.display = 'none';
-    timeGraph.update();
-}
-
-//For forceGraph display mode toggling
-document.getElementById('toggleMode').onchange = function(){
-    forceGraph.mode = (forceGraph.mode=='ref') ? 'citedBy' : 'ref';
-    forceGraph.update(Papers,Edges)
-    document.getElementById('connectedControls').getElementsByTagName('select')[0].value = (forceGraph.mode=='ref') ? 'seedsCitedBy' : 'seedsCited';
-    plotResultsTable(forceGraph.sizeMetric,1,true)
-} 
-//For forceGraph threshold slider
-document.getElementById('thresholdInput').oninput = function(){
-    document.querySelector('#thresholdOutput').value = 'Minimum Connections: ' + this.value;
-    forceGraph.threshold(this.value)
-}
 /* 
 document.getElementById('colorByOA').onclick = function(){
     node.attr("fill", function(d) { 
@@ -70,7 +47,7 @@ document.getElementById('colorByOA').onclick = function(){
     })                
 } */
 //For toggling paper details panel
-    document.getElementById('collapseBar').onclick = hideSideBar;
+ /*    document.getElementById('collapseBar').onclick = hideSideBar;
     function hideSideBar(){
         document.getElementById('seedPapers').style.display='none';
         var icon = document.getElementById('collapse-seeds-icon');
@@ -84,7 +61,7 @@ document.getElementById('colorByOA').onclick = function(){
         icon.classList.remove('fa-chevron-right');
         icon.classList.add('fa-chevron-left');
         document.getElementById('collapseBar').onclick = hideSideBar;
-    }
+    } */
 //For addSeedModals
     // When the user clicks anywhere outside of the modal, close it
     window.onclick = function(event) {
@@ -97,11 +74,7 @@ document.getElementById('colorByOA').onclick = function(){
     document.getElementById("addSeeds").onclick = function() {
         document.getElementById('addSeedModal').style.display = "block";
     }
-    document.getElementById("addbyZotero").onclick = function() {
-        document.getElementById('addSeedModal').style.display = "none";
-        document.getElementById('zoteroModal').style.display = "block";
-        zotero.getCollections();
-    }
+   
     document.getElementById("addbyDOI").onclick = function() {
         document.getElementById('addSeedModal').style.display = "none";
         document.getElementById('doiInputModal').style.display = "block";

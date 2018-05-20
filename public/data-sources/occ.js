@@ -3,9 +3,9 @@ newDataModule('occ', {
     eventResponses:{
         newSeed: function(paper){
             if(paper.occID){
-                occ.citedByID(paper.occID)
+                occ.getPapersCitingID(paper.occID)
             } else if(paper.DOI){
-                occ.citedByDOI(paper.DOI)
+                occ.getPapersCitingDOI(paper.DOI)
             }
         },
         seedUpdate: function(paper){
@@ -63,7 +63,7 @@ newDataModule('occ', {
 
          console.log('querying OCC...');
     },
-    refsByDOI: function(doi){
+    getPapersCitedByDOI: function(doi){
         var query ={};
         query.type = 'refs'
         query.string = 'PREFIX cito: <http://purl.org/spar/cito/>\n\
@@ -91,7 +91,7 @@ newDataModule('occ', {
         }';
         occ.sendQuery(query, occ.callback);
     },
-    refsByID: function(id){ //Queries OCC SPARQL to find references of the ID specified. Updates Papers and Edges data structures.
+    getPapersCitedByID: function(id){ //Queries OCC SPARQL to find references of the ID specified. Updates Papers and Edges data structures.
         var query = {};
         query.type = 'refs'
         query.string = 'PREFIX cito: <http://purl.org/spar/cito/>\n\
@@ -120,7 +120,7 @@ newDataModule('occ', {
         }';
         occ.sendQuery(query, occ.callback);
     },
-    citedByID: function(id){
+    getPapersCitingID: function(id){
         var query = {};
         query.type = 'citedBy'
         query.string = 'PREFIX cito: <http://purl.org/spar/cito/>\n\
@@ -149,7 +149,7 @@ newDataModule('occ', {
         }';
         occ.sendQuery(query, occ.callback);
     },
-    citedByDOI: function(doi){
+    getPapersCitingDOI: function(doi){
         var query ={};
         query.type = 'refs'
         query.string = 'PREFIX cito: <http://purl.org/spar/cito/>\n\

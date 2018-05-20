@@ -1,3 +1,10 @@
+function plotTimeGraph(){
+
+    document.getElementById('timelineView').style.display = 'block';
+    document.getElementById('networkView').style.display = 'none';
+    timeGraph.update();
+}
+
 timeGraph = {}
 
 timeGraph.osvg = d3.select('#timelineGraph')
