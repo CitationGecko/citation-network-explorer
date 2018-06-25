@@ -93,13 +93,9 @@ newDataModule('microsoft', {
     },
     titleSearch: function(query){
         var request = microsoft.titleQuery(query)
-        d3.select('#titleSearchButton').html('Searching...')
         microsoft.apiRequest(request,function(response){
             var response = JSON.parse(response)
             updateSearchTable(response.Results.map(function(p){return p[0];}),1,true)
-            d3.select('#titleSearchButton').html('Search for Seed Papers')
-            d3.select('#b').attr('class','inactive')
-            d3.select('#a').attr('class','active')
         })
     },
     titleMatchSearch: function(paper){

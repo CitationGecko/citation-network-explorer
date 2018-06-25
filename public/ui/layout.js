@@ -34,18 +34,7 @@ document.getElementById('connectedTableButton').onclick = function(){
     plotResultsTable('seedsCitedBy',1);
 }
 
-/* 
-document.getElementById('colorByOA').onclick = function(){
-    node.attr("fill", function(d) { 
-        if(d.OA==true){
-            return 'green'
-        }else if(d.OA==false){
-            return 'red'
-        }else{
-            return 'grey'
-        }    
-    })                
-} */
+
 //For toggling paper details panel
  /*    document.getElementById('collapseBar').onclick = hideSideBar;
     function hideSideBar(){
