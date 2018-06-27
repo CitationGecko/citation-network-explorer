@@ -1,0 +1,12 @@
+#selected-paper-box {
+    display:none;
+    position: absolute;
+    font-size: 70%;
+    right:0em;
+    bottom:.2em;
+    max-width:50%;
+    background-color: rgb(212, 212, 212);
+}
+.add-seed {
+    text-align: right;
+}

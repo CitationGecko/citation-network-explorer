@@ -30,12 +30,12 @@ var metrics = {
 var events = {}; //Object of events comprising an array of methods to run when the event is triggered.
 
 //Function for defining new events.
-function defineEvent(name){
+defineEvent = function(name){
     events[name] = {};
     events[name].methods = [];
 }
 //Function for triggering a named event and passing the subject of the event.
-function triggerEvent(name,subject){
+triggerEvent = function(name,subject){
     for(let i=0;i<events[name].methods.length;i++){
         events[name].methods[i].call(null,subject)
      }
@@ -48,7 +48,7 @@ defineEvent('paperUpdate') //Event trigger when non-seed paper is updated with m
 
 
 //Builds a new data source module.
-function newDataModule(name,methods){
+newDataModule = function(name,methods){
     window[name] = methods; //add methods of module to there own namespace.
     for(event in events){
         if(methods.eventResponses[event]){ 
@@ -57,7 +57,7 @@ function newDataModule(name,methods){
     } 
 }
 
-function addPaper(paper){
+addPaper = function(paper){
     let match = matchPapers(paper,Papers)
     if(!match){
         paper.ID = Papers.length;
@@ -70,7 +70,7 @@ function addPaper(paper){
     return(paper)
 }
 
-function addEdge(newEdge){
+addEdge = function(newEdge){
     let edge = Edges.filter(function(e){
         return e.source == newEdge.source & e.target == newEdge.target;
     })
@@ -123,9 +123,16 @@ function updateMetrics(Papers,Edges){
         Papers.forEach(function(p){p[metric] = metrics[metric](p,Edges)});
     }
 }
+refreshGraphics = function(){
+    updateMetrics(Papers,Edges); // update citation metrics
+    updateSeedList(); //update HTML table
+    updateConnectedList(forceGraph.sizeMetric);
+    forceGraph.update(Papers,Edges);
+    //timeGraph.update();
+};
 
 //Removes seed status of a paper, deletes all edges to non-seeds and all now unconnected papers
-function deleteSeed(paper){
+deleteSeed = function(paper){
     //Set seed status to false
     paper.seed = false; 
     //Delete edges connecting the paper to non-seeds
@@ -138,24 +145,3 @@ function deleteSeed(paper){
     })
     refreshGraphics();
 };
-
-function refreshGraphics(){
-    updateMetrics(Papers,Edges); // update citation metrics
-    updateSeedTable(); //update HTML table
-    updateResultsTable(forceGraph.sizeMetric);
-    forceGraph.update(Papers,Edges);
-    //timeGraph.update();
-};
-
-var doiQuery; //Place holder for the user input field.
-var titleQuery; //Place holder for the user input field.
-
-//Update request based on doi query inputted by the user.
-var doiInput = document.querySelector("#doiInput").addEventListener("input",function(){
-    doiQuery=this.value;
-});
-
-//Update request based on title query inputted by the user.
-var titleInput = document.querySelector("#titleInput").addEventListener("input", function() {
-    titleQuery = this.value;
-});

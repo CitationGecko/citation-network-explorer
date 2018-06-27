@@ -21,7 +21,7 @@ var bibtex = {
             };
             reader.readAsText(f);       
         };
-        document.getElementById('uploadBibTexModal').style.display = "none"; //Hide modal once file selected
+        document.getElementById('upload-bibtex-modal').style.display = "none"; //Hide modal once file selected
     },
     //Importing Example BibTex
     importExampleBibTex: function(){
@@ -33,10 +33,14 @@ var bibtex = {
                     addPaper(newSeed);
                     triggerEvent('newSeed',newSeed);                 
                 };
-                document.getElementById('uploadBibTexModal').style.display = "none";
+                document.getElementById('upload-bibtex-modal').style.display = "none";
             }
         )
     }
 }
 
 document.getElementById('files').addEventListener('change', bibtex.importBibTex, false);
+
+document.getElementById('demo-button').onclick = function(){
+    bibtex.importExampleBibTex()
+}

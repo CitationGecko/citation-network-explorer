@@ -1,4 +1,4 @@
-
+/* 
 newDataModule('gecko', {
 
     eventResponses:{
@@ -30,4 +30,4 @@ newDataModule('gecko', {
         console.log('GeckoDB found ' + ne + " citations")
         return(cited)
     }
-})
+}) */

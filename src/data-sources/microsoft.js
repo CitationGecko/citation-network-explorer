@@ -95,7 +95,7 @@ newDataModule('microsoft', {
         var request = microsoft.titleQuery(query)
         microsoft.apiRequest(request,function(response){
             var response = JSON.parse(response)
-            updateSearchTable(response.Results.map(function(p){return p[0];}),1,true)
+            updateTitleSearchResults(response.Results.map(function(p){return p[0];}),1,true)
         })
     },
     titleMatchSearch: function(paper){
@@ -116,7 +116,7 @@ newDataModule('microsoft', {
                 microsoft.sendQuery(microsoft.refQuery(ID))
             } else {
                 /* alert("Papers with similar titles found, please choose from table...")
-                updateSearchTable(response.Results.map(function(p){return p[0];}))
+                updateTitleSearchResults(response.Results.map(function(p){return p[0];}))
              */
             }
         })

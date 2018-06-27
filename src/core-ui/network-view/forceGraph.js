@@ -1,13 +1,13 @@
 //For forceGraph display mode toggling
-document.getElementById('toggleMode').onchange = function(){
+document.getElementById('mode-toggle').onchange = function(){
     forceGraph.mode = (forceGraph.mode=='ref') ? 'citedBy' : 'ref';
     forceGraph.update(Papers,Edges)
-    document.getElementById('connectedControls').getElementsByTagName('select')[0].value = (forceGraph.mode=='ref') ? 'seedsCitedBy' : 'seedsCited';
-    plotResultsTable(forceGraph.sizeMetric,1,true)
+    document.getElementById('connected-sort-by').getElementsByTagName('select')[0].value = (forceGraph.mode=='ref') ? 'seedsCitedBy' : 'seedsCited';
+    printConnectedList(forceGraph.sizeMetric,1,true)
 } 
 //For forceGraph threshold slider
-document.getElementById('thresholdInput').oninput = function(){
-    document.querySelector('#thresholdOutput').value = 'Minimum Connections: ' + this.value;
+document.getElementById('threshold-input').oninput = function(){
+    document.querySelector('#threshold-output').value = 'Minimum Connections: ' + this.value;
     forceGraph.threshold(this.value)
 }
 
@@ -17,7 +17,7 @@ forceGraph.minconnections = 0;
 forceGraph.mode = 'ref';
 forceGraph.sizeMetric = 'seedsCitedBy';
 forceGraph.selectednode = null;
-forceGraph.osvg =  d3.select('#forceGraph')
+forceGraph.osvg =  d3.select('#force-graph')
                         .on('click',function(){
                             forceGraph.circles.style("opacity", 1);
                             forceGraph.lines.style("opacity",1);
@@ -25,8 +25,8 @@ forceGraph.osvg =  d3.select('#forceGraph')
                         })
                         .call(d3.zoom().on("zoom", function () {forceGraph.svg.attr("transform", d3.event.transform)}))//enable zoom by scrolling
                         .on("dblclick.zoom", null);//disable double click zooming
-forceGraph.width =  document.getElementById('networkView').offsetWidth; //extract the width and height attribute (the + converts to number)
-forceGraph.height =  document.getElementById('networkView').offsetHeight;
+forceGraph.width =  document.getElementById('network-view').offsetWidth; //extract the width and height attribute (the + converts to number)
+forceGraph.height =  document.getElementById('network-view').offsetHeight;
 forceGraph.svg =  forceGraph.osvg.append('g');
 forceGraph.lines =  forceGraph.svg.append("g").attr("class", "link").selectAll("line");
 forceGraph.circles =  forceGraph.svg.append("g").attr("class", "node").selectAll("circle");

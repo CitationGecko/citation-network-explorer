@@ -1,10 +1,16 @@
-d3.select('#addSeedModal').select('div').append('button').attr('id','addByZotero')
-    .html("<img id='zotero-square' src='visuals/zotero2.png'>")
+d3.select('#add-seeds-modal').select('div').append('button').attr('id','add-by-zotero')
+    .html("<img id='zotero-square' src='images/zotero/zotero2.png'>")
 
-var modal = d3.select('body').append('div').attr('id','zoteroModal').attr('class','modal')
+document.getElementById("add-by-zotero").onclick = function() {
+    document.getElementById('add-seeds-modal').style.display = "none";
+    document.getElementById('zotero-modal').style.display = "block";
+    zotero.getCollections();
+}
+
+var modal = d3.select('body').append('div').attr('id','zotero-modal').attr('class','modal')
     .append('div').attr('class','modal-content')
     
-    modal.append('div').html("<img id='zotero-logo' src='visuals/zotero-logo.png'>");
+    modal.append('div').html("<img id='zotero-logo' src='images/zotero/zotero-logo.png'>");
     modal.append('svg').attr('id','zotero-collections');
 
 
@@ -103,7 +109,7 @@ var zotero = {
     displayCollections: function(collections){
 
         var margin = {top: 30, right: 20, bottom: 30, left: 20},
-            width = d3.select('#zoteroModal').select('.modal-content').node().getBoundingClientRect().width,
+            width = d3.select('#zotero-modal').select('.modal-content').node().getBoundingClientRect().width,
             barHeight = 40,
             barWidth = (width - margin.left - margin.right) * 0.7;
 
@@ -146,7 +152,7 @@ var zotero = {
             update(d); */
 
             zotero.getItems(d.data.key)
-            document.getElementById('zoteroModal').style.display = "none";
+            document.getElementById('zotero-modal').style.display = "none";
           }
 
           function color(d) {
@@ -267,6 +273,6 @@ var zotero = {
 
 d3.select("#addByZotero").on('click', function() {
     document.getElementById('addSeedModal').style.display = "none";
-    document.getElementById('zoteroModal').style.display = "block";
+    document.getElementById('zotero-modal').style.display = "block";
     zotero.getCollections();
 })

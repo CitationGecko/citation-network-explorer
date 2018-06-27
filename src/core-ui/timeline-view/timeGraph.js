@@ -1,7 +1,7 @@
 function plotTimeGraph(){
 
     document.getElementById('timelineView').style.display = 'block';
-    document.getElementById('networkView').style.display = 'none';
+    document.getElementById('network-view').style.display = 'none';
     timeGraph.update();
 }
 
@@ -17,8 +17,8 @@ timeGraph.osvg = d3.select('#timelineGraph')
                     )//enable zoom by scrolling
                      .on("dblclick.zoom", null);//disable double click zooming; // Select svg
 timeGraph.svg =  timeGraph.osvg.append('g');
-timeGraph.width =  document.getElementById('networkView').offsetWidth; //extract the width and height attribute (the + converts to number)
-timeGraph.height =  document.getElementById('networkView').offsetHeight;
+timeGraph.width =  document.getElementById('network-view').offsetWidth; //extract the width and height attribute (the + converts to number)
+timeGraph.height =  document.getElementById('network-view').offsetHeight;
 timeGraph.nodes = Papers;
 timeGraph.circles = timeGraph.svg.append("g").attr("class", "node").selectAll("circle");
 timeGraph.update = function(){
