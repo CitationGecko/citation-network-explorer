@@ -254,11 +254,10 @@ var zotero = {
 
                 for(let i=0;i<items.length;i++){
                     item = items[i];
-                    item.data.title;
-                    item.meta.creatorSummary;
-                    item.meta.parsedDate;
-                    var newSeed = addPaper({DOI:item.data.DOI,seed:true});
-                    triggerEvent('newSeed',newSeed);      
+                    //item.data.title;
+                    //item.meta.creatorSummary;
+                    //item.meta.parsedDate;
+                    addPaper({DOI:item.data.DOI},true);
                 }
             } else {
                 // Some kind of error occurred.

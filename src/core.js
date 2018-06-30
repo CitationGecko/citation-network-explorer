@@ -57,7 +57,8 @@ newDataModule = function(name,methods){
     } 
 }
 
-addPaper = function(paper){
+addPaper = function(paper,asSeed){
+
     let match = matchPapers(paper,Papers)
     if(!match){
         paper.ID = Papers.length;
@@ -67,6 +68,12 @@ addPaper = function(paper){
         paper = merge(match,paper)
         //triggerEvent('paperUpdated',paper) // Ideally only triggers if there is new info.
     }
+
+    if(asSeed){
+        paper.seed = true
+        triggerEvent('newSeed',paper)
+    }
+
     return(paper)
 }
 

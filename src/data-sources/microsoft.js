@@ -132,28 +132,23 @@ newDataModule('microsoft', {
                 }
         })
     },
+    parsePaper: function(paper){
+        return {           
+            Title: paper.OriginalTitle,
+            Author: null,
+            DOI: paper.DOI,
+            Year: paper.PublishYear,
+            MicrosoftID: paper.CellID,
+        }
+    },
     parseResponse: function(response,request){
         var ne = 0; //For bean counting only
         var seedpaper = response.Results[0][0];
-        seedpaper = {           
-            Title: seedpaper.OriginalTitle,
-            Author: null,
-            DOI: seedpaper.DOI,
-            Year: seedpaper.PublishYear,
-            MicrosoftID: seedpaper.CellID,
-            seed: true
-        }
-        seedpaper = addPaper(seedpaper);
+        seedpaper = microsoft.parsePaper(seedpaper)
+        seedpaper = addPaper(seedpaper,true);
         for (let i=0; i < response.Results.length; i++) {
             var connection = response.Results[i][1];
-            connection = {
-                Title: connection.OriginalTitle,
-                Author: null,
-                DOI: connection.DOI,
-                Year: connection.PublishYear,
-                MicrosoftID: connection.CellID,
-                seed: false
-            }
+            connection = microsoft.parsePaper(connection)
             connection = addPaper(connection);
             //Define the edges depending on request
             var edges =[];
@@ -165,7 +160,6 @@ newDataModule('microsoft', {
                     edges = [{"source": connection, "target": seedpaper,"MAG":true, hide: false}];
                     break;    
             }
-
             edges.forEach(function(edge){   
                 addEdge(edge);
                 ne++; //bean counting

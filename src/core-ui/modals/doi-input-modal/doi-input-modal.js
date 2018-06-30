@@ -7,7 +7,7 @@ var doiInput = document.querySelector("#doi-input").addEventListener("input",fun
 
 document.getElementById("doi-input").onkeydown = function(event){
     if (event.keyCode == 13){   
-        makeSeed(addPaper({DOI:doiQuery}))
+        addPaper({DOI:doiQuery},true)
         document.getElementById('doi-input-loader').style.display = 'inline-block';
     }
 }

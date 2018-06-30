@@ -25,20 +25,18 @@ newDataModule('occ', {
                 DOI: edge.citedDOI ? edge.citedDOI.value : null,
                 Title: edge.citedTitle ? edge.citedTitle.value : null,
                 Year: edge.citedYear ? edge.citedYear.value : null,
-                occID: edge.citedID.value,
-                seed: (queryType=='refs')
+                occID: edge.citedID.value
             }
-            cited = addPaper(cited);
+            cited = addPaper(cited,(queryType=='refs'));
             if(!edge.citingID){break}
             var citer = {
                 Author: null,
                 DOI: edge.citingDOI ? edge.citingDOI.value : null,
                 Title: edge.citingTitle ? edge.citingTitle.value : null,
                 Year: edge.citingYear ? edge.citingYear.value : null,
-                occID: edge.citingID.value,
-                seed: (queryType=='citedBy')
+                occID: edge.citingID.value
             }
-            citer = addPaper(citer);
+            citer = addPaper(citer,(queryType=='citedBy'));
             let newEdge = {
                 source: citer,
                 target: cited,

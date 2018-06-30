@@ -28,10 +28,8 @@ newDataModule('crossref', {
             };  
         }
     },
-    
-    parseResponse: function(response){
-        let ne = 0; //For bean counting only
-        let citer = {
+    parsePaper: function(response){
+       return {
             DOI: response.DOI,
             Title: response.title[0],
             Author: response.author[0].family,
@@ -40,31 +38,42 @@ newDataModule('crossref', {
             Timestamp: response.created.timestamp,
             Journal: response['container-title'][0],
             CitationCount: response['is-referenced-by-count'],
-            seed: true,
+            References: response['reference'] ? response['reference'] : false,
             crossref: true
         };
-        citer = addPaper(citer);
-        if(!response.reference){return(citer)};
 
-        let refs = response.reference;
+    },
+    parseReference: function(ref){
+        return {
+            DOI: ref.DOI ? ref.DOI : null,
+            Title: ref['article-title'] ? ref['article-title'] : 'unavailable',
+            Author: ref.author ? ref.author : null,
+            Year: ref.year ? ref.year : null ,
+            Journal: ref['journal-title'] ? ref['journal-title'] : null,
+        }
+
+    },
+    parseResponse: function(response){
+        let ne = 0; //For bean counting only
+        let citer = crossref.parsePaper(response);
+        citer = addPaper(citer,true);
+
+        if(!citer.References){return(citer)};
+
+        let refs = citer.References;
+
         for(let i=0;i<refs.length;i++){
 
-            let cited = {
-                DOI: refs[i].DOI ? refs[i].DOI : null,
-                Title: refs[i]['article-title'] ? refs[i]['article-title'] : 'unavailable',
-                Author: refs[i].author ? refs[i].author : null,
-                Year: refs[i].year ? refs[i].year : null ,
-                Journal: refs[i]['journal-title'] ? refs[i]['journal-title'] : null,
-                seed: false
-            };            
+            let cited = crossref.parseReference(refs[i]);
+                        
             cited = addPaper(cited);
-            let newEdge = {
+
+            addEdge({
                 source: citer,
                 target: cited,
                 crossref: true,
                 hide: false
-            }
-            addEdge(newEdge);
+            });
             ne++;//bean counting
         };   
         console.log('CrossRef found ' + ne + " citations")

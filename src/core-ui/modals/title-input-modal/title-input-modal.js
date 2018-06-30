@@ -36,10 +36,8 @@ function updateTitleSearchResults(results,pageNum,replot){
                 DOI: p.DOI,
                 Year: p.PublishYear,
                 MicrosoftID: p.CellID,
-                seed: true
             };
-            addPaper(newSeed);
-            triggerEvent('newSeed',newSeed);      
+            addPaper(newSeed,true);
         })
     newpapers = newpapers.append('div')
         .attr('class','inner-paper-box panel')
