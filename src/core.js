@@ -5,23 +5,19 @@ var Edges = [] //Array of edge objects, each is a pair of paper objects (source 
 var metrics = {  
     "citedBy": function(paper,Edges){
         //Count number of times cited in the edges list supplied
-        var count = Edges.reduce(function(n, edge) {return n + (edge.target == paper)},0); //the 0 is the initial value for the reduce function and is needed to coerce booleans to number
-        return count;
+        return Edges.filter(e=>e.target==paper).length
     },
     "references": function(paper,Edges){
         //Count number of times a paper cites another paper (in the edge list provided) 
-        var count = Edges.reduce(function(n, edge) {return n + (edge.source == paper)},0);
-        return count;
+        return Edges.filter(e=>e.source==paper).length
     },
     "seedsCitedBy": function(paper,Edges){
         //Count number of seed papers that cite the paper.
-        var count = Edges.reduce(function(n, edge) {return n + ((edge.target == paper) && edge.source.seed)},0); //the 0 is the initial value for the reduce function and is needed to coerce booleans to number
-        return count;
+        return Edges.filter(e=>e.source.seed&e.target==paper).length;
     },
     "seedsCited": function(paper,Edges){
         //Count number of seed papers the paper cites. 
-        var count = Edges.reduce(function(n, edge) {return n + ((edge.source == paper) && edge.target.seed)},0);
-        return count;
+        return Edges.filter(e=>e.target.seed&e.source==paper).length;
     }
 };        
 
@@ -57,9 +53,15 @@ newDataModule = function(name,methods){
     } 
 }
 
-addPaper = function(paper,asSeed){
+function makeSeed(paper){
+    paper.seed = true;
+    triggerEvent('newSeed',paper)
+}
+
+function addPaper(paper,asSeed){
 
     let match = matchPapers(paper,Papers)
+    
     if(!match){
         paper.ID = Papers.length;
         Papers.push(paper)
@@ -69,10 +71,7 @@ addPaper = function(paper,asSeed){
         //triggerEvent('paperUpdated',paper) // Ideally only triggers if there is new info.
     }
 
-    if(asSeed){
-        paper.seed = true
-        triggerEvent('newSeed',paper)
-    }
+    if(asSeed&!paper.seed){makeSeed(paper)}
 
     return(paper)
 }

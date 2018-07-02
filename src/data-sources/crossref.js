@@ -1,30 +1,43 @@
 
 newDataModule('crossref', {
-    //Sends a query (queryStr) to endpoint and executes callback on response
     eventResponses: {
-
-        newSeed: function(paper){
-            console.log("querying crossRef for references...")
-            if(paper.DOI){
-                CrossRef.work(paper.DOI,function(err,res){
-                    console.log("response from CrossRef!")
-                    let seed = crossref.parseResponse(res);
-                    triggerEvent('seedUpdate',seed); //Could put in merge function instead...
-                    refreshGraphics();         
-                });  
-            }    
+        newSeed: async function(paper){
+            
+            if(paper.crossref!='Complete'){
+                await paper.crossref
+                paper.crossref = 'Complete'
+                triggerEvent('seedUpdate',paper);
+            }
+            if(paper.References){
+                paper.References.forEach((ref)=>{
+                    let cited = addPaper(crossref.parseReference(ref))
+                    addEdge({
+                        source: paper,
+                        target: cited,
+                        crossref: true,
+                        hide: false
+                    });
+                    console.log('CrossRef found ' + paper.References.length + " citations")
+                })
+            }
+            refreshGraphics();         
         },   
         newPaper: function(paper){
             if(paper.DOI){
-                CrossRef.work(paper.DOI,function(err,response){          
-                    paper.Title = response.title[0];
-                    paper.Author= response.author[0].family;
-                    paper.Month= response.created['date-parts'][0][1];
-                    paper.Year= response.created['date-parts'][0][0];
-                    paper.Journal= response['container-title'][0];
-                    paper.CitationCount= response['is-referenced-by-count'];
-                    updateConnectedList(forceGraph.sizeMetric);
-                });
+                console.log("querying crossRef for " +paper.DOI)
+                paper.crossref = new Promise((resolve,reject)=>{
+                    CrossRef.work(paper.DOI,function(err,response){          
+                        if(err){
+                            reject('Something went wrong')
+                        } else {
+                            console.log("CrossRef data found for "+paper.DOI)
+                            paper.crossref = 'Complete'
+                            merge(paper,crossref.parsePaper(response))
+                            updateConnectedList(forceGraph.sizeMetric);
+                            resolve('CrossRef info found')
+                        }
+                    });
+                })   
             };  
         }
     },
@@ -54,8 +67,11 @@ newDataModule('crossref', {
 
     },
     parseResponse: function(response){
+        
         let ne = 0; //For bean counting only
+        
         let citer = crossref.parsePaper(response);
+        
         citer = addPaper(citer,true);
 
         if(!citer.References){return(citer)};
@@ -65,7 +81,7 @@ newDataModule('crossref', {
         for(let i=0;i<refs.length;i++){
 
             let cited = crossref.parseReference(refs[i]);
-                        
+
             cited = addPaper(cited);
 
             addEdge({

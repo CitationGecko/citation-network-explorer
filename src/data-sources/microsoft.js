@@ -7,8 +7,8 @@ newDataModule('microsoft', {
     eventResponses:{
         newSeed: function(paper){  
             if(paper.MicrosoftID){
-                microsoft.sendQuery(microsoft.citedByQuery(paper.MicrosoftID));       
-                microsoft.sendQuery(microsoft.refQuery(paper.MicrosoftID));
+                microsoft.sendCitedByQuery(paper.MicrosoftID);       
+                microsoft.sendRefQuery(paper.MicrosoftID);
             } else if(paper.Title){
                microsoft.titleMatchSearch(paper);
             }
@@ -20,14 +20,25 @@ newDataModule('microsoft', {
         },
     },
     apiRequest: function(request,callback){ //Send a generic request to the MAG api
-        xmlhttp = new XMLHttpRequest();
+        var url = '/api/v1/query/microsoft/search';
+        fetch(url,
+            {
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                method: "POST",
+                body: JSON.stringify(request.toSend)
+            })
+            .then((res)=>res.json())
+            .then(callback)
+        /* xmlhttp = new XMLHttpRequest();
         //If no API key is given the request will be sent to an intermediate server which inserts the API and forwards it on to Microsoft.
         var url = '/api/v1/query/microsoft/search';
         xmlhttp.open('POST', url, true);
         xmlhttp.setRequestHeader('Content-Type', 'application/json');
         xmlhttp.onreadystatechange = function () {
             if (this.readyState == 4 && this.status == 200) {
-                console.log('Response recieved from MAG!')
                 callback(this.responseText)
             } else if(this.readyState==4){
                 if(MicrosoftStatus == 'good'){
@@ -36,8 +47,7 @@ newDataModule('microsoft', {
                     console.log(this.responseText)
                 }
         }
-        xmlhttp.send(JSON.stringify(request.toSend));
-        console.log('sending request to MAG... ');
+        xmlhttp.send(JSON.stringify(request.toSend)); */
     },
     refQuery: function(id){ //Query for MAG API to get references of a paper from the Microsoft ID.
         return {          
@@ -93,15 +103,17 @@ newDataModule('microsoft', {
     },
     titleSearch: function(query){
         var request = microsoft.titleQuery(query)
+        console.log('MAG: querying title "'+query+'"')
         microsoft.apiRequest(request,function(response){
-            var response = JSON.parse(response)
+            console.log('MAG: results found for title "'+query+'"')
             updateTitleSearchResults(response.Results.map(function(p){return p[0];}),1,true)
         })
     },
     titleMatchSearch: function(paper){
-        var request = microsoft.titleQuery(paper.Title)       
+        var request = microsoft.titleQuery(paper.Title)
+        console.log('MAG: querying title "'+paper.Title+'"')       
         microsoft.apiRequest(request,function(response){
-            var response = JSON.parse(response)
+            console.log('MAG: results found for title "'+paper.Title+'"')
             //check for DOI matches
             var match = response.Results.filter(function(p){
                 if(p[0].DOI){
@@ -112,8 +124,8 @@ newDataModule('microsoft', {
             })[0];
             if(match){
                 var ID = response.Results[0][0].CellID;               
-                microsoft.sendQuery(microsoft.citedByQuery(ID))
-                microsoft.sendQuery(microsoft.refQuery(ID))
+                microsoft.sendCitedByQuery(ID)
+                microsoft.sendRefQuery(ID)
             } else {
                 /* alert("Papers with similar titles found, please choose from table...")
                 updateTitleSearchResults(response.Results.map(function(p){return p[0];}))
@@ -121,10 +133,25 @@ newDataModule('microsoft', {
             }
         })
     },
-    sendQuery: function(request){
+    sendRefQuery: function(ID){
+        console.log('MAG: querying refs for ID '+ID)
+        var request = microsoft.refQuery(ID)
         microsoft.apiRequest(request,function(response){
-            var response = JSON.parse(response)
                 if(response.Results.length){
+                    console.log('MAG: founds refs for ID '+ID)
+                    microsoft.parseResponse(response,request); //add Papers found by request to Papers array
+                    refreshGraphics();
+                } else {
+                    console.log("No connecting papers found");
+                }
+        })
+    },
+    sendCitedByQuery: function(ID){
+        console.log('MAG: querying cited-by for ID '+ID)
+        var request = microsoft.citedByQuery(ID)
+        microsoft.apiRequest(request,function(response){
+                if(response.Results.length){
+                    console.log('MAG: founds cited-by for ID '+ID)
                     microsoft.parseResponse(response,request); //add Papers found by request to Papers array
                     refreshGraphics();
                 } else {

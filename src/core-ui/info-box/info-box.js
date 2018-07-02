@@ -7,6 +7,6 @@ function updateInfoBox(selected){
     paperbox.select('.author-year').html((p.Author ? p.Author:'')+' '+p.Year)
     paperbox.select('.doi-link').html(p.DOI ? ("<a target='_blank' href='https://doi.org/"+p.DOI+"'>"+p.DOI+"</a>"): '')
     paperbox.select('.add-seed').html(p.seed ? 'Delete Seed':'Make Seed')
-            .on('click', function(){p.seed ? deleteSeed(p) : triggerEvent('newSeed',p)})
+            .on('click', function(){p.seed ? deleteSeed(p) : makeSeed(p)})
     forceGraph.selectednode = p;
 }

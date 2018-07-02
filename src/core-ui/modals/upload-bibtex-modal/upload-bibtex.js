@@ -13,9 +13,8 @@ var bibtex = {
                 };
                 for(let i=0;i<papers.length;i++){
                     if(papers[i].entryTags.doi){
-                        let newSeed = {DOI: papers[i].entryTags.doi,seed:true}
-                        addPaper(newSeed);
-                        triggerEvent('newSeed',newSeed);             
+                        let newSeed = {DOI: papers[i].entryTags.doi}
+                        addPaper(newSeed,true);
                     }; 
                 };
             };

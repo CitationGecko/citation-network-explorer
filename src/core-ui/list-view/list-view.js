@@ -96,7 +96,7 @@ function printConnectedList(metric,pageNum,replot){
     newpapers.append('button').attr('class','delete-seed')
         .html('<i class="fa fa-plus" color="green" aria-hidden="true"></i>')
         .on('click',function(p){
-            triggerEvent('newSeed',p)
+            makeSeed(p)
         })
     newpapers = newpapers.append('div')
         .attr('class','inner-paper-box panel')

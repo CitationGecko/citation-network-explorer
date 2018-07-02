@@ -5,23 +5,19 @@ var Edges = [] //Array of edge objects, each is a pair of paper objects (source 
 var metrics = {  
     "citedBy": function(paper,Edges){
         //Count number of times cited in the edges list supplied
-        var count = Edges.reduce(function(n, edge) {return n + (edge.target == paper)},0); //the 0 is the initial value for the reduce function and is needed to coerce booleans to number
-        return count;
+        return Edges.filter(e=>e.target==paper).length
     },
     "references": function(paper,Edges){
         //Count number of times a paper cites another paper (in the edge list provided) 
-        var count = Edges.reduce(function(n, edge) {return n + (edge.source == paper)},0);
-        return count;
+        return Edges.filter(e=>e.source==paper).length
     },
     "seedsCitedBy": function(paper,Edges){
         //Count number of seed papers that cite the paper.
-        var count = Edges.reduce(function(n, edge) {return n + ((edge.target == paper) && edge.source.seed)},0); //the 0 is the initial value for the reduce function and is needed to coerce booleans to number
-        return count;
+        return Edges.filter(e=>e.source.seed&e.target==paper).length;
     },
     "seedsCited": function(paper,Edges){
         //Count number of seed papers the paper cites. 
-        var count = Edges.reduce(function(n, edge) {return n + ((edge.source == paper) && edge.target.seed)},0);
-        return count;
+        return Edges.filter(e=>e.target.seed&e.source==paper).length;
     }
 };        
 
@@ -57,8 +53,15 @@ newDataModule = function(name,methods){
     } 
 }
 
-addPaper = function(paper){
+function makeSeed(paper){
+    paper.seed = true;
+    triggerEvent('newSeed',paper)
+}
+
+function addPaper(paper,asSeed){
+
     let match = matchPapers(paper,Papers)
+    
     if(!match){
         paper.ID = Papers.length;
         Papers.push(paper)
@@ -67,6 +70,9 @@ addPaper = function(paper){
         paper = merge(match,paper)
         //triggerEvent('paperUpdated',paper) // Ideally only triggers if there is new info.
     }
+
+    if(asSeed&!paper.seed){makeSeed(paper)}
+
     return(paper)
 }
 
@@ -148,38 +154,49 @@ deleteSeed = function(paper){
 
 
 newDataModule('crossref', {
-    //Sends a query (queryStr) to endpoint and executes callback on response
     eventResponses: {
-
-        newSeed: function(paper){
-            console.log("querying crossRef for references...")
-            if(paper.DOI){
-                CrossRef.work(paper.DOI,function(err,res){
-                    console.log("response from CrossRef!")
-                    let seed = crossref.parseResponse(res);
-                    triggerEvent('seedUpdate',seed); //Could put in merge function instead...
-                    refreshGraphics();         
-                });  
-            }    
+        newSeed: async function(paper){
+            
+            if(paper.crossref!='Complete'){
+                await paper.crossref
+                paper.crossref = 'Complete'
+                triggerEvent('seedUpdate',paper);
+            }
+            if(paper.References){
+                paper.References.forEach((ref)=>{
+                    let cited = addPaper(crossref.parseReference(ref))
+                    addEdge({
+                        source: paper,
+                        target: cited,
+                        crossref: true,
+                        hide: false
+                    });
+                    console.log('CrossRef found ' + paper.References.length + " citations")
+                })
+            }
+            refreshGraphics();         
         },   
         newPaper: function(paper){
             if(paper.DOI){
-                CrossRef.work(paper.DOI,function(err,response){          
-                    paper.Title = response.title[0];
-                    paper.Author= response.author[0].family;
-                    paper.Month= response.created['date-parts'][0][1];
-                    paper.Year= response.created['date-parts'][0][0];
-                    paper.Journal= response['container-title'][0];
-                    paper.CitationCount= response['is-referenced-by-count'];
-                    updateConnectedList(forceGraph.sizeMetric);
-                });
+                console.log("querying crossRef for " +paper.DOI)
+                paper.crossref = new Promise((resolve,reject)=>{
+                    CrossRef.work(paper.DOI,function(err,response){          
+                        if(err){
+                            reject('Something went wrong')
+                        } else {
+                            console.log("CrossRef data found for "+paper.DOI)
+                            paper.crossref = 'Complete'
+                            merge(paper,crossref.parsePaper(response))
+                            updateConnectedList(forceGraph.sizeMetric);
+                            resolve('CrossRef info found')
+                        }
+                    });
+                })   
             };  
         }
     },
-    
-    parseResponse: function(response){
-        let ne = 0; //For bean counting only
-        let citer = {
+    parsePaper: function(response){
+       return {
             DOI: response.DOI,
             Title: response.title[0],
             Author: response.author[0].family,
@@ -188,31 +205,45 @@ newDataModule('crossref', {
             Timestamp: response.created.timestamp,
             Journal: response['container-title'][0],
             CitationCount: response['is-referenced-by-count'],
-            seed: true,
+            References: response['reference'] ? response['reference'] : false,
             crossref: true
         };
-        citer = addPaper(citer);
-        if(!response.reference){return(citer)};
 
-        let refs = response.reference;
+    },
+    parseReference: function(ref){
+        return {
+            DOI: ref.DOI ? ref.DOI : null,
+            Title: ref['article-title'] ? ref['article-title'] : 'unavailable',
+            Author: ref.author ? ref.author : null,
+            Year: ref.year ? ref.year : null ,
+            Journal: ref['journal-title'] ? ref['journal-title'] : null,
+        }
+
+    },
+    parseResponse: function(response){
+        
+        let ne = 0; //For bean counting only
+        
+        let citer = crossref.parsePaper(response);
+        
+        citer = addPaper(citer,true);
+
+        if(!citer.References){return(citer)};
+
+        let refs = citer.References;
+
         for(let i=0;i<refs.length;i++){
 
-            let cited = {
-                DOI: refs[i].DOI ? refs[i].DOI : null,
-                Title: refs[i]['article-title'] ? refs[i]['article-title'] : 'unavailable',
-                Author: refs[i].author ? refs[i].author : null,
-                Year: refs[i].year ? refs[i].year : null ,
-                Journal: refs[i]['journal-title'] ? refs[i]['journal-title'] : null,
-                seed: false
-            };            
+            let cited = crossref.parseReference(refs[i]);
+
             cited = addPaper(cited);
-            let newEdge = {
+
+            addEdge({
                 source: citer,
                 target: cited,
                 crossref: true,
                 hide: false
-            }
-            addEdge(newEdge);
+            });
             ne++;//bean counting
         };   
         console.log('CrossRef found ' + ne + " citations")
@@ -261,8 +292,8 @@ newDataModule('microsoft', {
     eventResponses:{
         newSeed: function(paper){  
             if(paper.MicrosoftID){
-                microsoft.sendQuery(microsoft.citedByQuery(paper.MicrosoftID));       
-                microsoft.sendQuery(microsoft.refQuery(paper.MicrosoftID));
+                microsoft.sendCitedByQuery(paper.MicrosoftID);       
+                microsoft.sendRefQuery(paper.MicrosoftID);
             } else if(paper.Title){
                microsoft.titleMatchSearch(paper);
             }
@@ -274,14 +305,25 @@ newDataModule('microsoft', {
         },
     },
     apiRequest: function(request,callback){ //Send a generic request to the MAG api
-        xmlhttp = new XMLHttpRequest();
+        var url = '/api/v1/query/microsoft/search';
+        fetch(url,
+            {
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                method: "POST",
+                body: JSON.stringify(request.toSend)
+            })
+            .then((res)=>res.json())
+            .then(callback)
+        /* xmlhttp = new XMLHttpRequest();
         //If no API key is given the request will be sent to an intermediate server which inserts the API and forwards it on to Microsoft.
         var url = '/api/v1/query/microsoft/search';
         xmlhttp.open('POST', url, true);
         xmlhttp.setRequestHeader('Content-Type', 'application/json');
         xmlhttp.onreadystatechange = function () {
             if (this.readyState == 4 && this.status == 200) {
-                console.log('Response recieved from MAG!')
                 callback(this.responseText)
             } else if(this.readyState==4){
                 if(MicrosoftStatus == 'good'){
@@ -290,8 +332,7 @@ newDataModule('microsoft', {
                     console.log(this.responseText)
                 }
         }
-        xmlhttp.send(JSON.stringify(request.toSend));
-        console.log('sending request to MAG... ');
+        xmlhttp.send(JSON.stringify(request.toSend)); */
     },
     refQuery: function(id){ //Query for MAG API to get references of a paper from the Microsoft ID.
         return {          
@@ -347,15 +388,17 @@ newDataModule('microsoft', {
     },
     titleSearch: function(query){
         var request = microsoft.titleQuery(query)
+        console.log('MAG: querying title "'+query+'"')
         microsoft.apiRequest(request,function(response){
-            var response = JSON.parse(response)
+            console.log('MAG: results found for title "'+query+'"')
             updateTitleSearchResults(response.Results.map(function(p){return p[0];}),1,true)
         })
     },
     titleMatchSearch: function(paper){
-        var request = microsoft.titleQuery(paper.Title)       
+        var request = microsoft.titleQuery(paper.Title)
+        console.log('MAG: querying title "'+paper.Title+'"')       
         microsoft.apiRequest(request,function(response){
-            var response = JSON.parse(response)
+            console.log('MAG: results found for title "'+paper.Title+'"')
             //check for DOI matches
             var match = response.Results.filter(function(p){
                 if(p[0].DOI){
@@ -366,8 +409,8 @@ newDataModule('microsoft', {
             })[0];
             if(match){
                 var ID = response.Results[0][0].CellID;               
-                microsoft.sendQuery(microsoft.citedByQuery(ID))
-                microsoft.sendQuery(microsoft.refQuery(ID))
+                microsoft.sendCitedByQuery(ID)
+                microsoft.sendRefQuery(ID)
             } else {
                 /* alert("Papers with similar titles found, please choose from table...")
                 updateTitleSearchResults(response.Results.map(function(p){return p[0];}))
@@ -375,10 +418,12 @@ newDataModule('microsoft', {
             }
         })
     },
-    sendQuery: function(request){
+    sendRefQuery: function(ID){
+        console.log('MAG: querying refs for ID '+ID)
+        var request = microsoft.refQuery(ID)
         microsoft.apiRequest(request,function(response){
-            var response = JSON.parse(response)
                 if(response.Results.length){
+                    console.log('MAG: founds refs for ID '+ID)
                     microsoft.parseResponse(response,request); //add Papers found by request to Papers array
                     refreshGraphics();
                 } else {
@@ -386,28 +431,36 @@ newDataModule('microsoft', {
                 }
         })
     },
+    sendCitedByQuery: function(ID){
+        console.log('MAG: querying cited-by for ID '+ID)
+        var request = microsoft.citedByQuery(ID)
+        microsoft.apiRequest(request,function(response){
+                if(response.Results.length){
+                    console.log('MAG: founds cited-by for ID '+ID)
+                    microsoft.parseResponse(response,request); //add Papers found by request to Papers array
+                    refreshGraphics();
+                } else {
+                    console.log("No connecting papers found");
+                }
+        })
+    },
+    parsePaper: function(paper){
+        return {           
+            Title: paper.OriginalTitle,
+            Author: null,
+            DOI: paper.DOI,
+            Year: paper.PublishYear,
+            MicrosoftID: paper.CellID,
+        }
+    },
     parseResponse: function(response,request){
         var ne = 0; //For bean counting only
         var seedpaper = response.Results[0][0];
-        seedpaper = {           
-            Title: seedpaper.OriginalTitle,
-            Author: null,
-            DOI: seedpaper.DOI,
-            Year: seedpaper.PublishYear,
-            MicrosoftID: seedpaper.CellID,
-            seed: true
-        }
-        seedpaper = addPaper(seedpaper);
+        seedpaper = microsoft.parsePaper(seedpaper)
+        seedpaper = addPaper(seedpaper,true);
         for (let i=0; i < response.Results.length; i++) {
             var connection = response.Results[i][1];
-            connection = {
-                Title: connection.OriginalTitle,
-                Author: null,
-                DOI: connection.DOI,
-                Year: connection.PublishYear,
-                MicrosoftID: connection.CellID,
-                seed: false
-            }
+            connection = microsoft.parsePaper(connection)
             connection = addPaper(connection);
             //Define the edges depending on request
             var edges =[];
@@ -419,7 +472,6 @@ newDataModule('microsoft', {
                     edges = [{"source": connection, "target": seedpaper,"MAG":true, hide: false}];
                     break;    
             }
-
             edges.forEach(function(edge){   
                 addEdge(edge);
                 ne++; //bean counting
@@ -499,20 +551,18 @@ newDataModule('occ', {
                 DOI: edge.citedDOI ? edge.citedDOI.value : null,
                 Title: edge.citedTitle ? edge.citedTitle.value : null,
                 Year: edge.citedYear ? edge.citedYear.value : null,
-                occID: edge.citedID.value,
-                seed: (queryType=='refs')
+                occID: edge.citedID.value
             }
-            cited = addPaper(cited);
+            cited = addPaper(cited,(queryType=='refs'));
             if(!edge.citingID){break}
             var citer = {
                 Author: null,
                 DOI: edge.citingDOI ? edge.citingDOI.value : null,
                 Title: edge.citingTitle ? edge.citingTitle.value : null,
                 Year: edge.citingYear ? edge.citingYear.value : null,
-                occID: edge.citingID.value,
-                seed: (queryType=='citedBy')
+                occID: edge.citingID.value
             }
-            citer = addPaper(citer);
+            citer = addPaper(citer,(queryType=='citedBy'));
             let newEdge = {
                 source: citer,
                 target: cited,
@@ -662,7 +712,7 @@ function updateInfoBox(selected){
     paperbox.select('.author-year').html((p.Author ? p.Author:'')+' '+p.Year)
     paperbox.select('.doi-link').html(p.DOI ? ("<a target='_blank' href='https://doi.org/"+p.DOI+"'>"+p.DOI+"</a>"): '')
     paperbox.select('.add-seed').html(p.seed ? 'Delete Seed':'Make Seed')
-            .on('click', function(){p.seed ? deleteSeed(p) : triggerEvent('newSeed',p)})
+            .on('click', function(){p.seed ? deleteSeed(p) : makeSeed(p)})
     forceGraph.selectednode = p;
 }
 
@@ -764,7 +814,7 @@ function printConnectedList(metric,pageNum,replot){
     newpapers.append('button').attr('class','delete-seed')
         .html('<i class="fa fa-plus" color="green" aria-hidden="true"></i>')
         .on('click',function(p){
-            triggerEvent('newSeed',p)
+            makeSeed(p)
         })
     newpapers = newpapers.append('div')
         .attr('class','inner-paper-box panel')
@@ -794,25 +844,6 @@ function printConnectedList(metric,pageNum,replot){
         console.log('print called')
    
 }
-// When the user clicks anywhere outside of the modal, close it
-window.onclick = function(event) {
-    if (event.target.classList.contains('modal')) {
-        event.target.style.display = "none";
-    }
-}
-//For forceGraph display mode toggling
-document.getElementById('mode-toggle').onchange = function(){
-    forceGraph.mode = (forceGraph.mode=='ref') ? 'citedBy' : 'ref';
-    forceGraph.update(Papers,Edges)
-    document.getElementById('connected-sort-by').getElementsByTagName('select')[0].value = (forceGraph.mode=='ref') ? 'seedsCitedBy' : 'seedsCited';
-    printConnectedList(forceGraph.sizeMetric,1,true)
-} 
-//For forceGraph threshold slider
-document.getElementById('threshold-input').oninput = function(){
-    document.querySelector('#threshold-output').value = 'Minimum Connections: ' + this.value;
-    forceGraph.threshold(this.value)
-}
-
 let forceGraph = {};
 
 forceGraph.minconnections = 0;
@@ -980,6 +1011,12 @@ forceGraph.update =  function(Papers,Edges){
 
 
   
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+    if (event.target.classList.contains('modal')) {
+        event.target.style.display = "none";
+    }
+}
 function plotTimeGraph(){
 
     document.getElementById('timelineView').style.display = 'block';
@@ -1082,12 +1119,26 @@ document.getElementById('connected-list-button').onclick = function(){
 document.getElementById('connected-sort-by').style.display = 'none'
 document.getElementById('connected-sort-by').getElementsByTagName('select')[0].onchange = function(){
     let metric = this.value;
-    papers = d3.select('#connected-paper-container').selectAll('tr').select('td').select('.inner-paper-box')
+    papers = d3.select('#connected-paper-container').selectAll('.outer-paper-box').select('.inner-paper-box')
     papers.select('.metric').html(function(p){
         return(p[metric]?p[metric]:'0')
     })
     printConnectedList(metric,1,true)    
 }
+//For forceGraph display mode toggling
+document.getElementById('mode-toggle').onchange = function(){
+    forceGraph.mode = (forceGraph.mode=='ref') ? 'citedBy' : 'ref';
+    forceGraph.update(Papers,Edges)
+    document.getElementById('connected-sort-by').getElementsByTagName('select')[0].value = (forceGraph.mode=='ref') ? 'seedsCitedBy' : 'seedsCited';
+    printConnectedList(forceGraph.sizeMetric,1,true)
+} 
+
+//For forceGraph threshold slider
+document.getElementById('threshold-input').oninput = function(){
+    document.querySelector('#threshold-output').value = 'Minimum Connections: ' + this.value;
+    forceGraph.threshold(this.value)
+}
+
      
     document.getElementById("add-by-doi").onclick = function() {
         document.getElementById('add-seeds-modal').style.display = "none";
@@ -1112,7 +1163,7 @@ var doiInput = document.querySelector("#doi-input").addEventListener("input",fun
 
 document.getElementById("doi-input").onkeydown = function(event){
     if (event.keyCode == 13){   
-        makeSeed(addPaper({DOI:doiQuery}))
+        addPaper({DOI:doiQuery},true)
         document.getElementById('doi-input-loader').style.display = 'inline-block';
     }
 }
@@ -1159,10 +1210,8 @@ function updateTitleSearchResults(results,pageNum,replot){
                 DOI: p.DOI,
                 Year: p.PublishYear,
                 MicrosoftID: p.CellID,
-                seed: true
             };
-            addPaper(newSeed);
-            triggerEvent('newSeed',newSeed);      
+            addPaper(newSeed,true);
         })
     newpapers = newpapers.append('div')
         .attr('class','inner-paper-box panel')
@@ -1199,9 +1248,8 @@ var bibtex = {
                 };
                 for(let i=0;i<papers.length;i++){
                     if(papers[i].entryTags.doi){
-                        let newSeed = {DOI: papers[i].entryTags.doi,seed:true}
-                        addPaper(newSeed);
-                        triggerEvent('newSeed',newSeed);             
+                        let newSeed = {DOI: papers[i].entryTags.doi}
+                        addPaper(newSeed,true);
                     }; 
                 };
             };
@@ -1215,9 +1263,8 @@ var bibtex = {
         fetch(url).then((resp) => resp.text()).then((data)=> {
                 var papers = bibtexParse.toJSON(data);
                 for(let i=0;i<papers.length;i++){
-                    let newSeed = {DOI: papers[i].entryTags.doi,seed:true}
-                    addPaper(newSeed);
-                    triggerEvent('newSeed',newSeed);                 
+                    let newSeed = {DOI: papers[i].entryTags.doi}
+                    addPaper(newSeed,true);
                 };
                 document.getElementById('upload-bibtex-modal').style.display = "none";
             }
@@ -1486,11 +1533,10 @@ var zotero = {
 
                 for(let i=0;i<items.length;i++){
                     item = items[i];
-                    item.data.title;
-                    item.meta.creatorSummary;
-                    item.meta.parsedDate;
-                    var newSeed = addPaper({DOI:item.data.DOI,seed:true});
-                    triggerEvent('newSeed',newSeed);      
+                    //item.data.title;
+                    //item.meta.creatorSummary;
+                    //item.meta.parsedDate;
+                    addPaper({DOI:item.data.DOI},true);
                 }
             } else {
                 // Some kind of error occurred.
