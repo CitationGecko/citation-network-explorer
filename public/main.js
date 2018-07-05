@@ -153,6 +153,50 @@ deleteSeed = function(paper){
 };
 
 
+newDataModule('coci', {
+
+    eventResponses:{
+        newSeed: function(paper){
+           /*  let url = 'https://w3id.org/oc/index/coci/api/v1/references/'+paper.DOI
+            fetch(url).then(resp=>resp.json()).then(data => {
+                coci.parseResponse(data,paper);
+            }) */
+            console.log('Querying COCI for'+paper.DOI)
+            let url = 'http://opencitations.net/index/coci/api/v1/citations/'+paper.DOI
+            fetch(url, {headers: {
+                'Accept': 'application/sparql-results+json',
+                'Access-Control-Allow-Origin':'*'
+            }}).then(resp=>resp.json()).then(data => {
+                coci.parseResponse(data,paper);
+            })
+        },
+    },
+    parseResponse: function(response,paper){
+        let ne = 0; //For bean counting only
+        let cited = paper;
+
+        for(let i=0, citation = response[i];i<response.length;i++){
+
+            let citer = {
+                DOI: citation.citing
+            };
+
+            citer = addPaper(citer);
+
+            let newEdge = {
+                source: citer,
+                target: cited,
+                coci: true,
+                hide: false
+            }
+            addEdge(newEdge);
+            ne++;//bean counting
+        };   
+        console.log('COCI found ' + ne + " citations")
+        return(cited)
+    }
+}) 
+
 newDataModule('crossref', {
     eventResponses: {
         newSeed: async function(paper){
@@ -182,7 +226,8 @@ newDataModule('crossref', {
                 paper.crossref = new Promise((resolve,reject)=>{
                     CrossRef.work(paper.DOI,function(err,response){          
                         if(err){
-                            reject('Something went wrong')
+                            paper.crossref = false
+                            resolve('CrossRef info not found')
                         } else {
                             console.log("CrossRef data found for "+paper.DOI)
                             paper.crossref = 'Complete'
@@ -844,6 +889,12 @@ function printConnectedList(metric,pageNum,replot){
         console.log('print called')
    
 }
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+    if (event.target.classList.contains('modal')) {
+        event.target.style.display = "none";
+    }
+}
 let forceGraph = {};
 
 forceGraph.minconnections = 0;
@@ -1011,12 +1062,6 @@ forceGraph.update =  function(Papers,Edges){
 
 
   
-// When the user clicks anywhere outside of the modal, close it
-window.onclick = function(event) {
-    if (event.target.classList.contains('modal')) {
-        event.target.style.display = "none";
-    }
-}
 function plotTimeGraph(){
 
     document.getElementById('timelineView').style.display = 'block';
@@ -1125,20 +1170,6 @@ document.getElementById('connected-sort-by').getElementsByTagName('select')[0].o
     })
     printConnectedList(metric,1,true)    
 }
-//For forceGraph display mode toggling
-document.getElementById('mode-toggle').onchange = function(){
-    forceGraph.mode = (forceGraph.mode=='ref') ? 'citedBy' : 'ref';
-    forceGraph.update(Papers,Edges)
-    document.getElementById('connected-sort-by').getElementsByTagName('select')[0].value = (forceGraph.mode=='ref') ? 'seedsCitedBy' : 'seedsCited';
-    printConnectedList(forceGraph.sizeMetric,1,true)
-} 
-
-//For forceGraph threshold slider
-document.getElementById('threshold-input').oninput = function(){
-    document.querySelector('#threshold-output').value = 'Minimum Connections: ' + this.value;
-    forceGraph.threshold(this.value)
-}
-
      
     document.getElementById("add-by-doi").onclick = function() {
         document.getElementById('add-seeds-modal').style.display = "none";
@@ -1554,3 +1585,16 @@ d3.select("#addByZotero").on('click', function() {
     document.getElementById('zotero-modal').style.display = "block";
     zotero.getCollections();
 })
+//For forceGraph display mode toggling
+document.getElementById('mode-toggle').onchange = function(){
+    forceGraph.mode = (forceGraph.mode=='ref') ? 'citedBy' : 'ref';
+    forceGraph.update(Papers,Edges)
+    document.getElementById('connected-sort-by').getElementsByTagName('select')[0].value = (forceGraph.mode=='ref') ? 'seedsCitedBy' : 'seedsCited';
+    printConnectedList(forceGraph.sizeMetric,1,true)
+} 
+
+//For forceGraph threshold slider
+document.getElementById('threshold-input').oninput = function(){
+    document.querySelector('#threshold-output').value = 'Minimum Connections: ' + this.value;
+    forceGraph.threshold(this.value)
+}

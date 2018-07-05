@@ -28,7 +28,8 @@ newDataModule('crossref', {
                 paper.crossref = new Promise((resolve,reject)=>{
                     CrossRef.work(paper.DOI,function(err,response){          
                         if(err){
-                            reject('Something went wrong')
+                            paper.crossref = false
+                            resolve('CrossRef info not found')
                         } else {
                             console.log("CrossRef data found for "+paper.DOI)
                             paper.crossref = 'Complete'
