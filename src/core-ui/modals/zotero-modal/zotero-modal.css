@@ -1,0 +1,19 @@
+.zotero-folder rect {
+    cursor: pointer;
+    fill: #fff;
+    fill-opacity: 0.5;
+    stroke: #979797;
+    stroke-width: 1.5px;
+}
+
+#zotero-logo {
+    width: 40%
+}
+
+#zotero-square {
+    height:90%
+}
+
+#add-by-zotero > div{
+    display: inline
+}

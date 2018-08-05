@@ -1,0 +1,16 @@
+#help-button {
+    background:none;
+    position: absolute;
+    bottom:.5em;
+    margin-left: auto;
+    margin-right: auto;
+    border-style:none;
+}
+
+.logo {
+    max-width: 95%;
+    max-height:70%;
+    position: absolute;
+    top: 50%;                         /* 3 */
+    transform: translate(0, -50%);
+}

@@ -9,28 +9,21 @@
         <link href="https://fonts.googleapis.com/css?family=Comfortaa" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
 
-        <link rel="stylesheet" type="text/css" href='visuals/styles.css'/>
+        <link rel="stylesheet" type="text/css" href='styles.css'/>
 
         <script defer src="https://use.fontawesome.com/releases/v5.0.4/js/all.js"></script>
-
-        <!--DataTables-->
-        <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
-        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.15/datatables.min.css"/>
-        <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.15/datatables.min.js"></script>
-        <!--D3-->
-        <script src="https://d3js.org/d3.v4.js"></script>
     </head>
     <body>
-        <div id='main'>
-            <div id='logoBar' class='panel'>
-                <button id='helpButton'><i class="fa fa-question-circle fa-2x" color ='green' aria-hidden="true"></i></button>
-                <img class='logo' src='visuals/logo2.png'/>
+        <div class='main'>
+            <div id ='logo-panel' class = 'panel'>
+                <button id='help-button'><i class="fa fa-question-circle fa-2x" color ='green' aria-hidden="true"></i></button>
+                <img class='logo' src='images/gecko-logo/logo2.png'/>
             </div>
-            <div id='seedPapers' class='panel'>
-                <div id='tableSwitch'>
-                   <button id='seedTableButton'>Seeds</button><button id='connectedTableButton'>Connected</button>
+            <div id='list-panel' class= 'panel'>
+                <div class = 'box-toggle'>
+                   <button id='seed-list-button'>Seeds</button><button id='connected-list-button'>Connected</button>
                 </div>
-                <div id='connectedControls'>
+                <div id='connected-sort-by'>
                     <span>Sort By:</span>
                     <select>
                         <option value="seedsCitedBy">Seeds Cited-By</option>
@@ -38,7 +31,7 @@
                     </select>
                 </div>
                 <div>
-                    <button id='addSeeds' class='button1' onclick=''><i class="fa fa-plus" aria-hidden="true"></i><span>add more seed papers...</span></button>
+                    <button id='add-seeds-button' class='add-seed-button' onclick=''><i class="fa fa-plus" aria-hidden="true"></i><span>add more seed papers...</span></button>
                 </div>
                 <div id='seed-paper-container'>
                 </div>
@@ -46,24 +39,19 @@
 
                 </div>
             </div>
-            <div id='collapseBar' class='panel'>
-                <i id='collapse-seeds-icon' class="fa fa-chevron-left" aria-hidden="true"></i>
-            </div>
-            <div id='connectedPapers' class='panel'>
-                <div id='networkView'>
-                    <svg id="forceGraph"></svg>
+            <div id='graph-panel' class= 'panel'>
+                <div id='network-view'>
+                    <svg id='force-graph'></svg>
 
-                    <div id='thresholdSlider'>
-                            <input id='thresholdInput' type='range' min='1' max='10' value='1'>
-                            <output id="thresholdOutput" for="thresholdInput">Minimum Connections: 1</output>
+                    <div id='threshold-slider'>
+                            <input id='threshold-input' type='range' min='1' max='10' value='1'>
+                            <output id="threshold-output" for="threshold-input">Minimum Connections: 1</output>
                     </div>
-                    <!-- <div id="controlPanel">
-                        <button id='colorByOA'>Color by Access</button>
-                    </div> -->
-                    <div id='networkKey'>
+                
+                    <div id='network-key'>
                         <div class='key-icon'>
                             <div id='seed-key'></div>
-                        <input type="checkbox" id="toggleMode" /><label class='toggle' for="toggleMode">Toggle</label>
+                        <input type="checkbox" id="mode-toggle" /><label class='toggle' for="mode-toggle">Toggle</label>
                         </div>
                         <div class='key-label'>
                             <div>Seed Papers</div>
@@ -73,19 +61,18 @@
 
                     </div>
                 </div>
-                <div id='timelineView'>
-                    <svg id="timelineGraph"></svg>
+                <div id='timeline-view'>
+                    <svg id="timeline-graph"></svg>
                 </div>
                 <div id='selected-paper-box' class='panel'>
                     <p class='paper-title'></p>
                     <p class='doi-link'></p>
                     <p class='author-year'></p>
-                    <div class='add-seed'></div>
-                </div>
+                    <button type='button' class='add-seed'>Make Seed</button>
             </div>
         </div>
 
-        <div id='helpModal' class='modal'>
+        <div id='help-modal' class='modal'>
             <div class='modal-content'>
                 <h2> Welcome to Citation Gecko!</h2>
                 <p>Gecko is here to help you find the most relevant papers to your research
@@ -133,65 +120,41 @@
                 <h2>Feedback</h2>
                 <p>Thank you for using this demo version of Gecko. If you have any feedback i.e.
                   bugs or feature requests drop me an email at <a href='mailto:bjw15@ic.ac.uk'>bjw15@ic.ac.uk</a>
-                  or <a href='https://github.com/CitationGecko/citation-network-explorer'>start an issue thread on Github</a>.</p>
+                  or <a href='https://github.com/CitationGecko/citation-network-explorer' target='_blank'>start an issue thread on Github</a>.</p>
                 <p> Enjoy!</p>
             </div>
         </div>
-        <div id='addSeedModal' class='modal'>
+        <div id='add-seeds-modal' class='modal'>
             <div class='modal-content'>
-                <button id='addbyDOI'>add by DOI</button>
-                <button id='searchByTitle'>search by title</button>
-                <button id='uploadBibTex'>upload BibTex</button>
-                <button id='addbyZotero'><img id='zotero-square' src='visuals/zotero2.png'></button>
+                <button id='add-by-doi'>add by DOI</button>
+                <button id='search-by-title'>search by title</button>
+                <button id='upload-bibtex'>upload BibTex</button>
             </div>
         </div>
-        <div id='doiInputModal' class='modal'>
+        <div id='doi-input-modal' class='modal'>
             <div class='modal-content'>
-                Enter DOI: <input id='doiInput' type="text"><div id='doiInputLoader' class='loader'></div></input>
+                Enter DOI: <input id='doi-input' type="text"><div id='doi-input-loader' class='loader'></div></input>
 
             </div>
         </div>
-        <div id='titleInputModal' class='modal'>
-                <div id='titleSearchResults' class='modal-content'>
-                    <i class='fa fa-search'></i>Search by Title: <input id='titleInput' type="text"><div id='titleInputLoader' class='loader'></div></input>
-                    <div id='table-container'>
-                        <table id="searchTable" class="table">
-                            <thead>
-                                <th>Title</th>
-                                <th>Year</th>
-                                <th>DOI</th>
-                                <th></th>
-                            </thead>
-                            <tbody>
-                                <tr></tr>
-                            </tbody>
-                        </table>
+        <div id='title-input-modal' class='modal'>
+                <div id='title-search-results' class='modal-content'>
+                    <i class='fa fa-search'></i>Search by Title: <input id='title-input' type="text"><div id='titleInputLoader' class='loader'></div></input>
+                    <div id='title-search-container'>
+                        
                     </div>
                 </div>
         </div>
-        <div id='uploadBibTexModal' class='modal'>
+        <div id='upload-bibtex-modal' class='modal'>
                 <div class='modal-content'>
-                    add seeds from bibTex: <input type="file" id="files" name="files[]" multiple /><output id="list"></output><button id='demoButton'>DEMO</button>
+                    add seeds from bibTex: <input type="file" id="files" name="files[]" multiple /><output id="list"></output><button id='demo-button'>DEMO</button>
                 </div>
         </div>
-        <div id='zoteroModal' class='modal'>
-            <div class='modal-content'>
-                <div><img id='zotero-logo' src='visuals/zotero-logo.png'></div>
-                <svg id='zotero-collections'></svg>
-            </div>
-        </div>
-
-        <script src = "core.js"></script>
-        <script src = 'ui/layout.js'></script>
-        <script src = "ui/forceGraph.js"></script>
-        <script src = "ui/timeGraph.js"></script>
+        
+        <script src=  "https://d3js.org/d3.v4.js"></script>
         <script src = "third-party/bibtexParse.js"></script>
         <script src = "third-party/crossref.min.js"></script>
-        <script src = "data-sources/crossref.js"></script>
-        <script src = "data-sources/occ.js"></script>
-        <script src = "data-sources/microsoft.js"></script>
-        <script src = "data-sources/oaDOI.js"></script>
-        <script src = "integrations/zotero.js"></script>
-
+        <script src = "apikeys.js"></script>
+        <script src = "main.js"></script>
     </body>
 </html>

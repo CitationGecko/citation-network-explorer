@@ -1,0 +1,9 @@
+#add-seeds-modal > .modal-content > button {
+    display:block;
+    background-color: rgb(104, 104, 104);
+    border-style: none;
+    height: 6em;
+    margin:.5em 0em;
+    width:100%;
+    color:white;
+}

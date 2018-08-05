@@ -1,0 +1,15 @@
+.add-seed-button {
+    width:95%;
+    margin-right:0;
+    margin-left:auto;
+    border-style: none;
+    background-color: white;
+    z-index: 1;
+}
+.add-seed-button > span {
+    position:relative;
+    margin-left: .5em;
+}
+.add-seed-button .fa-plus {
+    color:green;
+}

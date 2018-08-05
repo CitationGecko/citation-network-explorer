@@ -1,0 +1,16 @@
+.box-toggle {
+    width:auto;
+    margin: .5em;
+}
+.box-toggle > button{
+    width:50%;
+    height: 3em; 
+}
+.box-toggle-on {
+    background-color:rgb(255, 255, 255);
+    border:3px solid;
+}
+.box-toggle-off {
+    background-color:rgb(200,200,200);
+    border:1px solid;
+}

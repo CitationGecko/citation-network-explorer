@@ -1,0 +1,12 @@
+#timeline-view {
+    width:100%;
+    height:100%;
+    display:none;
+    margin:1em;
+    flex-grow:1;
+    font-size:60%;
+}
+#timeline-graph{
+    width: 100%;
+    height: 1000%;
+}
