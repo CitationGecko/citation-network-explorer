@@ -5,7 +5,7 @@ MicrosoftStatus = 'good'; // Once it switches to bad after first failed request 
 
 newDataModule('microsoft', {
     eventResponses:{
-        newSeed: function(paper){  
+       /*  newSeed: function(paper){  
             if(paper.MicrosoftID){
                 microsoft.sendCitedByQuery(paper.MicrosoftID);       
                 microsoft.sendRefQuery(paper.MicrosoftID);
@@ -17,7 +17,7 @@ newDataModule('microsoft', {
             if(!paper.MicrosoftID){
                 microsoft.titleMatchSearch(paper);
             }
-        },
+        }, */
     },
     apiRequest: function(request,callback){ //Send a generic request to the MAG api
         var url = '/api/v1/query/microsoft/search';

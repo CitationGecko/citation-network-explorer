@@ -1,7 +1,7 @@
 newDataModule('occ', {
 
     eventResponses:{
-        newSeed: function(paper){
+        /* newSeed: function(paper){
             if(paper.occID){
                 occ.getPapersCitingID(paper.occID)
             } else if(paper.DOI){
@@ -12,7 +12,7 @@ newDataModule('occ', {
             if(!paper.occID & paper.DOI){
                 occ.citedByDOI(paper.DOI)
             }
-        }
+        } */
     },
     parseResponse: function(responseString, queryType){
         var response = JSON.parse(responseString);

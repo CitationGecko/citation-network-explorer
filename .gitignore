@@ -1,5 +1,6 @@
 apikeys.js
 public/apikeys.js
+public/zoterokey.js
 node_modules
 dynamo/*.tsv
 package-lock.json

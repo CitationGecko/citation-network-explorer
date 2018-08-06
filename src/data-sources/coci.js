@@ -7,13 +7,13 @@ newDataModule('coci', {
             fetch(url).then(resp=>resp.json()).then(data => {
                 coci.parseResponse(data,paper);
             }) */
-            console.log('Querying COCI for'+paper.DOI)
+            console.log('Querying COCI for '+paper.DOI)
             let url = 'http://opencitations.net/index/coci/api/v1/citations/'+paper.DOI
             fetch(url, {headers: {
-                'Accept': 'application/sparql-results+json',
-                'Access-Control-Allow-Origin':'*'
+                'Accept': 'application/sparql-results+json'
             }}).then(resp=>resp.json()).then(data => {
                 coci.parseResponse(data,paper);
+                refreshGraphics();
             })
         },
     },
@@ -21,10 +21,9 @@ newDataModule('coci', {
         let ne = 0; //For bean counting only
         let cited = paper;
 
-        for(let i=0, citation = response[i];i<response.length;i++){
-
+        for(let i=0;i<response.length;i++){
             let citer = {
-                DOI: citation.citing
+                DOI: response[i].citing
             };
 
             citer = addPaper(citer);
