@@ -142,8 +142,8 @@ var zotero = {
               d._children = null;
             }
             update(d); */
-
-            zotero.getItems(d.data.key)
+            zotero.collection = d.data.key
+            zotero.getItems(zotero.collection)
             document.getElementById('zotero-modal').style.display = "none";
           }
 
@@ -234,36 +234,37 @@ var zotero = {
 
     getItems: function(collectionID){
         url = 'https://api.zotero.org/users/' + ZOTERO_USER_ID + '/collections/' + collectionID + '/items/top';
-        xmlhttp = new XMLHttpRequest();
-        xmlhttp.open('GET', url,true);
-        xmlhttp.setRequestHeader('Zotero-API-Key', ZOTERO_USER_API_KEY);
-        xmlhttp.onreadystatechange = function() {
-            if(this.readyState == 4) {
-            if(this.status == 200) {
-                // Do something with the results
-                console.log('response from Zotero!')
-                items = JSON.parse(this.responseText);
-
-                for(let i=0;i<items.length;i++){
-                    item = items[i];
-                    //item.data.title;
-                    //item.meta.creatorSummary;
-                    //item.meta.parsedDate;
-                    addPaper({DOI:item.data.DOI},true);
-                }
-            } else {
-                // Some kind of error occurred.
-                //alert("oaDOI query error: " + this.status + " "+ this.responseText);
+        
+        fetch(url,{
+            headers: {'Zotero-API-Key':ZOTERO_USER_API_KEY}
+        }).then(resp=>resp.json()).then(items=>{
+            for(let i=0;i<items.length;i++){
+                item = items[i];
+                //item.data.title;
+                //item.meta.creatorSummary;
+                //item.meta.parsedDate;
+                addPaper({DOI:item.data.DOI},true);
             }
-            }
-        };
-        xmlhttp.send(null);
+        })
+    },
 
+    addItem: function(paper,collection){
+        let url = 'https://api.zotero.org/items/new?itemType=journalArticle'
+        fetch(url).then(resp=>resp.json()).then(template=>{
+
+            template.DOI = paper.DOI
+            template.title = paper.Title
+            template.publicationTitle = paper.Journal
+            template.date = paper.Year
+            template.creators[0].lastName = paper.Author
+            template.collections = [zotero.collection]
+
+            let endpoint = 'https://api.zotero.org/users/' + ZOTERO_USER_ID + '/items'
+            fetch(endpoint,{
+                method: 'post',
+                headers:{'Zotero-API-Key': ZOTERO_USER_API_KEY},
+                body:JSON.stringify([template])
+            }).then(resp=>resp.json()).then(r=>console.log(r))  
+        }) 
     }
 }
-
-d3.select("#addByZotero").on('click', function() {
-    document.getElementById('addSeedModal').style.display = "none";
-    document.getElementById('zotero-modal').style.display = "block";
-    zotero.getCollections();
-})

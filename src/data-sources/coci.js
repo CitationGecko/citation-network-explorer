@@ -21,10 +21,9 @@ newDataModule('coci', {
         let ne = 0; //For bean counting only
         let cited = paper;
 
-        for(let i=0, citation = response[i];i<response.length;i++){
-
+        for(let i=0;i<response.length;i++){
             let citer = {
-                DOI: citation.citing
+                DOI: response[i].citing
             };
 
             citer = addPaper(citer);
