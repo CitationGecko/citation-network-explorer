@@ -161,11 +161,10 @@ newDataModule('coci', {
             fetch(url).then(resp=>resp.json()).then(data => {
                 coci.parseResponse(data,paper);
             }) */
-            console.log('Querying COCI for'+paper.DOI)
+            console.log('Querying COCI for '+paper.DOI)
             let url = 'http://opencitations.net/index/coci/api/v1/citations/'+paper.DOI
             fetch(url, {headers: {
-                'Accept': 'application/sparql-results+json',
-                'Access-Control-Allow-Origin':'*'
+                'Accept': 'application/sparql-results+json'
             }}).then(resp=>resp.json()).then(data => {
                 coci.parseResponse(data,paper);
             })
@@ -199,7 +198,7 @@ newDataModule('coci', {
 
 newDataModule('crossref', {
     eventResponses: {
-        newSeed: async function(paper){
+       /*  newSeed: async function(paper){
             
             if(paper.crossref!='Complete'){
                 await paper.crossref
@@ -238,7 +237,7 @@ newDataModule('crossref', {
                     });
                 })   
             };  
-        }
+        } */
     },
     parsePaper: function(response){
        return {
@@ -335,7 +334,7 @@ MicrosoftStatus = 'good'; // Once it switches to bad after first failed request 
 
 newDataModule('microsoft', {
     eventResponses:{
-        newSeed: function(paper){  
+       /*  newSeed: function(paper){  
             if(paper.MicrosoftID){
                 microsoft.sendCitedByQuery(paper.MicrosoftID);       
                 microsoft.sendRefQuery(paper.MicrosoftID);
@@ -347,7 +346,7 @@ newDataModule('microsoft', {
             if(!paper.MicrosoftID){
                 microsoft.titleMatchSearch(paper);
             }
-        },
+        }, */
     },
     apiRequest: function(request,callback){ //Send a generic request to the MAG api
         var url = '/api/v1/query/microsoft/search';
@@ -572,7 +571,7 @@ document.getElementById('colorByOA').onclick = function(){
 newDataModule('occ', {
 
     eventResponses:{
-        newSeed: function(paper){
+        /* newSeed: function(paper){
             if(paper.occID){
                 occ.getPapersCitingID(paper.occID)
             } else if(paper.DOI){
@@ -583,7 +582,7 @@ newDataModule('occ', {
             if(!paper.occID & paper.DOI){
                 occ.citedByDOI(paper.DOI)
             }
-        }
+        } */
     },
     parseResponse: function(responseString, queryType){
         var response = JSON.parse(responseString);
@@ -1131,6 +1130,16 @@ timeGraph.update = function(){
 document.getElementById("add-seeds-button").onclick = function() {
     document.getElementById('add-seeds-modal').style.display = "block";
 }
+
+document.getElementById('connected-sort-by').style.display = 'none'
+document.getElementById('connected-sort-by').getElementsByTagName('select')[0].onchange = function(){
+    let metric = this.value;
+    papers = d3.select('#connected-paper-container').selectAll('.outer-paper-box').select('.inner-paper-box')
+    papers.select('.metric').html(function(p){
+        return(p[metric]?p[metric]:'0')
+    })
+    printConnectedList(metric,1,true)    
+}
 //For paper details panel switching. 
 document.getElementById('connected-paper-container').style.display = 'none';
 
@@ -1160,16 +1169,6 @@ document.getElementById('connected-list-button').onclick = function(){
 
     printConnectedList('seedsCitedBy',1);
 }
-
-document.getElementById('connected-sort-by').style.display = 'none'
-document.getElementById('connected-sort-by').getElementsByTagName('select')[0].onchange = function(){
-    let metric = this.value;
-    papers = d3.select('#connected-paper-container').selectAll('.outer-paper-box').select('.inner-paper-box')
-    papers.select('.metric').html(function(p){
-        return(p[metric]?p[metric]:'0')
-    })
-    printConnectedList(metric,1,true)    
-}
      
     document.getElementById("add-by-doi").onclick = function() {
         document.getElementById('add-seeds-modal').style.display = "none";
@@ -1185,6 +1184,11 @@ document.getElementById('connected-sort-by').getElementsByTagName('select')[0].o
     } 
 
    
+//For help modal
+document.getElementById('help-modal').style.display = "block";
+document.getElementById('help-button').onclick = function(){
+    document.getElementById('help-modal').style.display = "block";
+}
 var doiQuery; //Place holder for the user input field.
 
 //Update request based on doi query inputted by the user.
@@ -1197,11 +1201,6 @@ document.getElementById("doi-input").onkeydown = function(event){
         addPaper({DOI:doiQuery},true)
         document.getElementById('doi-input-loader').style.display = 'inline-block';
     }
-}
-//For help modal
-document.getElementById('help-modal').style.display = "block";
-document.getElementById('help-button').onclick = function(){
-    document.getElementById('help-modal').style.display = "block";
 }
 var titleQuery; //Place holder for the user input field.
 //Update request based on title query inputted by the user.

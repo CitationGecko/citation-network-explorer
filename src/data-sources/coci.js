@@ -7,11 +7,10 @@ newDataModule('coci', {
             fetch(url).then(resp=>resp.json()).then(data => {
                 coci.parseResponse(data,paper);
             }) */
-            console.log('Querying COCI for'+paper.DOI)
+            console.log('Querying COCI for '+paper.DOI)
             let url = 'http://opencitations.net/index/coci/api/v1/citations/'+paper.DOI
             fetch(url, {headers: {
-                'Accept': 'application/sparql-results+json',
-                'Access-Control-Allow-Origin':'*'
+                'Accept': 'application/sparql-results+json'
             }}).then(resp=>resp.json()).then(data => {
                 coci.parseResponse(data,paper);
             })

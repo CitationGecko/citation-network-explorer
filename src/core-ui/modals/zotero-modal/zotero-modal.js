@@ -4,7 +4,9 @@ d3.select('#add-seeds-modal').select('div').append('button').attr('id','add-by-z
 document.getElementById("add-by-zotero").onclick = function() {
     document.getElementById('add-seeds-modal').style.display = "none";
     document.getElementById('zotero-modal').style.display = "block";
-    zotero.getCollections();
+    if(!zotero.status){
+        zotero.getCollections();
+    }
 }
 
 var modal = d3.select('body').append('div').attr('id','zotero-modal').attr('class','modal')
@@ -15,7 +17,7 @@ var modal = d3.select('body').append('div').attr('id','zotero-modal').attr('clas
 
 
 var zotero = {
-
+    status: false,
     getCollections: function(){
 
       if (!ZOTERO_USER_ID || !ZOTERO_USER_API_KEY) {
@@ -32,6 +34,7 @@ var zotero = {
                 if(this.status == 200) {
                     // Do something with the results
                     console.log('response from Zotero!');
+                    zotero.status = true;
                     collections = JSON.parse(this.responseText);
 
                     let total = this.getResponseHeader('Total-Results');
