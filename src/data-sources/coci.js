@@ -13,6 +13,7 @@ newDataModule('coci', {
                 'Accept': 'application/sparql-results+json'
             }}).then(resp=>resp.json()).then(data => {
                 coci.parseResponse(data,paper);
+                refreshGraphics();
             })
         },
     },

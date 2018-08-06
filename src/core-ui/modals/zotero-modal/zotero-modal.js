@@ -20,54 +20,43 @@ var zotero = {
     status: false,
     getCollections: function(){
 
-      if (!ZOTERO_USER_ID || !ZOTERO_USER_API_KEY) {
+    if (!ZOTERO_USER_ID || !ZOTERO_USER_API_KEY) {
         ZOTERO_USER_ID = prompt('Enter Zotero User ID');
         ZOTERO_USER_API_KEY = prompt('Enter Zotero User API Key');
-      }
+    }
 
         let url = 'https://api.zotero.org/users/' + ZOTERO_USER_ID + '/collections?limit=100';
-        let xmlhttp = new XMLHttpRequest();
-        xmlhttp.open('GET', url,true);
-        xmlhttp.setRequestHeader('Zotero-API-Key', ZOTERO_USER_API_KEY)
-        xmlhttp.onreadystatechange = function() {
-            if(this.readyState == 4) {
-                if(this.status == 200) {
-                    // Do something with the results
-                    console.log('response from Zotero!');
-                    zotero.status = true;
-                    collections = JSON.parse(this.responseText);
 
-                    let total = this.getResponseHeader('Total-Results');
-
-                    if(total==collections.length){
-                        zotero.displayCollections(collections);
-                    }
-
-                    for(let i=0;i<Math.ceil(total/100);i++){
-
-                        let url = 'https://api.zotero.org/users/' + ZOTERO_USER_ID + '/collections?key=' + ZOTERO_USER_API_KEY + '&limit=100&start=' + (100 * (i+1));
-                        let xmlhttp = new XMLHttpRequest();
-                        xmlhttp.open('GET', url,true);
-                        xmlhttp.onreadystatechange = function() {
-                            if(this.readyState == 4) {
-                                if(this.status == 200) {
-                                    // Do something with the results
-                                    collections = collections.concat(JSON.parse(this.responseText));
-
-                                    if(i==(Math.ceil(total/100)-1)){
-                                        zotero.displayCollections(collections);
-                                    }
-                                }
-                            };
-                        };
-                        xmlhttp.send(null);
-
-                    }
-
-                }
+        fetch(url,
+            {
+                headers:{'Zotero-API-Key': ZOTERO_USER_API_KEY}
             }
-        };
-        xmlhttp.send(null);
+        ).then(resp => {
+            console.log('response from Zotero!');
+            zotero.totalCollections = resp.headers.get('Total-Results')
+            resp.json().then(json=>{
+                zotero.status = true;
+                zotero.collections = json;
+
+                if(zotero.totalCollections==zotero.collections.length){
+                    zotero.displayCollections(zotero.collections);
+                }
+
+                for(let i=0;i<Math.ceil(zotero.totalCollections/100);i++){
+    
+                    let url = 'https://api.zotero.org/users/' + ZOTERO_USER_ID + '/collections?limit=100' + '&start=' + (100 * (i+1));
+                    fetch(url,{headers:{'Zotero-API-Key': ZOTERO_USER_API_KEY}})
+                        .then(resp=>resp.json())
+                        .then(json => {
+                            zotero.collections = zotero.collections.concat(json);
+                            if(i==(Math.ceil(zotero.totalCollections/100)-1)){
+                                zotero.displayCollections(zotero.collections);
+                            }
+                        }
+                    )                    
+                }
+            })
+        })
     },
 
     parseCollectionTree: function(collections){

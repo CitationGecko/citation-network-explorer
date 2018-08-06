@@ -167,6 +167,7 @@ newDataModule('coci', {
                 'Accept': 'application/sparql-results+json'
             }}).then(resp=>resp.json()).then(data => {
                 coci.parseResponse(data,paper);
+                refreshGraphics();
             })
         },
     },
@@ -198,7 +199,7 @@ newDataModule('coci', {
 
 newDataModule('crossref', {
     eventResponses: {
-       /*  newSeed: async function(paper){
+        newSeed: async function(paper){
             
             if(paper.crossref!='Complete'){
                 await paper.crossref
@@ -237,7 +238,7 @@ newDataModule('crossref', {
                     });
                 })   
             };  
-        } */
+        }
     },
     parsePaper: function(response){
        return {
@@ -1126,10 +1127,6 @@ timeGraph.update = function(){
 
 
 
-// When the user clicks on the button, open the modal
-document.getElementById("add-seeds-button").onclick = function() {
-    document.getElementById('add-seeds-modal').style.display = "block";
-}
 
 document.getElementById('connected-sort-by').style.display = 'none'
 document.getElementById('connected-sort-by').getElementsByTagName('select')[0].onchange = function(){
@@ -1169,21 +1166,10 @@ document.getElementById('connected-list-button').onclick = function(){
 
     printConnectedList('seedsCitedBy',1);
 }
-     
-    document.getElementById("add-by-doi").onclick = function() {
-        document.getElementById('add-seeds-modal').style.display = "none";
-        document.getElementById('doi-input-modal').style.display = "block";
-    }
-    document.getElementById("search-by-title").onclick = function() {
-        document.getElementById('add-seeds-modal').style.display = "none";
-        document.getElementById('title-input-modal').style.display = "block";
-    }
-    document.getElementById("upload-bibtex").onclick = function() {
-        document.getElementById('add-seeds-modal').style.display = "none";
-        document.getElementById('upload-bibtex-modal').style.display = "block";
-    } 
-
-   
+// When the user clicks on the button, open the modal
+document.getElementById("add-seeds-button").onclick = function() {
+    document.getElementById('add-seeds-modal').style.display = "block";
+}
 //For help modal
 document.getElementById('help-modal').style.display = "block";
 document.getElementById('help-button').onclick = function(){
@@ -1202,6 +1188,21 @@ document.getElementById("doi-input").onkeydown = function(event){
         document.getElementById('doi-input-loader').style.display = 'inline-block';
     }
 }
+     
+    document.getElementById("add-by-doi").onclick = function() {
+        document.getElementById('add-seeds-modal').style.display = "none";
+        document.getElementById('doi-input-modal').style.display = "block";
+    }
+    document.getElementById("search-by-title").onclick = function() {
+        document.getElementById('add-seeds-modal').style.display = "none";
+        document.getElementById('title-input-modal').style.display = "block";
+    }
+    document.getElementById("upload-bibtex").onclick = function() {
+        document.getElementById('add-seeds-modal').style.display = "none";
+        document.getElementById('upload-bibtex-modal').style.display = "block";
+    } 
+
+   
 var titleQuery; //Place holder for the user input field.
 //Update request based on title query inputted by the user.
 var titleInput = document.querySelector("#title-input").addEventListener("input", function() {
@@ -1307,13 +1308,22 @@ document.getElementById('files').addEventListener('change', bibtex.importBibTex,
 document.getElementById('demo-button').onclick = function(){
     bibtex.importExampleBibTex()
 }
+//For forceGraph display mode toggling
+document.getElementById('mode-toggle').onchange = function(){
+    forceGraph.mode = (forceGraph.mode=='ref') ? 'citedBy' : 'ref';
+    forceGraph.update(Papers,Edges)
+    document.getElementById('connected-sort-by').getElementsByTagName('select')[0].value = (forceGraph.mode=='ref') ? 'seedsCitedBy' : 'seedsCited';
+    printConnectedList(forceGraph.sizeMetric,1,true)
+} 
 d3.select('#add-seeds-modal').select('div').append('button').attr('id','add-by-zotero')
     .html("<img id='zotero-square' src='images/zotero/zotero2.png'>")
 
 document.getElementById("add-by-zotero").onclick = function() {
     document.getElementById('add-seeds-modal').style.display = "none";
     document.getElementById('zotero-modal').style.display = "block";
-    zotero.getCollections();
+    if(!zotero.status){
+        zotero.getCollections();
+    }
 }
 
 var modal = d3.select('body').append('div').attr('id','zotero-modal').attr('class','modal')
@@ -1324,56 +1334,46 @@ var modal = d3.select('body').append('div').attr('id','zotero-modal').attr('clas
 
 
 var zotero = {
-
+    status: false,
     getCollections: function(){
 
-      if (!ZOTERO_USER_ID || !ZOTERO_USER_API_KEY) {
+    if (!ZOTERO_USER_ID || !ZOTERO_USER_API_KEY) {
         ZOTERO_USER_ID = prompt('Enter Zotero User ID');
         ZOTERO_USER_API_KEY = prompt('Enter Zotero User API Key');
-      }
+    }
 
         let url = 'https://api.zotero.org/users/' + ZOTERO_USER_ID + '/collections?limit=100';
-        let xmlhttp = new XMLHttpRequest();
-        xmlhttp.open('GET', url,true);
-        xmlhttp.setRequestHeader('Zotero-API-Key', ZOTERO_USER_API_KEY)
-        xmlhttp.onreadystatechange = function() {
-            if(this.readyState == 4) {
-                if(this.status == 200) {
-                    // Do something with the results
-                    console.log('response from Zotero!');
-                    collections = JSON.parse(this.responseText);
 
-                    let total = this.getResponseHeader('Total-Results');
-
-                    if(total==collections.length){
-                        zotero.displayCollections(collections);
-                    }
-
-                    for(let i=0;i<Math.ceil(total/100);i++){
-
-                        let url = 'https://api.zotero.org/users/' + ZOTERO_USER_ID + '/collections?key=' + ZOTERO_USER_API_KEY + '&limit=100&start=' + (100 * (i+1));
-                        let xmlhttp = new XMLHttpRequest();
-                        xmlhttp.open('GET', url,true);
-                        xmlhttp.onreadystatechange = function() {
-                            if(this.readyState == 4) {
-                                if(this.status == 200) {
-                                    // Do something with the results
-                                    collections = collections.concat(JSON.parse(this.responseText));
-
-                                    if(i==(Math.ceil(total/100)-1)){
-                                        zotero.displayCollections(collections);
-                                    }
-                                }
-                            };
-                        };
-                        xmlhttp.send(null);
-
-                    }
-
-                }
+        fetch(url,
+            {
+                headers:{'Zotero-API-Key': ZOTERO_USER_API_KEY}
             }
-        };
-        xmlhttp.send(null);
+        ).then(resp => {
+            console.log('response from Zotero!');
+            zotero.totalCollections = resp.headers.get('Total-Results')
+            resp.json().then(json=>{
+                zotero.status = true;
+                zotero.collections = json;
+
+                if(zotero.totalCollections==zotero.collections.length){
+                    zotero.displayCollections(zotero.collections);
+                }
+
+                for(let i=0;i<Math.ceil(zotero.totalCollections/100);i++){
+    
+                    let url = 'https://api.zotero.org/users/' + ZOTERO_USER_ID + '/collections?limit=100' + '&start=' + (100 * (i+1));
+                    fetch(url,{headers:{'Zotero-API-Key': ZOTERO_USER_API_KEY}})
+                        .then(resp=>resp.json())
+                        .then(json => {
+                            zotero.collections = zotero.collections.concat(json);
+                            if(i==(Math.ceil(zotero.totalCollections/100)-1)){
+                                zotero.displayCollections(zotero.collections);
+                            }
+                        }
+                    )                    
+                }
+            })
+        })
     },
 
     parseCollectionTree: function(collections){
@@ -1584,13 +1584,6 @@ d3.select("#addByZotero").on('click', function() {
     document.getElementById('zotero-modal').style.display = "block";
     zotero.getCollections();
 })
-//For forceGraph display mode toggling
-document.getElementById('mode-toggle').onchange = function(){
-    forceGraph.mode = (forceGraph.mode=='ref') ? 'citedBy' : 'ref';
-    forceGraph.update(Papers,Edges)
-    document.getElementById('connected-sort-by').getElementsByTagName('select')[0].value = (forceGraph.mode=='ref') ? 'seedsCitedBy' : 'seedsCited';
-    printConnectedList(forceGraph.sizeMetric,1,true)
-} 
 
 //For forceGraph threshold slider
 document.getElementById('threshold-input').oninput = function(){

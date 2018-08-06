@@ -1,7 +1,7 @@
 
 newDataModule('crossref', {
     eventResponses: {
-       /*  newSeed: async function(paper){
+        newSeed: async function(paper){
             
             if(paper.crossref!='Complete'){
                 await paper.crossref
@@ -40,7 +40,7 @@ newDataModule('crossref', {
                     });
                 })   
             };  
-        } */
+        }
     },
     parsePaper: function(response){
        return {
