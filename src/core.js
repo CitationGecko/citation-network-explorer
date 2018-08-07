@@ -28,13 +28,15 @@ var events = {}; //Object of events comprising an array of methods to run when t
 //Function for defining new events.
 defineEvent = function(name){
     events[name] = {};
-    events[name].methods = [];
+    events[name].responses = [];
 }
 //Function for triggering a named event and passing the subject of the event.
 triggerEvent = function(name,subject){
-    for(let i=0;i<events[name].methods.length;i++){
-        events[name].methods[i].call(null,subject)
-     }
+    for(let i=0;i<events[name].responses.length;i++){
+        if(events[name].responses[i].listening){
+            events[name].responses[i].action.call(null,subject)
+        }
+    }
 }
 
 defineEvent('newSeed'); //Event triggered when a new seed is added.
@@ -44,11 +46,11 @@ defineEvent('paperUpdate') //Event trigger when non-seed paper is updated with m
 
 
 //Builds a new data source module.
-newDataModule = function(name,methods){
-    window[name] = methods; //add methods of module to there own namespace.
+newDataModule = function(name,obj){
+    window[name] = obj.methods; //add methods of module to there own namespace.
     for(event in events){
-        if(methods.eventResponses[event]){ 
-            events[event].methods.push(methods.eventResponses[event]); //if module has event response methods add them to the appropriate array.
+        if(obj.eventResponses[event]){ 
+            events[event].responses.push(obj.eventResponses[event]); //if module has event response methods add them to the appropriate array.
         }
     } 
 }
