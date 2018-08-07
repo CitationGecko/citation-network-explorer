@@ -1,5 +1,5 @@
 
-newDataModule('crossref', {
+newModule('crossref', {
     eventResponses: {
         newSeed: {
             listening: true,
@@ -21,8 +21,8 @@ newDataModule('crossref', {
                         });
                         console.log('CrossRef found ' + paper.references.length + " citations")
                     })
+                    triggerEvent('newEdges')
                 }
-                refreshGraphics();         
             }
         },   
         newPaper: {
@@ -39,7 +39,7 @@ newDataModule('crossref', {
                                 console.log("CrossRef data found for "+paper.doi)
                                 paper.crossref = 'Complete'
                                 merge(paper,crossref.parsePaper(response))
-                                updateConnectedList(forceGraph.sizeMetric);
+                                triggerEvent('paperUpdate')
                                 resolve('CrossRef info found')
                             }
                         });
