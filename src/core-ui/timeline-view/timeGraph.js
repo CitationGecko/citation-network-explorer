@@ -30,7 +30,7 @@ timeGraph.update = function(){
         .domain([minYear,maxYear])
         .range([0,maxYear*70])
     let yAxis = d3.axisLeft(y);
-    timeGraph.nodes.sort((a,b)=>(a.Year-b.Year))
+    timeGraph.nodes.sort((a,b)=>(a.year-b.year))
     timeGraph.circles = timeGraph.circles.data(timeGraph.nodes,function(d){return d.ID})
     timeGraph.circles.exit().remove();
     timeGraph.circles = timeGraph.circles.enter().append("circle")
@@ -39,15 +39,15 @@ timeGraph.update = function(){
             return d.seed ? 7 : 5*Math.max(d.seedsCited,d.seedsCitedBy);
         })
         .attr('cx',function(d){
-            let year = (d.Year? d.Year:maxYear);
-            let month = (d.Month ? d.Month:6);
+            let year = (d.year? d.year:maxyear);
+            let month = (d.month ? d.month:6);
             let a = timeGraph.width*month/12;
             let dir = year%2;
             return (a*dir + (timeGraph.width-a)*(1-dir))
         })
         .attr('cy',function(d){
-            let year = (d.Year? d.Year:maxYear);
-            let month = (d.Month ? d.Month:6);
+            let year = (d.year? d.year:maxYear);
+            let month = (d.month ? d.month:6);
             return (maxYear-year+(6-month)/12)*70;
         })
         .attr("class", function(d) { 
@@ -56,7 +56,7 @@ timeGraph.update = function(){
         .style("visibility", function (d) {return d.hide == 1 ? "hidden" : "visible";})
         .on("click",timeGraph.highlightNode)
         .on("mouseover",function(){updateInfoBox(this)})
-    timeGraph.circles.append("title").text(function(d) { return d.Year + ' ' + d.Month; }); //Label nodes with Title on hover
+    timeGraph.circles.append("title").text(function(d) { return d.year + ' ' + d.month; }); //Label nodes with title on hover
 }
 
 

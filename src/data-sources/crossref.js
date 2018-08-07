@@ -10,8 +10,8 @@ newDataModule('crossref', {
                     paper.crossref = 'Complete'
                     triggerEvent('seedUpdate',paper);
                 }
-                if(paper.References){
-                    paper.References.forEach((ref)=>{
+                if(paper.references){
+                    paper.references.forEach((ref)=>{
                         let cited = addPaper(crossref.parseReference(ref))
                         addEdge({
                             source: paper,
@@ -19,7 +19,7 @@ newDataModule('crossref', {
                             crossref: true,
                             hide: false
                         });
-                        console.log('CrossRef found ' + paper.References.length + " citations")
+                        console.log('CrossRef found ' + paper.references.length + " citations")
                     })
                 }
                 refreshGraphics();         
@@ -28,15 +28,15 @@ newDataModule('crossref', {
         newPaper: {
             listening: true,
             action: function(paper){
-                if(paper.DOI){
-                    console.log("querying crossRef for " +paper.DOI)
+                if(paper.doi){
+                    console.log("querying crossRef for " +paper.doi)
                     paper.crossref = new Promise((resolve,reject)=>{
-                        CrossRef.work(paper.DOI,function(err,response){          
+                        CrossRef.work(paper.doi,function(err,response){          
                             if(err){
                                 paper.crossref = false
                                 resolve('CrossRef info not found')
                             } else {
-                                console.log("CrossRef data found for "+paper.DOI)
+                                console.log("CrossRef data found for "+paper.doi)
                                 paper.crossref = 'Complete'
                                 merge(paper,crossref.parsePaper(response))
                                 updateConnectedList(forceGraph.sizeMetric);
@@ -51,26 +51,26 @@ newDataModule('crossref', {
     methods:{
         parsePaper: function(response){
         return {
-                DOI: response.DOI,
-                Title: response.title[0],
-                Author: response.author[0].family,
-                Month: response.created['date-parts'][0][1],
-                Year: response.created['date-parts'][0][0],
-                Timestamp: response.created.timestamp,
-                Journal: response['container-title'][0],
-                CitationCount: response['is-referenced-by-count'],
-                References: response['reference'] ? response['reference'] : false,
+                doi: response.DOI,
+                title: response.title[0],
+                author: response.author[0].family,
+                month: response.created['date-parts'][0][1],
+                year: response.created['date-parts'][0][0],
+                timestamp: response.created.timestamp,
+                journal: response['container-title'][0],
+                citationCount: response['is-referenced-by-count'],
+                references: response['reference'] ? response['reference'] : false,
                 crossref: true
             };
 
         },
         parseReference: function(ref){
             return {
-                DOI: ref.DOI ? ref.DOI : null,
-                Title: ref['article-title'] ? ref['article-title'] : 'unavailable',
-                Author: ref.author ? ref.author : null,
-                Year: ref.year ? ref.year : null ,
-                Journal: ref['journal-title'] ? ref['journal-title'] : null,
+                doi: ref.DOI ? ref.DOI : null,
+                title: ref['article-title'] ? ref['article-title'] : 'unavailable',
+                author: ref.author ? ref.author : null,
+                year: ref.year ? ref.year : null ,
+                journal: ref['journal-title'] ? ref['journal-title'] : null,
             }
 
         },
@@ -82,9 +82,9 @@ newDataModule('crossref', {
             
             citer = addPaper(citer,true);
 
-            if(!citer.References){return(citer)};
+            if(!citer.references){return(citer)};
 
-            let refs = citer.References;
+            let refs = citer.references;
 
             for(let i=0;i<refs.length;i++){
 
