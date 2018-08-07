@@ -2,35 +2,44 @@ newDataModule('gecko', {
 
     eventResponses:{
         newSeed: {
-            listenting: true,
+            listenting: false,
             action:  function(paper){
-                let url = '/api/v1/?doi='+paper.DOI
-                fetch(url).then(resp=>resp.json()).then(data => {
-                    gecko.parseResponse(data,paper);
+                let url = '/api/v1/getMockResponse?doi='+paper.DOI
+                fetch(url).then(resp=>resp.json()).then(json => {
+                    gecko.parseResponse(json.data,paper);
                 })
             }
         }
     },
     methods:{
-        parseResponse: function(response,paper){
-            let ne = 0; //For bean counting only
-            let cited = paper;
-            for(let i=0;i<response.length;i++){
+        parseResponse: function(data,paper){
+            
+            for(let i=0;i<data.papers.length;i++){
 
-                let citer = {
-                    DOI: response[i].citeFrom
-                };
-                citer = addPaper(citer);
-                let newEdge = {
-                    source: citer,
-                    target: cited,
-                    geckoDB: true,
-                    hide: false
+                paper = {
+                    DOI: response.DOI,
+                    Title: response.title[0],
+                    Author: response.author[0].family,
+                    Month: response.created['date-parts'][0][1],
+                    Year: response.created['date-parts'][0][0],
+                    Timestamp: response.created.timestamp,
+                    Journal: response['container-title'][0],
+                    CitationCount: response['is-referenced-by-count'],
+                    References: response['reference'] ? response['reference'] : false,
                 }
-                addEdge(newEdge);
-                ne++;//bean counting
-            };   
-            console.log('GeckoDB found ' + ne + " citations")
+
+                addPaper(data.papers[i]); 
+            };
+
+            for(let i=0;i<data.edges.length;i++){
+                
+                let edge = data.edges[i];
+                edge.source = Papers.filter(p=>p.geckoID==edge.source);
+                edge.target = Papers.filter(p=>p.geckoID==edge.target);
+                addEdge(edge); 
+            };
+
+            console.log('Gecko found ' + data.edges.length + " citations")
             return(cited)
         }
     }

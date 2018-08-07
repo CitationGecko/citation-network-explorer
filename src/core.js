@@ -94,7 +94,7 @@ function matchPapers(paper,Papers){
     var match;
     if(paper.MicrosoftID){  
         match = Papers.filter(function(p){
-            return p.ID==paper.ID
+            return p.MicrosoftID==paper.MicrosoftID
         })[0];
     };
     if(!match && paper.DOI){

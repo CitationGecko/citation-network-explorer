@@ -28,13 +28,15 @@ var events = {}; //Object of events comprising an array of methods to run when t
 //Function for defining new events.
 defineEvent = function(name){
     events[name] = {};
-    events[name].methods = [];
+    events[name].responses = [];
 }
 //Function for triggering a named event and passing the subject of the event.
 triggerEvent = function(name,subject){
-    for(let i=0;i<events[name].methods.length;i++){
-        events[name].methods[i].call(null,subject)
-     }
+    for(let i=0;i<events[name].responses.length;i++){
+        if(events[name].responses[i].listening){
+            events[name].responses[i].action.call(null,subject)
+        }
+    }
 }
 
 defineEvent('newSeed'); //Event triggered when a new seed is added.
@@ -44,11 +46,11 @@ defineEvent('paperUpdate') //Event trigger when non-seed paper is updated with m
 
 
 //Builds a new data source module.
-newDataModule = function(name,methods){
-    window[name] = methods; //add methods of module to there own namespace.
+newDataModule = function(name,obj){
+    window[name] = obj.methods; //add methods of module to there own namespace.
     for(event in events){
-        if(methods.eventResponses[event]){ 
-            events[event].methods.push(methods.eventResponses[event]); //if module has event response methods add them to the appropriate array.
+        if(obj.eventResponses[event]){ 
+            events[event].responses.push(obj.eventResponses[event]); //if module has event response methods add them to the appropriate array.
         }
     } 
 }
@@ -92,7 +94,7 @@ function matchPapers(paper,Papers){
     var match;
     if(paper.MicrosoftID){  
         match = Papers.filter(function(p){
-            return p.ID==paper.ID
+            return p.MicrosoftID==paper.MicrosoftID
         })[0];
     };
     if(!match && paper.DOI){
@@ -154,407 +156,432 @@ deleteSeed = function(paper){
 
 
 newDataModule('coci', {
-
     eventResponses:{
-        newSeed: function(paper){
-           /*  let url = 'https://w3id.org/oc/index/coci/api/v1/references/'+paper.DOI
-            fetch(url).then(resp=>resp.json()).then(data => {
-                coci.parseResponse(data,paper);
-            }) */
-            console.log('Querying COCI for '+paper.DOI)
-            let url = 'http://opencitations.net/index/coci/api/v1/citations/'+paper.DOI
-            fetch(url, {headers: {
-                'Accept': 'application/sparql-results+json'
-            }}).then(resp=>resp.json()).then(data => {
-                coci.parseResponse(data,paper);
-                refreshGraphics();
-            })
+        newSeed: {
+            listening: true,
+            action: function(paper){
+                /*  let url = 'https://w3id.org/oc/index/coci/api/v1/references/'+paper.DOI
+                 fetch(url).then(resp=>resp.json()).then(data => {
+                     coci.parseResponse(data,paper);
+                 }) */
+                 console.log('Querying COCI for '+paper.DOI)
+                 let url = 'https://w3id.org/oc/index/coci/api/v1/citations/'+paper.DOI
+                 fetch(url, {headers: {
+                     'Accept': 'application/sparql-results+json'
+                 }}).then(resp=>resp.json()).then(data => {
+                     coci.parseResponse(data,paper);
+                     refreshGraphics();
+                 })
+            }
         },
     },
-    parseResponse: function(response,paper){
-        let ne = 0; //For bean counting only
-        let cited = paper;
+    methods:{
 
-        for(let i=0;i<response.length;i++){
-            let citer = {
-                DOI: response[i].citing
-            };
+        parseResponse: function(response,paper){
+            let ne = 0; //For bean counting only
+            let cited = paper;
 
-            citer = addPaper(citer);
+            for(let i=0;i<response.length;i++){
+                let citer = {
+                    DOI: response[i].citing
+                };
 
-            let newEdge = {
-                source: citer,
-                target: cited,
-                coci: true,
-                hide: false
-            }
-            addEdge(newEdge);
-            ne++;//bean counting
-        };   
-        console.log('COCI found ' + ne + " citations")
-        return(cited)
+                citer = addPaper(citer);
+
+                let newEdge = {
+                    source: citer,
+                    target: cited,
+                    coci: true,
+                    hide: false
+                }
+                addEdge(newEdge);
+                ne++;//bean counting
+            };   
+            console.log('COCI found ' + ne + " citations")
+            return(cited)
+        }
     }
 }) 
 
 newDataModule('crossref', {
     eventResponses: {
-        newSeed: async function(paper){
+        newSeed: {
+            listening: true,
+            action: async function(paper){
             
-            if(paper.crossref!='Complete'){
-                await paper.crossref
-                paper.crossref = 'Complete'
-                triggerEvent('seedUpdate',paper);
+                if(paper.crossref!='Complete'){
+                    await paper.crossref
+                    paper.crossref = 'Complete'
+                    triggerEvent('seedUpdate',paper);
+                }
+                if(paper.References){
+                    paper.References.forEach((ref)=>{
+                        let cited = addPaper(crossref.parseReference(ref))
+                        addEdge({
+                            source: paper,
+                            target: cited,
+                            crossref: true,
+                            hide: false
+                        });
+                        console.log('CrossRef found ' + paper.References.length + " citations")
+                    })
+                }
+                refreshGraphics();         
             }
-            if(paper.References){
-                paper.References.forEach((ref)=>{
-                    let cited = addPaper(crossref.parseReference(ref))
-                    addEdge({
-                        source: paper,
-                        target: cited,
-                        crossref: true,
-                        hide: false
-                    });
-                    console.log('CrossRef found ' + paper.References.length + " citations")
-                })
-            }
-            refreshGraphics();         
         },   
-        newPaper: function(paper){
-            if(paper.DOI){
-                console.log("querying crossRef for " +paper.DOI)
-                paper.crossref = new Promise((resolve,reject)=>{
-                    CrossRef.work(paper.DOI,function(err,response){          
-                        if(err){
-                            paper.crossref = false
-                            resolve('CrossRef info not found')
-                        } else {
-                            console.log("CrossRef data found for "+paper.DOI)
-                            paper.crossref = 'Complete'
-                            merge(paper,crossref.parsePaper(response))
-                            updateConnectedList(forceGraph.sizeMetric);
-                            resolve('CrossRef info found')
-                        }
-                    });
-                })   
-            };  
-        }
+        newPaper: {
+            listening: true,
+            action: function(paper){
+                if(paper.DOI){
+                    console.log("querying crossRef for " +paper.DOI)
+                    paper.crossref = new Promise((resolve,reject)=>{
+                        CrossRef.work(paper.DOI,function(err,response){          
+                            if(err){
+                                paper.crossref = false
+                                resolve('CrossRef info not found')
+                            } else {
+                                console.log("CrossRef data found for "+paper.DOI)
+                                paper.crossref = 'Complete'
+                                merge(paper,crossref.parsePaper(response))
+                                updateConnectedList(forceGraph.sizeMetric);
+                                resolve('CrossRef info found')
+                            }
+                        });
+                    })   
+                };  
+            }
+        },
     },
-    parsePaper: function(response){
-       return {
-            DOI: response.DOI,
-            Title: response.title[0],
-            Author: response.author[0].family,
-            Month: response.created['date-parts'][0][1],
-            Year: response.created['date-parts'][0][0],
-            Timestamp: response.created.timestamp,
-            Journal: response['container-title'][0],
-            CitationCount: response['is-referenced-by-count'],
-            References: response['reference'] ? response['reference'] : false,
-            crossref: true
-        };
-
-    },
-    parseReference: function(ref){
+    methods:{
+        parsePaper: function(response){
         return {
-            DOI: ref.DOI ? ref.DOI : null,
-            Title: ref['article-title'] ? ref['article-title'] : 'unavailable',
-            Author: ref.author ? ref.author : null,
-            Year: ref.year ? ref.year : null ,
-            Journal: ref['journal-title'] ? ref['journal-title'] : null,
-        }
+                DOI: response.DOI,
+                Title: response.title[0],
+                Author: response.author[0].family,
+                Month: response.created['date-parts'][0][1],
+                Year: response.created['date-parts'][0][0],
+                Timestamp: response.created.timestamp,
+                Journal: response['container-title'][0],
+                CitationCount: response['is-referenced-by-count'],
+                References: response['reference'] ? response['reference'] : false,
+                crossref: true
+            };
 
-    },
-    parseResponse: function(response){
-        
-        let ne = 0; //For bean counting only
-        
-        let citer = crossref.parsePaper(response);
-        
-        citer = addPaper(citer,true);
+        },
+        parseReference: function(ref){
+            return {
+                DOI: ref.DOI ? ref.DOI : null,
+                Title: ref['article-title'] ? ref['article-title'] : 'unavailable',
+                Author: ref.author ? ref.author : null,
+                Year: ref.year ? ref.year : null ,
+                Journal: ref['journal-title'] ? ref['journal-title'] : null,
+            }
 
-        if(!citer.References){return(citer)};
+        },
+        parseResponse: function(response){
+            
+            let ne = 0; //For bean counting only
+            
+            let citer = crossref.parsePaper(response);
+            
+            citer = addPaper(citer,true);
 
-        let refs = citer.References;
+            if(!citer.References){return(citer)};
 
-        for(let i=0;i<refs.length;i++){
+            let refs = citer.References;
 
-            let cited = crossref.parseReference(refs[i]);
+            for(let i=0;i<refs.length;i++){
 
-            cited = addPaper(cited);
+                let cited = crossref.parseReference(refs[i]);
 
-            addEdge({
-                source: citer,
-                target: cited,
-                crossref: true,
-                hide: false
-            });
-            ne++;//bean counting
-        };   
-        console.log('CrossRef found ' + ne + " citations")
-        return(citer)
-    } 
+                cited = addPaper(cited);
+
+                addEdge({
+                    source: citer,
+                    target: cited,
+                    crossref: true,
+                    hide: false
+                });
+                ne++;//bean counting
+            };   
+            console.log('CrossRef found ' + ne + " citations")
+            return(citer)
+        } 
+    }
 })
-/* 
 newDataModule('gecko', {
 
     eventResponses:{
-        newSeed: function(paper){
-            let url = '/api/v1/getCitingArticles?doi='+paper.DOI
-            fetch(url).then(resp=>resp.json()).then(data => {
-                gecko.parseResponse(data,paper);
-            })
-        },
-    },
-    parseResponse: function(response,paper){
-        let ne = 0; //For bean counting only
-        let cited = paper;
-        for(let i=0;i<response.length;i++){
-
-            let citer = {
-                DOI: response[i].citeFrom
-            };
-            citer = addPaper(citer);
-            let newEdge = {
-                source: citer,
-                target: cited,
-                geckoDB: true,
-                hide: false
+        newSeed: {
+            listenting: false,
+            action:  function(paper){
+                let url = '/api/v1/getMockResponse?doi='+paper.DOI
+                fetch(url).then(resp=>resp.json()).then(json => {
+                    gecko.parseResponse(json.data,paper);
+                })
             }
-            addEdge(newEdge);
-            ne++;//bean counting
-        };   
-        console.log('GeckoDB found ' + ne + " citations")
-        return(cited)
+        }
+    },
+    methods:{
+        parseResponse: function(data,paper){
+            
+            for(let i=0;i<data.papers.length;i++){
+
+                paper = {
+                    DOI: response.DOI,
+                    Title: response.title[0],
+                    Author: response.author[0].family,
+                    Month: response.created['date-parts'][0][1],
+                    Year: response.created['date-parts'][0][0],
+                    Timestamp: response.created.timestamp,
+                    Journal: response['container-title'][0],
+                    CitationCount: response['is-referenced-by-count'],
+                    References: response['reference'] ? response['reference'] : false,
+                }
+
+                addPaper(data.papers[i]); 
+            };
+
+            for(let i=0;i<data.edges.length;i++){
+                
+                let edge = data.edges[i];
+                edge.source = Papers.filter(p=>p.geckoID==edge.source);
+                edge.target = Papers.filter(p=>p.geckoID==edge.target);
+                addEdge(edge); 
+            };
+
+            console.log('Gecko found ' + data.edges.length + " citations")
+            return(cited)
+        }
     }
-}) */
-
-//Functions for sending requests to, and parsing responses from, the Microsoft Academic Graph API
-
-MicrosoftStatus = 'good'; // Once it switches to bad after first failed request it will stop alerting the user when requests fail.
+})
 
 newDataModule('microsoft', {
     eventResponses:{
-       /*  newSeed: function(paper){  
-            if(paper.MicrosoftID){
-                microsoft.sendCitedByQuery(paper.MicrosoftID);       
-                microsoft.sendRefQuery(paper.MicrosoftID);
-            } else if(paper.Title){
-               microsoft.titleMatchSearch(paper);
+        newSeed: {
+            listening: false,
+            action: function(paper){  
+                if(paper.MicrosoftID){
+                    microsoft.sendCitedByQuery(paper.MicrosoftID);       
+                    microsoft.sendRefQuery(paper.MicrosoftID);
+                } else if(paper.Title){
+                microsoft.titleMatchSearch(paper);
+                }
             }
         },
-        seedUpdate: function(paper){
-            if(!paper.MicrosoftID){
-                microsoft.titleMatchSearch(paper);
+        seedUpdate: {
+            listening: false,
+            action: function(paper){
+                if(!paper.MicrosoftID){
+                    microsoft.titleMatchSearch(paper);
+                }
             }
-        }, */
+        },
     },
-    apiRequest: function(request,callback){ //Send a generic request to the MAG api
-        var url = '/api/v1/query/microsoft/search';
-        fetch(url,
-            {
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                method: "POST",
-                body: JSON.stringify(request.toSend)
+    methods:{
+        apiRequest: function(request,callback){ //Send a generic request to the MAG api
+            var url = '/api/v1/query/microsoft/search';
+            fetch(url,
+                {
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    method: "POST",
+                    body: JSON.stringify(request.toSend)
+                })
+                .then((res)=>res.json())
+                .then(callback)
+            /* xmlhttp = new XMLHttpRequest();
+            //If no API key is given the request will be sent to an intermediate server which inserts the API and forwards it on to Microsoft.
+            var url = '/api/v1/query/microsoft/search';
+            xmlhttp.open('POST', url, true);
+            xmlhttp.setRequestHeader('Content-Type', 'application/json');
+            xmlhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    callback(this.responseText)
+                } else if(this.readyState==4){
+                    if(MicrosoftStatus == 'good'){
+                        MicrosoftStatus = 'bad';
+                        alert('The Microsoft Academic Graph is unavailable at this time. This will result in reduced coverage, especially in cited-by mode, and search by title won\'t work. Sorry for the inconvenience, please try again later.')}
+                        console.log(this.responseText)
+                    }
+            }
+            xmlhttp.send(JSON.stringify(request.toSend)); */
+        },
+        refQuery: function(id){ //Query for MAG API to get references of a paper from the Microsoft ID.
+            return {          
+                "type": "ref",
+                "toSend": {
+                    "path": "/paper/ReferenceIDs/cited",
+                    "paper": {
+                        "type": "Paper",
+                        "id": [id.toString()],
+                        "select":["OriginalTitle","DOI","PublishYear"]
+                    },
+                    "cited": {
+                        "select":["OriginalTitle" , "DOI","PublishYear"],
+                        "return": {
+                        "type": "Paper",
+                        }
+                    }
+                }
+            }
+        },
+        citedByQuery: function(id){//Query for MAG API to get papers citing a paper with a specific Microsoft ID.
+            return {          
+                "type": "citedBy",
+                "toSend": {
+                    "path": "/paper/CitationIDs/citer",
+                    "paper": {
+                        "type": "Paper",
+                        "id": [id.toString()],
+                        "select":["OriginalTitle","DOI","PublishYear"]
+                    },
+                    "citer": {
+                        "select":["OriginalTitle" , "DOI",,"PublishYear"],
+                        "return": {
+                        "type": "Paper",
+                        }
+                    }
+                }
+            }
+        },
+        titleQuery: function(title){//Query for MAG API that searches for papers with titles containing the string given by 'title'
+            return {           
+                "type": "title",
+                "toSend": {
+                    "path": "/paper/",
+                    "paper": {
+                        "type": "Paper",
+                        "NormalizedTitle": title,
+                        "select":["OriginalTitle","PublishYear","DOI"]
+                    }
+            
+                }
+            }
+        },
+        titleSearch: function(query){
+            var request = microsoft.titleQuery(query)
+            console.log('MAG: querying title "'+query+'"')
+            microsoft.apiRequest(request,function(response){
+                console.log('MAG: results found for title "'+query+'"')
+                updateTitleSearchResults(response.Results.map(function(p){return p[0];}),1,true)
             })
-            .then((res)=>res.json())
-            .then(callback)
-        /* xmlhttp = new XMLHttpRequest();
-        //If no API key is given the request will be sent to an intermediate server which inserts the API and forwards it on to Microsoft.
-        var url = '/api/v1/query/microsoft/search';
-        xmlhttp.open('POST', url, true);
-        xmlhttp.setRequestHeader('Content-Type', 'application/json');
-        xmlhttp.onreadystatechange = function () {
-            if (this.readyState == 4 && this.status == 200) {
-                callback(this.responseText)
-            } else if(this.readyState==4){
-                if(MicrosoftStatus == 'good'){
-                    MicrosoftStatus = 'bad';
-                    alert('The Microsoft Academic Graph is unavailable at this time. This will result in reduced coverage, especially in cited-by mode, and search by title won\'t work. Sorry for the inconvenience, please try again later.')}
-                    console.log(this.responseText)
-                }
-        }
-        xmlhttp.send(JSON.stringify(request.toSend)); */
-    },
-    refQuery: function(id){ //Query for MAG API to get references of a paper from the Microsoft ID.
-        return {          
-            "type": "ref",
-            "toSend": {
-                "path": "/paper/ReferenceIDs/cited",
-                "paper": {
-                    "type": "Paper",
-                    "id": [id.toString()],
-                    "select":["OriginalTitle","DOI","PublishYear"]
-                },
-                "cited": {
-                    "select":["OriginalTitle" , "DOI","PublishYear"],
-                    "return": {
-                    "type": "Paper",
+        },
+        titleMatchSearch: function(paper){
+            var request = microsoft.titleQuery(paper.Title)
+            console.log('MAG: querying title "'+paper.Title+'"')       
+            microsoft.apiRequest(request,function(response){
+                console.log('MAG: results found for title "'+paper.Title+'"')
+                //check for DOI matches
+                var match = response.Results.filter(function(p){
+                    if(p[0].DOI){
+                        return (p[0].DOI.toLowerCase()==paper.DOI.toLowerCase())
+                    } else {
+                        return(false)
                     }
+                })[0];
+                if(match){
+                    var ID = response.Results[0][0].CellID;               
+                    microsoft.sendCitedByQuery(ID)
+                    microsoft.sendRefQuery(ID)
+                } else {
+                    /* alert("Papers with similar titles found, please choose from table...")
+                    updateTitleSearchResults(response.Results.map(function(p){return p[0];}))
+                */
                 }
-            }
-        }
-    },
-    citedByQuery: function(id){//Query for MAG API to get papers citing a paper with a specific Microsoft ID.
-        return {          
-            "type": "citedBy",
-            "toSend": {
-                "path": "/paper/CitationIDs/citer",
-                "paper": {
-                    "type": "Paper",
-                    "id": [id.toString()],
-                    "select":["OriginalTitle","DOI","PublishYear"]
-                },
-                "citer": {
-                    "select":["OriginalTitle" , "DOI",,"PublishYear"],
-                    "return": {
-                    "type": "Paper",
+            })
+        },
+        sendRefQuery: function(ID){
+            console.log('MAG: querying refs for ID '+ID)
+            var request = microsoft.refQuery(ID)
+            microsoft.apiRequest(request,function(response){
+                    if(response.Results.length){
+                        console.log('MAG: founds refs for ID '+ID)
+                        microsoft.parseResponse(response,request); //add Papers found by request to Papers array
+                        refreshGraphics();
+                    } else {
+                        console.log("No connecting papers found");
                     }
-                }
+            })
+        },
+        sendCitedByQuery: function(ID){
+            console.log('MAG: querying cited-by for ID '+ID)
+            var request = microsoft.citedByQuery(ID)
+            microsoft.apiRequest(request,function(response){
+                    if(response.Results.length){
+                        console.log('MAG: founds cited-by for ID '+ID)
+                        microsoft.parseResponse(response,request); //add Papers found by request to Papers array
+                        refreshGraphics();
+                    } else {
+                        console.log("No connecting papers found");
+                    }
+            })
+        },
+        parsePaper: function(paper){
+            return {           
+                Title: paper.OriginalTitle,
+                Author: null,
+                DOI: paper.DOI,
+                Year: paper.PublishYear,
+                MicrosoftID: paper.CellID,
             }
-        }
-    },
-    titleQuery: function(title){//Query for MAG API that searches for papers with titles containing the string given by 'title'
-        return {           
-            "type": "title",
-            "toSend": {
-                "path": "/paper/",
-                "paper": {
-                    "type": "Paper",
-                    "NormalizedTitle": title,
-                    "select":["OriginalTitle","PublishYear","DOI"]
+        },
+        parseResponse: function(response,request){
+            var ne = 0; //For bean counting only
+            var seedpaper = response.Results[0][0];
+            seedpaper = microsoft.parsePaper(seedpaper)
+            seedpaper = addPaper(seedpaper,true);
+            for (let i=0; i < response.Results.length; i++) {
+                var connection = response.Results[i][1];
+                connection = microsoft.parsePaper(connection)
+                connection = addPaper(connection);
+                //Define the edges depending on request
+                var edges =[];
+                switch(request.type){
+                    case 'ref':
+                        edges = [{"source": seedpaper, "target": connection, "MAG":true, hide: false}];
+                        break;
+                    case 'citedBy':
+                        edges = [{"source": connection, "target": seedpaper,"MAG":true, hide: false}];
+                        break;    
                 }
-        
+                edges.forEach(function(edge){   
+                    addEdge(edge);
+                    ne++; //bean counting
+                });
             }
-        }
-    },
-    titleSearch: function(query){
-        var request = microsoft.titleQuery(query)
-        console.log('MAG: querying title "'+query+'"')
-        microsoft.apiRequest(request,function(response){
-            console.log('MAG: results found for title "'+query+'"')
-            updateTitleSearchResults(response.Results.map(function(p){return p[0];}),1,true)
-        })
-    },
-    titleMatchSearch: function(paper){
-        var request = microsoft.titleQuery(paper.Title)
-        console.log('MAG: querying title "'+paper.Title+'"')       
-        microsoft.apiRequest(request,function(response){
-            console.log('MAG: results found for title "'+paper.Title+'"')
-            //check for DOI matches
-            var match = response.Results.filter(function(p){
-                if(p[0].DOI){
-                    return (p[0].DOI.toLowerCase()==paper.DOI.toLowerCase())
-                } else {
-                    return(false)
-                }
-            })[0];
-            if(match){
-                var ID = response.Results[0][0].CellID;               
-                microsoft.sendCitedByQuery(ID)
-                microsoft.sendRefQuery(ID)
-            } else {
-                /* alert("Papers with similar titles found, please choose from table...")
-                updateTitleSearchResults(response.Results.map(function(p){return p[0];}))
-             */
-            }
-        })
-    },
-    sendRefQuery: function(ID){
-        console.log('MAG: querying refs for ID '+ID)
-        var request = microsoft.refQuery(ID)
-        microsoft.apiRequest(request,function(response){
-                if(response.Results.length){
-                    console.log('MAG: founds refs for ID '+ID)
-                    microsoft.parseResponse(response,request); //add Papers found by request to Papers array
-                    refreshGraphics();
-                } else {
-                    console.log("No connecting papers found");
-                }
-        })
-    },
-    sendCitedByQuery: function(ID){
-        console.log('MAG: querying cited-by for ID '+ID)
-        var request = microsoft.citedByQuery(ID)
-        microsoft.apiRequest(request,function(response){
-                if(response.Results.length){
-                    console.log('MAG: founds cited-by for ID '+ID)
-                    microsoft.parseResponse(response,request); //add Papers found by request to Papers array
-                    refreshGraphics();
-                } else {
-                    console.log("No connecting papers found");
-                }
-        })
-    },
-    parsePaper: function(paper){
-        return {           
-            Title: paper.OriginalTitle,
-            Author: null,
-            DOI: paper.DOI,
-            Year: paper.PublishYear,
-            MicrosoftID: paper.CellID,
-        }
-    },
-    parseResponse: function(response,request){
-        var ne = 0; //For bean counting only
-        var seedpaper = response.Results[0][0];
-        seedpaper = microsoft.parsePaper(seedpaper)
-        seedpaper = addPaper(seedpaper,true);
-        for (let i=0; i < response.Results.length; i++) {
-            var connection = response.Results[i][1];
-            connection = microsoft.parsePaper(connection)
-            connection = addPaper(connection);
-            //Define the edges depending on request
-            var edges =[];
-            switch(request.type){
-                case 'ref':
-                    edges = [{"source": seedpaper, "target": connection, "MAG":true, hide: false}];
-                    break;
-                case 'citedBy':
-                    edges = [{"source": connection, "target": seedpaper,"MAG":true, hide: false}];
-                    break;    
-            }
-            edges.forEach(function(edge){   
-                addEdge(edge);
-                ne++; //bean counting
-            });
-        }
-        console.log('MAG found '  + ne + " citations")
-    },
+            console.log('MAG found '  + ne + " citations")
+        },
+    }
 })
 newDataModule('oaDOI', {
     
   eventResponses: {
-    newPaper: function(paper){
-      //oaDOI.getAccessStatus(paper)
+    newPaper: {
+      listenting: false,
+      action: function(paper){
+        oaDOI.getAccessStatus(paper)
+      }
     }
   },
-  getAccessStatus: function(paper) {
-      if (paper.DOI) {
-        var url = '/api/v1/query/oadoi?doi=' + paper.DOI;
-        xmlhttp = new XMLHttpRequest();
-        xmlhttp.open('GET', url, true);
+  methods:{
+    getAccessStatus: function(paper) {
+        if (paper.DOI) {
+          var url = '/api/v1/query/oadoi?doi=' + paper.DOI;
+          
+          fetch(url).then(resp=>resp.json()).then(json=>{
+            paper.OA = JSON.parse(this.responseText).data.is_oa;
+          })
+        }
+      },
 
-        xmlhttp.onreadystatechange = function() {
-          if (this.readyState == 4) {
-            if (this.status == 200) {
-              // Do something with the results
-              // console.log('Response from oadoi');
-              paper.OA = JSON.parse(this.responseText).data.is_oa;
-            }
-          }
-        };
-        xmlhttp.send(null);
-      }
-    },
-
-  getAllAccessStatus: function() {
-      Papers.forEach(oaDOI.getAccessStatus);
+    getAllAccessStatus: function() {
+        Papers.forEach(oaDOI.getAccessStatus);
+    }
   }
 })
-
 
 /* 
 document.getElementById('colorByOA').onclick = function(){
@@ -571,182 +598,204 @@ document.getElementById('colorByOA').onclick = function(){
 newDataModule('occ', {
 
     eventResponses:{
-        /* newSeed: function(paper){
-            if(paper.occID){
-                occ.getPapersCitingID(paper.occID)
-            } else if(paper.DOI){
-                occ.getPapersCitingDOI(paper.DOI)
+        newSeed: {
+            listening: false,
+            action: function(paper){
+                if(paper.occID){
+                    occ.getPapersCitingID(paper.occID)
+                } else if(paper.DOI){
+                    occ.getPapersCitingDOI(paper.DOI)
+                }
             }
         },
-        seedUpdate: function(paper){
-            if(!paper.occID & paper.DOI){
-                occ.citedByDOI(paper.DOI)
+        seedUpdate: {
+            listening: false,
+            action:function(paper){
+                if(!paper.occID & paper.DOI){
+                    occ.citedByDOI(paper.DOI)
+                }
             }
-        } */
-    },
-    parseResponse: function(responseString, queryType){
-        var response = JSON.parse(responseString);
-        var ne = 0; //For bean counting only
-        var newEdges = response.results.bindings;
-        for(let i=0;i<newEdges.length;i++){
-            let edge = newEdges[i]
-            var cited = {
-                Author: null,
-                DOI: edge.citedDOI ? edge.citedDOI.value : null,
-                Title: edge.citedTitle ? edge.citedTitle.value : null,
-                Year: edge.citedYear ? edge.citedYear.value : null,
-                occID: edge.citedID.value
-            }
-            cited = addPaper(cited,(queryType=='refs'));
-            if(!edge.citingID){break}
-            var citer = {
-                Author: null,
-                DOI: edge.citingDOI ? edge.citingDOI.value : null,
-                Title: edge.citingTitle ? edge.citingTitle.value : null,
-                Year: edge.citingYear ? edge.citingYear.value : null,
-                occID: edge.citingID.value
-            }
-            citer = addPaper(citer,(queryType=='citedBy'));
-            let newEdge = {
-                source: citer,
-                target: cited,
-                occ: true,
-                hide: false
-            };
-            addEdge(newEdge);ne++
         }
-        console.log('OCC found ' + ne + " citations")
     },
-    sendQuery: function(query){
+    methods:{
 
-        let url = 'http://opencitations.net/sparql?query=' + escape(query.string);
-        fetch(url,{
-            headers: {
-                'Accept': 'application/sparql-results+json'
+        parseResponse: function(responseString, queryType){
+            var response = JSON.parse(responseString);
+            var ne = 0; //For bean counting only
+            var newEdges = response.results.bindings;
+            for(let i=0;i<newEdges.length;i++){
+                let edge = newEdges[i]
+                var cited = {
+                    Author: null,
+                    DOI: edge.citedDOI ? edge.citedDOI.value : null,
+                    Title: edge.citedTitle ? edge.citedTitle.value : null,
+                    Year: edge.citedYear ? edge.citedYear.value : null,
+                    occID: edge.citedID.value
+                }
+                cited = addPaper(cited,(queryType=='refs'));
+                if(!edge.citingID){break}
+                var citer = {
+                    Author: null,
+                    DOI: edge.citingDOI ? edge.citingDOI.value : null,
+                    Title: edge.citingTitle ? edge.citingTitle.value : null,
+                    Year: edge.citingYear ? edge.citingYear.value : null,
+                    occID: edge.citingID.value
+                }
+                citer = addPaper(citer,(queryType=='citedBy'));
+                let newEdge = {
+                    source: citer,
+                    target: cited,
+                    occ: true,
+                    hide: false
+                };
+                addEdge(newEdge);ne++
             }
-        }).then((resp) => resp.text()).then((data)=> {
-            occ.parseResponse(data, query.type);
-            refreshGraphics();
-        });
+            console.log('OCC found ' + ne + " citations")
+        },
+        sendQuery: function(query){
 
-         console.log('querying OCC...');
-    },
-    getPapersCitedByDOI: function(doi){
-        var query ={};
-        query.type = 'refs'
-        query.string = 'PREFIX cito: <http://purl.org/spar/cito/>\n\
-        PREFIX dcterms: <http://purl.org/dc/terms/>\n\
-        PREFIX datacite: <http://purl.org/spar/datacite/>\n\
-        PREFIX literal: <http://www.essepuntato.it/2010/06/literalreification/>\n\
-        PREFIX biro: <http://purl.org/spar/biro/>\n\
-        PREFIX frbr: <http://purl.org/vocab/frbr/core#>\n\
-        PREFIX c4o: <http://purl.org/spar/c4o/>\n\
-        PREFIX fabio: <http://purl.org/spar/fabio/>\n\
-        SELECT ?citingID ?citingDOI ?citingTitle ?citingYear ?citedID ?citedTitle ?citedYear ?citedDOI WHERE {\n\
-            BIND ("'+doi+'" AS ?citingDOI)\n\
-            ?citingID datacite:hasIdentifier [\n\
-                          datacite:usesIdentifierScheme datacite:doi ;\n\
-                          literal:hasLiteralValue ?citingDOI].\n\
-            ?citingID cito:cites ?citedID.\n\
-            OPTIONAL{\n\
-            ?citedID datacite:hasIdentifier [\n\
-                          datacite:usesIdentifierScheme datacite:doi ;\n\
-                          literal:hasLiteralValue ?citedDOI].\n\
-            ?citedID dcterms:title ?citedTitle.\n\
-            ?citedID fabio:hasPublicationYear ?citedYear.\n\
-            ?citingID dcterms:title ?citingTitle.\n\
-              ?citingID fabio:hasPublicationYear ?citingYear.}\n\
-        }';
-        occ.sendQuery(query, occ.callback);
-    },
-    getPapersCitedByID: function(id){ //Queries OCC SPARQL to find references of the ID specified. Updates Papers and Edges data structures.
-        var query = {};
-        query.type = 'refs'
-        query.string = 'PREFIX cito: <http://purl.org/spar/cito/>\n\
-        PREFIX dcterms: <http://purl.org/dc/terms/>\n\
-        PREFIX datacite: <http://purl.org/spar/datacite/>\n\
-        PREFIX literal: <http://www.essepuntato.it/2010/06/literalreification/>\n\
-        PREFIX biro: <http://purl.org/spar/biro/>\n\
-        PREFIX frbr: <http://purl.org/vocab/frbr/core#>\n\
-        PREFIX c4o: <http://purl.org/spar/c4o/>\n\
-        PREFIX fabio: <http://purl.org/spar/fabio/>\n\
-        SELECT ?citingID ?citingDOI ?citingTitle ?citingYear ?citedID ?citedTitle ?citedYear ?citedDOI WHERE {\n\
-            BIND (<'+id+'> AS ?citingID)\n\
-            ?citingID cito:cites ?citedID\n\
-            OPTIONAL {\n\
-            ?citedID datacite:hasIdentifier [\n\
-                datacite:usesIdentifierScheme datacite:doi ;\n\
-                literal:hasLiteralValue ?citedDOI].\n\
-                ?citedID dcterms:title ?citedTitle.\n\
-                ?citedID fabio:hasPublicationYear ?citedYear.}\n\
-            OPTIONAL { \n\
-            ?citingID dcterms:title ?citingTitle.\n\
-            ?citingID fabio:hasPublicationYear ?citingYear.\n\
+            let url = 'http://opencitations.net/sparql?query=' + escape(query.string);
+            fetch(url,{
+                headers: {
+                    'Accept': 'application/sparql-results+json'
+                }
+            }).then((resp) => resp.text()).then((data)=> {
+                occ.parseResponse(data, query.type);
+                refreshGraphics();
+            });
+
+            console.log('querying OCC...');
+        },
+        getPapersCitedByDOI: function(doi){
+            var query ={};
+            query.type = 'refs'
+            query.string = 'PREFIX cito: <http://purl.org/spar/cito/>\n\
+            PREFIX dcterms: <http://purl.org/dc/terms/>\n\
+            PREFIX datacite: <http://purl.org/spar/datacite/>\n\
+            PREFIX literal: <http://www.essepuntato.it/2010/06/literalreification/>\n\
+            PREFIX biro: <http://purl.org/spar/biro/>\n\
+            PREFIX frbr: <http://purl.org/vocab/frbr/core#>\n\
+            PREFIX c4o: <http://purl.org/spar/c4o/>\n\
+            PREFIX fabio: <http://purl.org/spar/fabio/>\n\
+            SELECT ?citingID ?citingDOI ?citingTitle ?citingYear ?citedID ?citedTitle ?citedYear ?citedDOI WHERE {\n\
+                BIND ("'+doi+'" AS ?citingDOI)\n\
                 ?citingID datacite:hasIdentifier [\n\
-                    datacite:usesIdentifierScheme datacite:doi ;\n\
-                    literal:hasLiteralValue ?citingDOI ].} \n\
-        }';
-        occ.sendQuery(query, occ.callback);
-    },
-    getPapersCitingID: function(id){
-        var query = {};
-        query.type = 'citedBy'
-        query.string = 'PREFIX cito: <http://purl.org/spar/cito/>\n\
-        PREFIX dcterms: <http://purl.org/dc/terms/>\n\
-        PREFIX datacite: <http://purl.org/spar/datacite/>\n\
-        PREFIX literal: <http://www.essepuntato.it/2010/06/literalreification/>\n\
-        PREFIX biro: <http://purl.org/spar/biro/>\n\
-        PREFIX frbr: <http://purl.org/vocab/frbr/core#>\n\
-        PREFIX c4o: <http://purl.org/spar/c4o/>\n\
-        PREFIX fabio: <http://purl.org/spar/fabio/>\n\
-        SELECT ?citingID ?citingDOI ?citingTitle ?citingYear ?citedID ?citedTitle ?citedYear ?citedDOI WHERE {\n\
-            BIND (<'+id+'> AS ?citedID)\n\
-            OPTIONAL {\n\
-            ?citedID datacite:hasIdentifier [\n\
-                datacite:usesIdentifierScheme datacite:doi ;\n\
-                literal:hasLiteralValue ?citedDOI].\n\
+                            datacite:usesIdentifierScheme datacite:doi ;\n\
+                            literal:hasLiteralValue ?citingDOI].\n\
+                ?citingID cito:cites ?citedID.\n\
+                OPTIONAL{\n\
+                ?citedID datacite:hasIdentifier [\n\
+                            datacite:usesIdentifierScheme datacite:doi ;\n\
+                            literal:hasLiteralValue ?citedDOI].\n\
                 ?citedID dcterms:title ?citedTitle.\n\
-                ?citedID fabio:hasPublicationYear ?citedYear.}\n\
-            OPTIONAL { \n\
-            ?citingID cito:cites ?citedID.\n\
-            ?citingID dcterms:title ?citingTitle.\n\
-            ?citingID fabio:hasPublicationYear ?citingYear.\n\
-                ?citingID datacite:hasIdentifier [\n\
-                    datacite:usesIdentifierScheme datacite:doi ;\n\
-                    literal:hasLiteralValue ?citingDOI ].} \n\
-        }';
-        occ.sendQuery(query, occ.callback);
-    },
-    getPapersCitingDOI: function(doi){
-        var query ={};
-        query.type = 'refs'
-        query.string = 'PREFIX cito: <http://purl.org/spar/cito/>\n\
-        PREFIX dcterms: <http://purl.org/dc/terms/>\n\
-        PREFIX datacite: <http://purl.org/spar/datacite/>\n\
-        PREFIX literal: <http://www.essepuntato.it/2010/06/literalreification/>\n\
-        PREFIX biro: <http://purl.org/spar/biro/>\n\
-        PREFIX frbr: <http://purl.org/vocab/frbr/core#>\n\
-        PREFIX c4o: <http://purl.org/spar/c4o/>\n\
-        PREFIX fabio: <http://purl.org/spar/fabio/>\n\
-        SELECT ?citingID ?citingDOI ?citingTitle ?citingYear ?citedID ?citedTitle ?citedYear ?citedDOI WHERE {\n\
-            BIND ("'+doi+'" AS ?citedDOI)\n\
-            ?citedID datacite:hasIdentifier [\n\
+                ?citedID fabio:hasPublicationYear ?citedYear.\n\
+                ?citingID dcterms:title ?citingTitle.\n\
+                ?citingID fabio:hasPublicationYear ?citingYear.}\n\
+            }';
+            occ.sendQuery(query, occ.callback);
+        },
+        getPapersCitedByID: function(id){ //Queries OCC SPARQL to find references of the ID specified. Updates Papers and Edges data structures.
+            var query = {};
+            query.type = 'refs'
+            query.string = 'PREFIX cito: <http://purl.org/spar/cito/>\n\
+            PREFIX dcterms: <http://purl.org/dc/terms/>\n\
+            PREFIX datacite: <http://purl.org/spar/datacite/>\n\
+            PREFIX literal: <http://www.essepuntato.it/2010/06/literalreification/>\n\
+            PREFIX biro: <http://purl.org/spar/biro/>\n\
+            PREFIX frbr: <http://purl.org/vocab/frbr/core#>\n\
+            PREFIX c4o: <http://purl.org/spar/c4o/>\n\
+            PREFIX fabio: <http://purl.org/spar/fabio/>\n\
+            SELECT ?citingID ?citingDOI ?citingTitle ?citingYear ?citedID ?citedTitle ?citedYear ?citedDOI WHERE {\n\
+                BIND (<'+id+'> AS ?citingID)\n\
+                ?citingID cito:cites ?citedID\n\
+                OPTIONAL {\n\
+                ?citedID datacite:hasIdentifier [\n\
                     datacite:usesIdentifierScheme datacite:doi ;\n\
                     literal:hasLiteralValue ?citedDOI].\n\
-            OPTIONAL {\n\
-            ?citedID dcterms:title ?citedTitle.\n\
-            ?citedID fabio:hasPublicationYear ?citedYear.}\n\
-            OPTIONAL { \n\
-            ?citingID cito:cites ?citedID.\n\
-            ?citingID dcterms:title ?citingTitle.\n\
-            ?citingID fabio:hasPublicationYear ?citingYear.\n\
-                ?citingID datacite:hasIdentifier [\n\
+                    ?citedID dcterms:title ?citedTitle.\n\
+                    ?citedID fabio:hasPublicationYear ?citedYear.}\n\
+                OPTIONAL { \n\
+                ?citingID dcterms:title ?citingTitle.\n\
+                ?citingID fabio:hasPublicationYear ?citingYear.\n\
+                    ?citingID datacite:hasIdentifier [\n\
+                        datacite:usesIdentifierScheme datacite:doi ;\n\
+                        literal:hasLiteralValue ?citingDOI ].} \n\
+            }';
+            occ.sendQuery(query, occ.callback);
+        },
+        getPapersCitingID: function(id){
+            var query = {};
+            query.type = 'citedBy'
+            query.string = 'PREFIX cito: <http://purl.org/spar/cito/>\n\
+            PREFIX dcterms: <http://purl.org/dc/terms/>\n\
+            PREFIX datacite: <http://purl.org/spar/datacite/>\n\
+            PREFIX literal: <http://www.essepuntato.it/2010/06/literalreification/>\n\
+            PREFIX biro: <http://purl.org/spar/biro/>\n\
+            PREFIX frbr: <http://purl.org/vocab/frbr/core#>\n\
+            PREFIX c4o: <http://purl.org/spar/c4o/>\n\
+            PREFIX fabio: <http://purl.org/spar/fabio/>\n\
+            SELECT ?citingID ?citingDOI ?citingTitle ?citingYear ?citedID ?citedTitle ?citedYear ?citedDOI WHERE {\n\
+                BIND (<'+id+'> AS ?citedID)\n\
+                OPTIONAL {\n\
+                ?citedID datacite:hasIdentifier [\n\
                     datacite:usesIdentifierScheme datacite:doi ;\n\
-                    literal:hasLiteralValue ?citingDOI ].} \n\
-        }';
-        occ.sendQuery(query, occ.callback);
-    },
+                    literal:hasLiteralValue ?citedDOI].\n\
+                    ?citedID dcterms:title ?citedTitle.\n\
+                    ?citedID fabio:hasPublicationYear ?citedYear.}\n\
+                OPTIONAL { \n\
+                ?citingID cito:cites ?citedID.\n\
+                ?citingID dcterms:title ?citingTitle.\n\
+                ?citingID fabio:hasPublicationYear ?citingYear.\n\
+                    ?citingID datacite:hasIdentifier [\n\
+                        datacite:usesIdentifierScheme datacite:doi ;\n\
+                        literal:hasLiteralValue ?citingDOI ].} \n\
+            }';
+            occ.sendQuery(query, occ.callback);
+        },
+        getPapersCitingDOI: function(doi){
+            var query ={};
+            query.type = 'refs'
+            query.string = 'PREFIX cito: <http://purl.org/spar/cito/>\n\
+            PREFIX dcterms: <http://purl.org/dc/terms/>\n\
+            PREFIX datacite: <http://purl.org/spar/datacite/>\n\
+            PREFIX literal: <http://www.essepuntato.it/2010/06/literalreification/>\n\
+            PREFIX biro: <http://purl.org/spar/biro/>\n\
+            PREFIX frbr: <http://purl.org/vocab/frbr/core#>\n\
+            PREFIX c4o: <http://purl.org/spar/c4o/>\n\
+            PREFIX fabio: <http://purl.org/spar/fabio/>\n\
+            SELECT ?citingID ?citingDOI ?citingTitle ?citingYear ?citedID ?citedTitle ?citedYear ?citedDOI WHERE {\n\
+                BIND ("'+doi+'" AS ?citedDOI)\n\
+                ?citedID datacite:hasIdentifier [\n\
+                        datacite:usesIdentifierScheme datacite:doi ;\n\
+                        literal:hasLiteralValue ?citedDOI].\n\
+                OPTIONAL {\n\
+                ?citedID dcterms:title ?citedTitle.\n\
+                ?citedID fabio:hasPublicationYear ?citedYear.}\n\
+                OPTIONAL { \n\
+                ?citingID cito:cites ?citedID.\n\
+                ?citingID dcterms:title ?citingTitle.\n\
+                ?citingID fabio:hasPublicationYear ?citingYear.\n\
+                    ?citingID datacite:hasIdentifier [\n\
+                        datacite:usesIdentifierScheme datacite:doi ;\n\
+                        literal:hasLiteralValue ?citingDOI ].} \n\
+            }';
+            occ.sendQuery(query, occ.callback);
+        }
+    }
 })
+//Functions for paper details panel
+function updateInfoBox(selected){
+    p = selected.__data__;
+    document.getElementById('selected-paper-box').style.display ='block';
+    var paperbox = d3.select('#selected-paper-box');
+    paperbox.select('.paper-title').html(p.Title)
+    paperbox.select('.author-year').html((p.Author ? p.Author:'')+' '+p.Year)
+    paperbox.select('.doi-link').html(p.DOI ? ("<a target='_blank' href='https://doi.org/"+p.DOI+"'>"+p.DOI+"</a>"): '')
+    paperbox.select('.add-seed').html(p.seed ? 'Delete Seed':'Make Seed')
+            .on('click', function(){p.seed ? deleteSeed(p) : makeSeed(p)})
+    forceGraph.selectednode = p;
+}
+
 function updateSeedList(){    
     var seedpapers = Papers.filter(function(p){return p.seed});
     var paperbox = d3.select('#seed-paper-container').selectAll('.outer-paper-box')
@@ -875,19 +924,6 @@ function printConnectedList(metric,pageNum,replot){
         console.log('print called')
    
 }
-//Functions for paper details panel
-function updateInfoBox(selected){
-    p = selected.__data__;
-    document.getElementById('selected-paper-box').style.display ='block';
-    var paperbox = d3.select('#selected-paper-box');
-    paperbox.select('.paper-title').html(p.Title)
-    paperbox.select('.author-year').html((p.Author ? p.Author:'')+' '+p.Year)
-    paperbox.select('.doi-link').html(p.DOI ? ("<a target='_blank' href='https://doi.org/"+p.DOI+"'>"+p.DOI+"</a>"): '')
-    paperbox.select('.add-seed').html(p.seed ? 'Delete Seed':'Make Seed')
-            .on('click', function(){p.seed ? deleteSeed(p) : makeSeed(p)})
-    forceGraph.selectednode = p;
-}
-
 let forceGraph = {};
 
 forceGraph.minconnections = 0;
@@ -1169,6 +1205,13 @@ document.getElementById('connected-list-button').onclick = function(){
 
     printConnectedList('seedsCitedBy',1);
 }
+
+//For forceGraph threshold slider
+document.getElementById('threshold-input').oninput = function(){
+    document.querySelector('#threshold-output').value = 'Minimum Connections: ' + this.value;
+    forceGraph.threshold(this.value)
+}
+
 //For forceGraph display mode toggling
 document.getElementById('mode-toggle').onchange = function(){
     forceGraph.mode = (forceGraph.mode=='ref') ? 'citedBy' : 'ref';
@@ -1176,6 +1219,19 @@ document.getElementById('mode-toggle').onchange = function(){
     document.getElementById('connected-sort-by').getElementsByTagName('select')[0].value = (forceGraph.mode=='ref') ? 'seedsCitedBy' : 'seedsCited';
     printConnectedList(forceGraph.sizeMetric,1,true)
 } 
+var doiQuery; //Place holder for the user input field.
+
+//Update request based on doi query inputted by the user.
+var doiInput = document.querySelector("#doi-input").addEventListener("input",function(){
+    doiQuery=this.value;
+});
+
+document.getElementById("doi-input").onkeydown = function(event){
+    if (event.keyCode == 13){   
+        addPaper({DOI:doiQuery},true)
+        document.getElementById('doi-input-loader').style.display = 'inline-block';
+    }
+}
      
     document.getElementById("add-by-doi").onclick = function() {
         document.getElementById('add-seeds-modal').style.display = "none";
@@ -1191,30 +1247,10 @@ document.getElementById('mode-toggle').onchange = function(){
     } 
 
    
-
-//For forceGraph threshold slider
-document.getElementById('threshold-input').oninput = function(){
-    document.querySelector('#threshold-output').value = 'Minimum Connections: ' + this.value;
-    forceGraph.threshold(this.value)
-}
-
 //For help modal
 document.getElementById('help-modal').style.display = "block";
 document.getElementById('help-button').onclick = function(){
     document.getElementById('help-modal').style.display = "block";
-}
-var doiQuery; //Place holder for the user input field.
-
-//Update request based on doi query inputted by the user.
-var doiInput = document.querySelector("#doi-input").addEventListener("input",function(){
-    doiQuery=this.value;
-});
-
-document.getElementById("doi-input").onkeydown = function(event){
-    if (event.keyCode == 13){   
-        addPaper({DOI:doiQuery},true)
-        document.getElementById('doi-input-loader').style.display = 'inline-block';
-    }
 }
 d3.select('#add-seeds-modal').select('div').append('button').attr('id','add-by-zotero')
     .html("<img id='zotero-square' src='images/zotero/zotero2.png'>")
@@ -1486,50 +1522,6 @@ var zotero = {
         }) 
     }
 }
-var bibtex = {
-    //Importing user uploaded Bibtex
-    importBibTex: function(evt) {
-        let files = evt.target.files; // FileList object
-        for (var i = 0, f; f = files[i]; i++) {
-            var reader = new FileReader();
-            reader.onload = function(e){
-                var papers = bibtexParse.toJSON(e.target.result);
-                if(papers.filter(function(p){
-                    return p.entryTags.doi;
-                }).length==0){
-                    alert("We couldn't find any DOIs in the BibTex you uploaded please check your export settings");
-                };
-                for(let i=0;i<papers.length;i++){
-                    if(papers[i].entryTags.doi){
-                        let newSeed = {DOI: papers[i].entryTags.doi}
-                        addPaper(newSeed,true);
-                    }; 
-                };
-            };
-            reader.readAsText(f);       
-        };
-        document.getElementById('upload-bibtex-modal').style.display = "none"; //Hide modal once file selected
-    },
-    //Importing Example BibTex
-    importExampleBibTex: function(){
-        let url = window.location.href+'examples/exampleBibTex.bib'
-        fetch(url).then((resp) => resp.text()).then((data)=> {
-                var papers = bibtexParse.toJSON(data);
-                for(let i=0;i<papers.length;i++){
-                    let newSeed = {DOI: papers[i].entryTags.doi}
-                    addPaper(newSeed,true);
-                };
-                document.getElementById('upload-bibtex-modal').style.display = "none";
-            }
-        )
-    }
-}
-
-document.getElementById('files').addEventListener('change', bibtex.importBibTex, false);
-
-document.getElementById('demo-button').onclick = function(){
-    bibtex.importExampleBibTex()
-}
 var titleQuery; //Place holder for the user input field.
 //Update request based on title query inputted by the user.
 var titleInput = document.querySelector("#title-input").addEventListener("input", function() {
@@ -1590,4 +1582,48 @@ function updateTitleSearchResults(results,pageNum,replot){
     d3.select('#title-search-container').append('div')
         .html('<button id="more-button2" class = "button1">more...</button>')
         .on('click',function(){updateTitleSearchResults(results,(pageNum+1))})
+}
+var bibtex = {
+    //Importing user uploaded Bibtex
+    importBibTex: function(evt) {
+        let files = evt.target.files; // FileList object
+        for (var i = 0, f; f = files[i]; i++) {
+            var reader = new FileReader();
+            reader.onload = function(e){
+                var papers = bibtexParse.toJSON(e.target.result);
+                if(papers.filter(function(p){
+                    return p.entryTags.doi;
+                }).length==0){
+                    alert("We couldn't find any DOIs in the BibTex you uploaded please check your export settings");
+                };
+                for(let i=0;i<papers.length;i++){
+                    if(papers[i].entryTags.doi){
+                        let newSeed = {DOI: papers[i].entryTags.doi}
+                        addPaper(newSeed,true);
+                    }; 
+                };
+            };
+            reader.readAsText(f);       
+        };
+        document.getElementById('upload-bibtex-modal').style.display = "none"; //Hide modal once file selected
+    },
+    //Importing Example BibTex
+    importExampleBibTex: function(){
+        let url = window.location.href+'examples/exampleBibTex.bib'
+        fetch(url).then((resp) => resp.text()).then((data)=> {
+                var papers = bibtexParse.toJSON(data);
+                for(let i=0;i<papers.length;i++){
+                    let newSeed = {DOI: papers[i].entryTags.doi}
+                    addPaper(newSeed,true);
+                };
+                document.getElementById('upload-bibtex-modal').style.display = "none";
+            }
+        )
+    }
+}
+
+document.getElementById('files').addEventListener('change', bibtex.importBibTex, false);
+
+document.getElementById('demo-button').onclick = function(){
+    bibtex.importExampleBibTex()
 }
