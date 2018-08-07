@@ -243,7 +243,7 @@ var zotero = {
                 //item.data.title;
                 //item.meta.creatorSummary;
                 //item.meta.parsedDate;
-                addPaper({DOI:item.data.DOI},true);
+                addPaper({doi:item.data.DOI},true);
             }
         })
     },
@@ -252,11 +252,11 @@ var zotero = {
         let url = 'https://api.zotero.org/items/new?itemType=journalArticle'
         fetch(url).then(resp=>resp.json()).then(template=>{
 
-            template.DOI = paper.DOI
-            template.title = paper.Title
-            template.publicationTitle = paper.Journal
-            template.date = paper.Year
-            template.creators[0].lastName = paper.Author
+            template.DOI = paper.doi
+            template.title = paper.title
+            template.publicationTitle = paper.journal
+            template.date = paper.year
+            template.creators[0].lastName = paper.author
             template.collections = [zotero.collection]
 
             let endpoint = 'https://api.zotero.org/users/' + ZOTERO_USER_ID + '/items'

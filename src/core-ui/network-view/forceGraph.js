@@ -114,7 +114,7 @@ forceGraph.threshold =  function(value){
     })
 };
 forceGraph.update =  function(Papers,Edges){                
-    //Pick only edges that you want to display i.e. citedBy vs References
+    //Pick only edges that you want to display i.e. citedBy vs references
     switch(forceGraph.mode){     
         case 'ref':
         forceGraph.edges = Edges.filter(function(e){return(e.source.seed)}).map(function(e){return {source: e.source.ID, target: e.target.ID}});
@@ -146,7 +146,7 @@ forceGraph.update =  function(Papers,Edges){
                         .on("dblclick",forceGraph.hideSingles)
                         .on("click",forceGraph.highlightNode)
                         .on("mouseover",function(){updateInfoBox(this)})
-    forceGraph.circles.append("title").text(function(d) { return d.Title; }); //Label nodes with Title on hover
+    forceGraph.circles.append("title").text(function(d) { return d.title; }); //Label nodes with title on hover
     forceGraph.lines = forceGraph.lines.data(forceGraph.edges, function(d) { return d.source.ID + "-" + d.target.ID; })
     forceGraph.lines.exit().remove();
     forceGraph.lines = forceGraph.lines.enter().append("line").attr("marker-end", "url(#end)").merge(forceGraph.lines);

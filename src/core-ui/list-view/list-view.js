@@ -7,16 +7,16 @@ function updateSeedList(){
 
     oldpapers = d3.select('#seed-paper-container').selectAll('.outer-paper-box').select('.inner-paper-box')
     oldpapers.select('.paper-title').html(function(p){
-        return(p.Title)
+        return(p.title)
     })
     oldpapers.select('.metric').html(function(p){
         return(p[metric]?p[metric]:'0')
     })
     oldpapers.select('.author-year').html(function(p){
-        if(p.Author) {return p.Author+' '+p.Year}else{return(p.Year)}
+        if(p.author) {return p.author+' '+p.year}else{return(p.year)}
     })
     oldpapers.select('.doi-link').html(function(p){
-        return("<a target='_blank' href='https://doi.org/"+p.DOI+"'>"+p.DOI+"</a>")
+        return("<a target='_blank' href='https://doi.org/"+p.doi+"'>"+p.doi+"</a>")
     })
 
     paperbox = paperbox.enter()
@@ -30,15 +30,15 @@ function updateSeedList(){
         .on('click',forceGraph.highlightNode)
     paperbox.append('p').attr('class','paper-title')
         .html(function(p){
-            return(p.Title)
+            return(p.title)
         })
     paperbox.append('p').attr('class','author-year')
         .html(function(p){
-            if(p.Author) {return p.Author+' '+p.Year}else{return(p.Year)}
+            if(p.author) {return p.author+' '+p.year}else{return(p.year)}
         })
     paperbox.append('p').attr('class','doi-link')
         .html(function(p){
-            return("<a target='_blank' href='https://doi.org/"+p.DOI+"'>"+p.DOI+"</a>")
+            return("<a target='_blank' href='https://doi.org/"+p.doi+"'>"+p.doi+"</a>")
         })
 };
 
@@ -51,16 +51,16 @@ function updateConnectedList(metric){
     paperbox.exit().remove();
     papers = d3.select('#connected-paper-container').selectAll('tr').select('td').select('.inner-paper-box')
     papers.select('.paper-title').html(function(p){
-        return(p.Title)
+        return(p.title)
     })
     papers.select('.metric').html(function(p){
         return(p[metric]?p[metric]:'0')
     })
     papers.select('.author-year').html(function(p){
-        if(p.Author) {return p.Author+' '+p.Year}else{return(p.Year)}
+        if(p.author) {return p.author+' '+p.year}else{return(p.year)}
     })
     papers.select('.doi-link').html(function(p){
-        return("<a target='_blank' href='https://doi.org/"+p.DOI+"'>"+p.DOI+"</a>")
+        return("<a target='_blank' href='https://doi.org/"+p.doi+"'>"+p.doi+"</a>")
     })
 }
 
@@ -79,16 +79,16 @@ function printConnectedList(metric,pageNum,replot){
 
     oldpapers = d3.select('#connected-paper-container').selectAll('.outer-paper-box').select('.inner-paper-box')
     oldpapers.select('.paper-title').html(function(p){
-        return(p.Title)
+        return(p.title)
     })
     oldpapers.select('.metric').html(function(p){
         return(p[metric]?p[metric]:'0')
     })
     oldpapers.select('.author-year').html(function(p){
-        if(p.Author) {return p.Author+' '+p.Year}else{return(p.Year)}
+        if(p.author) {return p.author+' '+p.year}else{return(p.year)}
     })
     oldpapers.select('.doi-link').html(function(p){
-        return("<a target='_blank' href='https://doi.org/"+p.DOI+"'>"+p.DOI+"</a>")
+        return("<a target='_blank' href='https://doi.org/"+p.doi+"'>"+p.doi+"</a>")
     })
     newpapers = paperboxes.enter()
         .append('div')
@@ -103,7 +103,7 @@ function printConnectedList(metric,pageNum,replot){
         .on('click',forceGraph.highlightNode)
     newpapers.append('p').attr('class','paper-title')
         .html(function(p){
-            return(p.Title)
+            return(p.title)
         })
     newpapers.append('p').attr('class','metric')
         .html(function(p){
@@ -111,11 +111,11 @@ function printConnectedList(metric,pageNum,replot){
         })
     newpapers.append('p').attr('class','author-year')
         .html(function(p){
-            if(p.Author) {return p.Author+' '+p.Year}else{return(p.Year)}
+            if(p.author) {return p.author+' '+p.year}else{return(p.year)}
         })
     newpapers.append('p').attr('class','doi-link')
         .html(function(p){
-            return("<a target='_blank' href='https://doi.org/"+p.DOI+"'>"+p.DOI+"</a>")
+            return("<a target='_blank' href='https://doi.org/"+p.doi+"'>"+p.doi+"</a>")
         })
 
     d3.select('#more-button').remove();

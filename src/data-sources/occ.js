@@ -6,16 +6,16 @@ newDataModule('occ', {
             action: function(paper){
                 if(paper.occID){
                     occ.getPapersCitingID(paper.occID)
-                } else if(paper.DOI){
-                    occ.getPapersCitingDOI(paper.DOI)
+                } else if(paper.doi){
+                    occ.getPapersCitingdoi(paper.doi)
                 }
             }
         },
         seedUpdate: {
             listening: false,
             action:function(paper){
-                if(!paper.occID & paper.DOI){
-                    occ.citedByDOI(paper.DOI)
+                if(!paper.occID & paper.doi){
+                    occ.citedBydoi(paper.doi)
                 }
             }
         }
@@ -29,19 +29,19 @@ newDataModule('occ', {
             for(let i=0;i<newEdges.length;i++){
                 let edge = newEdges[i]
                 var cited = {
-                    Author: null,
-                    DOI: edge.citedDOI ? edge.citedDOI.value : null,
-                    Title: edge.citedTitle ? edge.citedTitle.value : null,
-                    Year: edge.citedYear ? edge.citedYear.value : null,
+                    author: null,
+                    doi: edge.citedDOI ? edge.citedDOI.value : null,
+                    title: edge.citedTitle ? edge.citedTitle.value : null,
+                    year: edge.citedYear ? edge.citedYear.value : null,
                     occID: edge.citedID.value
                 }
                 cited = addPaper(cited,(queryType=='refs'));
                 if(!edge.citingID){break}
                 var citer = {
                     Author: null,
-                    DOI: edge.citingDOI ? edge.citingDOI.value : null,
-                    Title: edge.citingTitle ? edge.citingTitle.value : null,
-                    Year: edge.citingYear ? edge.citingYear.value : null,
+                    doi: edge.citingDOI ? edge.citingDOI.value : null,
+                    title: edge.citingTitle ? edge.citingTitle.value : null,
+                    year: edge.citingYear ? edge.citingYear.value : null,
                     occID: edge.citingID.value
                 }
                 citer = addPaper(citer,(queryType=='citedBy'));

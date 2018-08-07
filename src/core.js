@@ -40,7 +40,7 @@ triggerEvent = function(name,subject){
 }
 
 defineEvent('newSeed'); //Event triggered when a new seed is added.
-defineEvent('seedUpdate'); //Event triggered when more info is found on a seed i.e. title or DOI.
+defineEvent('seedUpdate'); //Event triggered when more info is found on a seed i.e. title or doi.
 defineEvent('newPaper'); //Event triggered when a new (non-seed) paper is added.
 defineEvent('paperUpdate') //Event trigger when non-seed paper is updated with more info. 
 
@@ -92,20 +92,20 @@ addEdge = function(newEdge){
 //For a new paper this function tries to find a match in the existing database
 function matchPapers(paper,Papers){
     var match;
-    if(paper.MicrosoftID){  
+    if(paper.microsoftID){  
         match = Papers.filter(function(p){
-            return p.MicrosoftID==paper.MicrosoftID
+            return p.microsoftID==paper.microsoftID
         })[0];
     };
-    if(!match && paper.DOI){
+    if(!match && paper.doi){
         match = Papers.filter(function(p){   
-            return (paper.DOI.toLowerCase() == (p.DOI ? p.DOI.toLowerCase() : null));      
+            return (paper.doi.toLowerCase() == (p.doi ? p.doi.toLowerCase() : null));      
         })[0];
     };
-    if(!match && paper.Title && paper.Author){
+    if(!match && paper.title && paper.author){
         match = Papers.filter(function(p){
-            if(p.Title){
-                return (p.Title.toLowerCase()==paper.Title.toLowerCase()) && (paper.Author.toLowerCase()==(p.Author ? p.Author.toLowerCase() : null))
+            if(p.title){
+                return (p.title.toLowerCase()==paper.title.toLowerCase()) && (paper.author.toLowerCase()==(p.author ? p.author.toLowerCase() : null))
             } 
         })[0]; 
     };  
@@ -115,7 +115,7 @@ function matchPapers(paper,Papers){
 //Given two paper/edge objects that are deemed to be matching, this merges the info in the two.
 function merge(oldrecord,newrecord){
     for(i in newrecord){
-        if(oldrecord[i]==undefined || oldrecord[i]==null ){
+        if(oldrecord[i]==undefined || oldrecord[i]==null || oldrecord[i]==0){
             oldrecord[i]=newrecord[i];
         }
     }
