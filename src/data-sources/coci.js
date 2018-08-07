@@ -2,14 +2,14 @@
 newDataModule('coci', {
     eventResponses:{
         newSeed: {
-            listening: false,
+            listening: true,
             action: function(paper){
                 /*  let url = 'https://w3id.org/oc/index/coci/api/v1/references/'+paper.DOI
                  fetch(url).then(resp=>resp.json()).then(data => {
                      coci.parseResponse(data,paper);
                  }) */
                  console.log('Querying COCI for '+paper.DOI)
-                 let url = 'http://opencitations.net/index/coci/api/v1/citations/'+paper.DOI
+                 let url = 'https://w3id.org/oc/index/coci/api/v1/citations/'+paper.DOI
                  fetch(url, {headers: {
                      'Accept': 'application/sparql-results+json'
                  }}).then(resp=>resp.json()).then(data => {

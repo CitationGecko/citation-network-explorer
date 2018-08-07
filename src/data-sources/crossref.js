@@ -2,7 +2,7 @@
 newDataModule('crossref', {
     eventResponses: {
         newSeed: {
-            listening: false,
+            listening: true,
             action: async function(paper){
             
                 if(paper.crossref!='Complete'){
@@ -26,7 +26,7 @@ newDataModule('crossref', {
             }
         },   
         newPaper: {
-            listening: false,
+            listening: true,
             action: function(paper){
                 if(paper.DOI){
                     console.log("querying crossRef for " +paper.DOI)
