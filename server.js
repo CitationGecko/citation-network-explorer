@@ -60,6 +60,12 @@ app.post('/api/v1/query/microsoft/search', require('./api/v1/query/microsoft/sea
 //app.post('/api/v1/query/occ/sparql', require('./api/v1/query/occ/sparql'));
 
 /**
+* API: Mocked response for the client-side refactor
+*/
+app.get('/api/v1/getMockResponse', require('./api/v1/getMockResponse'));
+
+
+/**
  * Start Express server
  */
 app.listen(appPort, function () {
