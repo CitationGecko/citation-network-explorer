@@ -1,9 +1,9 @@
-const oadoi = require('../../../../lib/data/oadoi');
+const coci = require('../../../../lib/data/coci');
 
 module.exports = function (req, res) {
   const doi = req.query.doi;
 
-  oadoi(doi, function (err, body) {
+  coci(doi, function (err, body) {
     if (err) {
       return res.json({ success: false, error: err });
     }

@@ -71,9 +71,19 @@ app.get('/user/getAuthInfo', require('./routes/user/getAuthInfo'));
 app.get('/api/v1/getCitedBy', require('./routes/api/v1/getCitingArticles'));
 
 /**
- * API  | Proxy to OA DOI
+ * API  | Test endpoint for OA DOI
  */
 app.get('/api/v1/query/oadoi', require('./routes/api/v1/query/oadoi'));
+
+/**
+ * API  | Test endpoint for CrossRef queries
+ */
+app.get('/api/v1/query/crossref', require('./routes/api/v1/query/crossref'));
+
+/**
+ * API  | Test endpoint for COCI queries
+ */
+app.get('/api/v1/query/coci', require('./routes/api/v1/query/coci'));
 
 /**
  * API  | Proxy to Microsoft Academic Graph

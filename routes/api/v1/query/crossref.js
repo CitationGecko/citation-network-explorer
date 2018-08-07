@@ -1,9 +1,9 @@
-const oadoi = require('../../../../lib/data/oadoi');
+const crossref = require('../../../../lib/data/crossref');
 
 module.exports = function (req, res) {
   const doi = req.query.doi;
 
-  oadoi(doi, function (err, body) {
+  crossref(doi, function (err, body) {
     if (err) {
       return res.json({ success: false, error: err });
     }
