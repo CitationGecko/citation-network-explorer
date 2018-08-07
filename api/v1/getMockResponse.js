@@ -44,17 +44,17 @@ const paper2 = {
       firstName: "Marthe",
       lastName: "Gavioli",
       orcid: "654321"
-    }
+    },
     {
       firstName: "Andrea",
       lastName: "Dessen",
       orcid: "654321"
-    }
+    },
     {
       firstName: "Roland",
       lastName: "Lloubès",
       orcid: "654321"
-    }
+    },
     {
       firstName: "Eric",
       lastName: "Cascales",
