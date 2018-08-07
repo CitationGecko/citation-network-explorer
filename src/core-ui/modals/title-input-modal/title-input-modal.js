@@ -31,11 +31,11 @@ function updateTitleSearchResults(results,pageNum,replot){
         .html('<i class="fa fa-plus" color="green" aria-hidden="true"></i>')
         .on('click',function(p){
             let newSeed = {
-                Title: p.OriginalTitle,
-                Author: null,
-                DOI: p.DOI,
-                Year: p.PublishYear,
-                MicrosoftID: p.CellID,
+                title: p.OriginalTitle,
+                author: null,
+                doi: p.DOI,
+                year: p.PublishYear,
+                microsoftID: p.CellID,
             };
             addPaper(newSeed,true);
         })
@@ -47,7 +47,7 @@ function updateTitleSearchResults(results,pageNum,replot){
         })
     newpapers.append('p').attr('class','author-year')
         .html(function(p){
-            if(p.Author) {return p.Author+' '+p.Year}else{return(p.Year)}
+            if(p.author) {return p.author+' '+p.year}else{return(p.year)}
         })
     newpapers.append('p').attr('class','doi-link')
         .html(function(p){

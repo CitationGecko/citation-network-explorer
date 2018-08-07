@@ -10,8 +10,8 @@ newDataModule('oaDOI', {
   },
   methods:{
     getAccessStatus: function(paper) {
-        if (paper.DOI) {
-          var url = '/api/v1/query/oadoi?doi=' + paper.DOI;
+        if (paper.doi) {
+          var url = '/api/v1/query/oadoi?doi=' + paper.doi;
           
           fetch(url).then(resp=>resp.json()).then(json=>{
             paper.OA = JSON.parse(this.responseText).data.is_oa;

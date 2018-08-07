@@ -4,10 +4,10 @@ newDataModule('microsoft', {
         newSeed: {
             listening: false,
             action: function(paper){  
-                if(paper.MicrosoftID){
-                    microsoft.sendCitedByQuery(paper.MicrosoftID);       
-                    microsoft.sendRefQuery(paper.MicrosoftID);
-                } else if(paper.Title){
+                if(paper.microsoftID){
+                    microsoft.sendCitedByQuery(paper.microsoftID);       
+                    microsoft.sendRefQuery(paper.microsoftID);
+                } else if(paper.title){
                 microsoft.titleMatchSearch(paper);
                 }
             }
@@ -15,7 +15,7 @@ newDataModule('microsoft', {
         seedUpdate: {
             listening: false,
             action: function(paper){
-                if(!paper.MicrosoftID){
+                if(!paper.microsoftID){
                     microsoft.titleMatchSearch(paper);
                 }
             }
@@ -113,14 +113,14 @@ newDataModule('microsoft', {
             })
         },
         titleMatchSearch: function(paper){
-            var request = microsoft.titleQuery(paper.Title)
-            console.log('MAG: querying title "'+paper.Title+'"')       
+            var request = microsoft.titleQuery(paper.title)
+            console.log('MAG: querying title "'+paper.title+'"')       
             microsoft.apiRequest(request,function(response){
-                console.log('MAG: results found for title "'+paper.Title+'"')
-                //check for DOI matches
+                console.log('MAG: results found for title "'+paper.title+'"')
+                //check for doi matches
                 var match = response.Results.filter(function(p){
-                    if(p[0].DOI){
-                        return (p[0].DOI.toLowerCase()==paper.DOI.toLowerCase())
+                    if(p[0].doi){
+                        return (p[0].doi.toLowerCase()==paper.doi.toLowerCase())
                     } else {
                         return(false)
                     }
@@ -164,11 +164,11 @@ newDataModule('microsoft', {
         },
         parsePaper: function(paper){
             return {           
-                Title: paper.OriginalTitle,
-                Author: null,
-                DOI: paper.DOI,
-                Year: paper.PublishYear,
-                MicrosoftID: paper.CellID,
+                title: paper.OriginalTitle,
+                author: null,
+                doi: paper.DOI,
+                year: paper.PublishYear,
+                microsoftID: paper.CellID,
             }
         },
         parseResponse: function(response,request){

@@ -9,11 +9,11 @@ var bibtex = {
                 if(papers.filter(function(p){
                     return p.entryTags.doi;
                 }).length==0){
-                    alert("We couldn't find any DOIs in the BibTex you uploaded please check your export settings");
+                    alert("We couldn't find any dois in the BibTex you uploaded please check your export settings");
                 };
                 for(let i=0;i<papers.length;i++){
                     if(papers[i].entryTags.doi){
-                        let newSeed = {DOI: papers[i].entryTags.doi}
+                        let newSeed = {doi: papers[i].entryTags.doi}
                         addPaper(newSeed,true);
                     }; 
                 };
@@ -28,7 +28,7 @@ var bibtex = {
         fetch(url).then((resp) => resp.text()).then((data)=> {
                 var papers = bibtexParse.toJSON(data);
                 for(let i=0;i<papers.length;i++){
-                    let newSeed = {DOI: papers[i].entryTags.doi}
+                    let newSeed = {doi: papers[i].entryTags.doi}
                     addPaper(newSeed,true);
                 };
                 document.getElementById('upload-bibtex-modal').style.display = "none";
