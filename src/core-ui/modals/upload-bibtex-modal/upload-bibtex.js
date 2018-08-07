@@ -9,7 +9,7 @@ var bibtex = {
                 if(papers.filter(function(p){
                     return p.entryTags.doi;
                 }).length==0){
-                    alert("We couldn't find any dois in the BibTex you uploaded please check your export settings");
+                    alert("We couldn't find any DOIs in the BibTex you uploaded please check your export settings");
                 };
                 for(let i=0;i<papers.length;i++){
                     if(papers[i].entryTags.doi){

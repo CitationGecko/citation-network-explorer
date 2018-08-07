@@ -1,4 +1,4 @@
-newDataModule('gecko', {
+newModule('gecko', {
 
     eventResponses:{
         newSeed: {

@@ -1,4 +1,4 @@
-newDataModule('oaDOI', {
+newModule('oaDOI', {
     
   eventResponses: {
     newPaper: {
