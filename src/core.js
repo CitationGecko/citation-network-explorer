@@ -3,11 +3,11 @@ var Edges = [] //Array of edge objects, each is a pair of paper objects (source 
 
 //Collection of metric functions to compute for each paper
 var metrics = {  
-    "citedBy": function(paper,Edges){
+    "localCitedBy": function(paper,Edges){
         //Count number of times cited in the edges list supplied
         return Edges.filter(e=>e.target==paper).length
     },
-    "references": function(paper,Edges){
+    "localReferences": function(paper,Edges){
         //Count number of times a paper cites another paper (in the edge list provided) 
         return Edges.filter(e=>e.source==paper).length
     },
@@ -43,10 +43,12 @@ defineEvent('newSeed'); //Event triggered when a new seed is added.
 defineEvent('seedUpdate'); //Event triggered when more info is found on a seed i.e. title or doi.
 defineEvent('newPaper'); //Event triggered when a new (non-seed) paper is added.
 defineEvent('paperUpdate') //Event trigger when non-seed paper is updated with more info. 
+defineEvent('newEdges') //Event triggered when new edges are added.
+defineEvent('seedDeleted')
 
 
 //Builds a new data source module.
-newDataModule = function(name,obj){
+function newModule(name,obj){
     window[name] = obj.methods; //add methods of module to there own namespace.
     for(event in events){
         if(obj.eventResponses[event]){ 
@@ -78,7 +80,7 @@ function addPaper(paper,asSeed){
     return(paper)
 }
 
-addEdge = function(newEdge){
+function addEdge(newEdge){
     let edge = Edges.filter(function(e){
         return e.source == newEdge.source & e.target == newEdge.target;
     })
@@ -131,16 +133,9 @@ function updateMetrics(Papers,Edges){
         Papers.forEach(function(p){p[metric] = metrics[metric](p,Edges)});
     }
 }
-refreshGraphics = function(){
-    updateMetrics(Papers,Edges); // update citation metrics
-    updateSeedList(); //update HTML table
-    updateConnectedList(forceGraph.sizeMetric);
-    forceGraph.update(Papers,Edges);
-    //timeGraph.update();
-};
 
 //Removes seed status of a paper, deletes all edges to non-seeds and all now unconnected papers
-deleteSeed = function(paper){
+function deleteSeed(paper){
     //Set seed status to false
     paper.seed = false; 
     //Delete edges connecting the paper to non-seeds
@@ -151,5 +146,5 @@ deleteSeed = function(paper){
     Papers = Papers.filter(function(p){
         return (Edges.map(function(e){return e.source}).includes(p) || Edges.map(function(e){return e.target}).includes(p));         
     })
-    refreshGraphics();
+    triggerEvent('seedDeleted')
 };

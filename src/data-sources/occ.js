@@ -1,4 +1,4 @@
-newDataModule('occ', {
+newModule('occ', {
 
     eventResponses:{
         newSeed: {
@@ -64,7 +64,7 @@ newDataModule('occ', {
                 }
             }).then((resp) => resp.text()).then((data)=> {
                 occ.parseResponse(data, query.type);
-                refreshGraphics();
+                triggerEvent('newEdges')
             });
 
             console.log('querying OCC...');

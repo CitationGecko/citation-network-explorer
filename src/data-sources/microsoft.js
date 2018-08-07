@@ -1,5 +1,5 @@
 
-newDataModule('microsoft', {
+newModule('microsoft', {
     eventResponses:{
         newSeed: {
             listening: false,
@@ -143,7 +143,7 @@ newDataModule('microsoft', {
                     if(response.Results.length){
                         console.log('MAG: founds refs for ID '+ID)
                         microsoft.parseResponse(response,request); //add Papers found by request to Papers array
-                        refreshGraphics();
+                        triggerEvent('newEdges')
                     } else {
                         console.log("No connecting papers found");
                     }
@@ -156,7 +156,7 @@ newDataModule('microsoft', {
                     if(response.Results.length){
                         console.log('MAG: founds cited-by for ID '+ID)
                         microsoft.parseResponse(response,request); //add Papers found by request to Papers array
-                        refreshGraphics();
+                        triggerEvent('newEdges')
                     } else {
                         console.log("No connecting papers found");
                     }

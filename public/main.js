@@ -3,11 +3,11 @@ var Edges = [] //Array of edge objects, each is a pair of paper objects (source 
 
 //Collection of metric functions to compute for each paper
 var metrics = {  
-    "citedBy": function(paper,Edges){
+    "localCitedBy": function(paper,Edges){
         //Count number of times cited in the edges list supplied
         return Edges.filter(e=>e.target==paper).length
     },
-    "references": function(paper,Edges){
+    "localReferences": function(paper,Edges){
         //Count number of times a paper cites another paper (in the edge list provided) 
         return Edges.filter(e=>e.source==paper).length
     },
@@ -43,10 +43,12 @@ defineEvent('newSeed'); //Event triggered when a new seed is added.
 defineEvent('seedUpdate'); //Event triggered when more info is found on a seed i.e. title or doi.
 defineEvent('newPaper'); //Event triggered when a new (non-seed) paper is added.
 defineEvent('paperUpdate') //Event trigger when non-seed paper is updated with more info. 
+defineEvent('newEdges') //Event triggered when new edges are added.
+defineEvent('seedDeleted')
 
 
 //Builds a new data source module.
-newDataModule = function(name,obj){
+function newModule(name,obj){
     window[name] = obj.methods; //add methods of module to there own namespace.
     for(event in events){
         if(obj.eventResponses[event]){ 
@@ -78,7 +80,7 @@ function addPaper(paper,asSeed){
     return(paper)
 }
 
-addEdge = function(newEdge){
+function addEdge(newEdge){
     let edge = Edges.filter(function(e){
         return e.source == newEdge.source & e.target == newEdge.target;
     })
@@ -131,16 +133,9 @@ function updateMetrics(Papers,Edges){
         Papers.forEach(function(p){p[metric] = metrics[metric](p,Edges)});
     }
 }
-refreshGraphics = function(){
-    updateMetrics(Papers,Edges); // update citation metrics
-    updateSeedList(); //update HTML table
-    updateConnectedList(forceGraph.sizeMetric);
-    forceGraph.update(Papers,Edges);
-    //timeGraph.update();
-};
 
 //Removes seed status of a paper, deletes all edges to non-seeds and all now unconnected papers
-deleteSeed = function(paper){
+function deleteSeed(paper){
     //Set seed status to false
     paper.seed = false; 
     //Delete edges connecting the paper to non-seeds
@@ -151,11 +146,11 @@ deleteSeed = function(paper){
     Papers = Papers.filter(function(p){
         return (Edges.map(function(e){return e.source}).includes(p) || Edges.map(function(e){return e.target}).includes(p));         
     })
-    refreshGraphics();
+    triggerEvent('seedDeleted')
 };
 
 
-newDataModule('coci', {
+newModule('coci', {
     eventResponses:{
         newSeed: {
             listening: true,
@@ -169,8 +164,8 @@ newDataModule('coci', {
                  fetch(url, {headers: {
                      'Accept': 'application/sparql-results+json'
                  }}).then(resp=>resp.json()).then(data => {
-                     coci.parseResponse(data,paper);
-                     refreshGraphics();
+                    coci.parseResponse(data,paper);
+                    triggerEvent('newEdges')
                  })
             }
         },
@@ -203,7 +198,7 @@ newDataModule('coci', {
     }
 }) 
 
-newDataModule('crossref', {
+newModule('crossref', {
     eventResponses: {
         newSeed: {
             listening: true,
@@ -225,8 +220,8 @@ newDataModule('crossref', {
                         });
                         console.log('CrossRef found ' + paper.references.length + " citations")
                     })
+                    triggerEvent('newEdges')
                 }
-                refreshGraphics();         
             }
         },   
         newPaper: {
@@ -243,7 +238,7 @@ newDataModule('crossref', {
                                 console.log("CrossRef data found for "+paper.doi)
                                 paper.crossref = 'Complete'
                                 merge(paper,crossref.parsePaper(response))
-                                updateConnectedList(forceGraph.sizeMetric);
+                                triggerEvent('paperUpdate')
                                 resolve('CrossRef info found')
                             }
                         });
@@ -309,7 +304,7 @@ newDataModule('crossref', {
         } 
     }
 })
-newDataModule('gecko', {
+newModule('gecko', {
 
     eventResponses:{
         newSeed: {
@@ -356,7 +351,7 @@ newDataModule('gecko', {
     }
 })
 
-newDataModule('microsoft', {
+newModule('microsoft', {
     eventResponses:{
         newSeed: {
             listening: false,
@@ -500,7 +495,7 @@ newDataModule('microsoft', {
                     if(response.Results.length){
                         console.log('MAG: founds refs for ID '+ID)
                         microsoft.parseResponse(response,request); //add Papers found by request to Papers array
-                        refreshGraphics();
+                        triggerEvent('newEdges')
                     } else {
                         console.log("No connecting papers found");
                     }
@@ -513,7 +508,7 @@ newDataModule('microsoft', {
                     if(response.Results.length){
                         console.log('MAG: founds cited-by for ID '+ID)
                         microsoft.parseResponse(response,request); //add Papers found by request to Papers array
-                        refreshGraphics();
+                        triggerEvent('newEdges')
                     } else {
                         console.log("No connecting papers found");
                     }
@@ -556,7 +551,7 @@ newDataModule('microsoft', {
         },
     }
 })
-newDataModule('oaDOI', {
+newModule('oaDOI', {
     
   eventResponses: {
     newPaper: {
@@ -595,7 +590,7 @@ document.getElementById('colorByOA').onclick = function(){
         }    
     })                
 } */
-newDataModule('occ', {
+newModule('occ', {
 
     eventResponses:{
         newSeed: {
@@ -661,7 +656,7 @@ newDataModule('occ', {
                 }
             }).then((resp) => resp.text()).then((data)=> {
                 occ.parseResponse(data, query.type);
-                refreshGraphics();
+                triggerEvent('newEdges')
             });
 
             console.log('querying OCC...');
@@ -783,6 +778,282 @@ newDataModule('occ', {
         }
     }
 })
+newModule('forceGraph',{
+    eventResponses:{
+        newEdges:{
+            listening:true,
+            action: function(){
+                updateMetrics(Papers,Edges); // update citation metrics
+                forceGraph.refresh()
+            }
+        }
+    },
+    methods:{
+        refresh: function(){                
+            //Pick only edges that you want to display i.e. citedBy vs references
+            switch(forceGraph.mode){     
+                case 'ref':
+                forceGraph.edges = Edges.filter(function(e){return(e.source.seed)}).map(function(e){return {source: e.source.ID, target: e.target.ID}});
+                forceGraph.sizeMetric = 'seedsCitedBy';
+                break;
+                case 'citedBy':
+                forceGraph.edges = Edges.filter(function(e){return(e.target.seed)}).map(function(e){return {source: e.source.ID, target: e.target.ID}});       
+                forceGraph.sizeMetric = 'seedsCited';    
+                break;
+            }
+            //Pick only Papers that are connected to something
+            forceGraph.nodes = Papers.filter(function(p){
+                let ids = forceGraph.edges.map(function(e){return(e.source)}).concat(forceGraph.edges.map(function(e){return(e.target)}));
+                return(ids.includes(p.ID))
+            }); 
+            forceGraph.circles = forceGraph.circles.data(forceGraph.nodes,function(d){return d.ID});
+            forceGraph.circles.exit().remove();
+            forceGraph.circles = forceGraph.circles.enter().append("circle")
+                                .merge(forceGraph.circles)
+                                .attr("r", function(d){return d.seed ? 7 : 5*d[forceGraph.sizeMetric]})
+                                .attr("class", function(d) { 
+                                    if(d.seed){return 'seed-node node'} else {return 'node'}
+                                })                                            
+                                .style("visibility", function (d) {return d.hide == 1 ? "hidden" : "visible";})
+                                .call(d3.drag()
+                                    .on("start", forceGraph.dragstarted)
+                                    .on("drag", forceGraph.dragged)
+                                    .on("end", forceGraph.dragended))
+                                .on("dblclick",forceGraph.hideSingles)
+                                .on("click",forceGraph.highlightNode)
+                                .on("mouseover",function(){updateInfoBox(this)})
+            forceGraph.circles.append("title").text(function(d) { return d.title; }); //Label nodes with title on hover
+            forceGraph.lines = forceGraph.lines.data(forceGraph.edges, function(d) { return d.source.ID + "-" + d.target.ID; })
+            forceGraph.lines.exit().remove();
+            forceGraph.lines = forceGraph.lines.enter().append("line").attr("marker-end", "url(#end)").merge(forceGraph.lines);
+            // Update and restart the simulation.
+            forceGraph.simulation.nodes(forceGraph.nodes).on("tick", forceGraph.ticked);
+            forceGraph.simulation.force("link").links(forceGraph.edges);
+            forceGraph.simulation.force("collide").initialize(forceGraph.simulation.nodes());
+            forceGraph.simulation.alpha(1).restart();
+            forceGraph.threshold(forceGraph.minconnections);   
+            forceGraph.circles.style("opacity", 1);
+            forceGraph.lines.style("opacity",1);   
+        },   
+        dragstarted:  function(d) {
+            if (!d3.event.active) forceGraph.simulation.alphaTarget(0.3).restart();
+            d.fx = d.x;
+            d.fy = d.y;
+        },
+        dragged:  function(d) {
+            d.fx = d3.event.x;
+            d.fy = d3.event.y;
+        },
+        dragended:  function(d) {
+            if (!d3.event.active) forceGraph.simulation.alphaTarget(0);
+            d.fx = null;
+            d.fy = null;
+        },
+        hideSingles:  function(){
+            let nodeid = this.__data__.ID;
+            childrenids = findUniqueChildren(nodeid);
+            Papers.filter(function(p){return childrenids.includes(p.ID)}).forEach(function(p){p.hide= !p.hide;});
+            Edges.filter(function(e){
+                let hiddenPapers = Papers.filter(function(p){return p.hide}).map(function(p){return p.ID});
+                return hiddenPapers.includes(e.source.ID) | hiddenPapers.includes(e.target.ID);
+            }).forEach(function(e){
+                e.hide=true
+            })
+            forceGraph.circles.style("visibility", function (p) {
+                return p.hide ? "hidden" : "visible" ;
+            });
+            forceGraph.lines.style("visibility", function(e){
+                var hiddenPapers = Papers.filter(function(p){return p.hide}).map(function(p){return p.ID});
+                return hiddenPapers.includes(e.source.ID) | hiddenPapers.includes(e.target.ID) ? "hidden":"visible";
+            })  
+        },
+        neighboring:  function(a, b) {
+            return (
+                forceGraph.edges.filter(function(e){
+                    return e.source == a | e.target == a
+                }).filter(function(e){
+                    return e.source == b | e.target == b
+                }).length
+            )
+        },
+        highlightNode: function(){
+            d = d3.select(this).node().__data__;
+            forceGraph.circles.style("opacity", 1);
+            forceGraph.lines.style("opacity",1);
+            forceGraph.circles.style("opacity", function (o) {
+                return forceGraph.neighboring(d, o) | forceGraph.neighboring(o, d) ? 1 : 0.15;
+            });
+            forceGraph.lines.style("opacity", function(o) {
+                return o.source === d || o.target === d ? 1 : 0.15;
+            });
+            updateInfoBox(this);
+            forceGraph.circles.on('mouseover',null)
+            d3.event.stopPropagation();
+        },
+        ticked: function() {
+            
+                forceGraph.lines
+                    .attr("x1", function(d) { return d.source.x; })
+                    .attr("y1", function(d) { return d.source.y; })
+                    .attr("x2", function(d) { return d.target.x; })
+                    .attr("y2", function(d) { return d.target.y; });
+        
+                forceGraph.circles
+                    .attr("cx", function(d) { return d.x; })
+                    .attr("cy", function(d) { return d.y; });
+        },
+        threshold:  function(value){
+            let metric;
+            switch(forceGraph.mode){
+                case 'ref':
+                    metric = 'seedsCitedBy';
+                    break;
+                case 'citedBy':
+                    metric = 'seedsCited';
+                    break;
+            } 
+            Papers.forEach(function(p){
+                p.hide = (p[metric]>=value || p.seed) ? false : true ;
+            });
+            forceGraph.circles.style("visibility", function (p) {
+                return p.hide ? "hidden" : "visible" ;
+            });
+            var hiddenPapers = Papers.filter(function(p){return p.hide}).map(function(p){return p.ID});        
+            forceGraph.lines.style("visibility", function(e){     
+                return hiddenPapers.includes(e.source.ID) | hiddenPapers.includes(e.target.ID) ? "hidden":"visible";  
+            })
+        }
+    }
+})
+
+forceGraph.minconnections = 0;
+forceGraph.mode = 'ref';
+forceGraph.sizeMetric = 'seedsCitedBy';
+forceGraph.selectednode = null;
+forceGraph.osvg =  d3.select('#force-graph')
+                        .on('click',function(){
+                            forceGraph.circles.style("opacity", 1);
+                            forceGraph.lines.style("opacity",1);
+                            forceGraph.circles.on('mouseover',function(){updateInfoBox(this)})
+                        })
+                        .call(d3.zoom().on("zoom", function () {forceGraph.svg.attr("transform", d3.event.transform)}))//enable zoom by scrolling
+                        .on("dblclick.zoom", null);//disable double click zooming
+forceGraph.width =  document.getElementById('network-view').offsetWidth; //extract the width and height attribute (the + converts to number)
+forceGraph.height =  document.getElementById('network-view').offsetHeight;
+forceGraph.svg =  forceGraph.osvg.append('g');
+forceGraph.lines =  forceGraph.svg.append("g").attr("class", "link").selectAll("line");
+forceGraph.circles =  forceGraph.svg.append("g").attr("class", "node").selectAll("circle");
+forceGraph.simulation =  d3.forceSimulation()
+                            .force("link", d3.forceLink().id(function(d){return d.ID;}))
+                            .force("charge", d3.forceManyBody().strength(-100))
+                            .force("center", d3.forceCenter(forceGraph.width / 2, forceGraph.height / 2))
+                            .force("xattract",d3.forceX())
+                            .force("yattract",d3.forceY())
+                            .force("collide",d3.forceCollide().radius(function(d){return (d.seed ? 7 : 5*d[forceGraph.sizeMetric])}));
+                    
+
+
+
+
+  
+newModule('seedList',{
+    eventResponses:{
+        seedUpdate:{
+            listening: true,
+            action: function(){
+                seedList.refresh()
+            }
+        },
+        newSeed:{
+            listening: true,
+            action: function(){
+                seedList.refresh()
+            }
+        }
+    },
+    methods: {
+        refresh: function(){
+            var seedpapers = Papers.filter(function(p){return p.seed});
+            var paperbox = d3.select('#seed-paper-container').selectAll('.outer-paper-box')
+                            .data(seedpapers,function(d){return d.ID})
+            paperbox.exit().remove()
+            var oldpapers = d3.select('#seed-paper-container').selectAll('.outer-paper-box').select('.inner-paper-box')
+            oldpapers.select('.paper-title').html(function(p){
+                return(p.title)
+            })
+            oldpapers.select('.metric').html(function(p){
+                return(p[metric]?p[metric]:'0')
+            })
+            oldpapers.select('.author-year').html(function(p){
+                if(p.author) {return p.author+' '+p.year}else{return(p.year)}
+            })
+            oldpapers.select('.doi-link').html(function(p){
+                return("<a target='_blank' href='https://doi.org/"+p.doi+"'>"+p.doi+"</a>")
+            })
+            paperbox = paperbox.enter()
+                .append('div')
+                .attr('class','outer-paper-box panel')
+            paperbox.append('button').attr('class','delete-seed')
+                .html('<i class="fa fa-times" color="red" aria-hidden="true"></i>')
+                .on('click',function(p){deleteSeed(p)})
+            paperbox = paperbox.append('div')
+                .attr('class','inner-paper-box panel')
+                .on('click',forceGraph.highlightNode)
+            paperbox.append('p').attr('class','paper-title')
+                .html(function(p){
+                    return(p.title)
+                })
+            paperbox.append('p').attr('class','author-year')
+                .html(function(p){
+                    if(p.author) {return p.author+' '+p.year}else{return(p.year)}
+                })
+            paperbox.append('p').attr('class','doi-link')
+                .html(function(p){
+                    return("<a target='_blank' href='https://doi.org/"+p.doi+"'>"+p.doi+"</a>")
+                })          
+        }
+    }
+})
+
+newModule('connectedList',{
+    eventResponses:{
+        newEdges:{
+            listening: true,
+            action: function(){
+                connectedList.refresh()
+            }
+        },
+        paperUpdate:{
+            listening: true,
+            action: function(){
+                connectedList.refresh()
+            }
+        }
+    },
+    methods:{
+        refresh: function(){
+            updateMetrics(Papers,Edges); // update citation metrics
+            var nonSeeds = Papers.filter(function(p){return(!p.seed)})
+            var paperbox = d3.select('#connected-paper-container').selectAll('tr')
+                            .data(nonSeeds,function(d){return d.ID});
+                            //.sort((a,b)=>b.seedsCitedBy<a.seedsCitedBy)
+            paperbox.exit().remove();
+            var papers = d3.select('#connected-paper-container').selectAll('tr').select('td').select('.inner-paper-box')
+            papers.select('.paper-title').html(function(p){
+                return(p.title)
+            })
+            papers.select('.metric').html(function(p){
+                return(p[metric]?p[metric]:'0')
+            })
+            papers.select('.author-year').html(function(p){
+                if(p.author) {return p.author+' '+p.year}else{return(p.year)}
+            })
+            papers.select('.doi-link').html(function(p){
+                return("<a target='_blank' href='https://doi.org/"+p.doi+"'>"+p.doi+"</a>")
+            })
+        }
+    }
+})
 //Functions for paper details panel
 function updateInfoBox(selected){
     p = selected.__data__;
@@ -794,72 +1065,6 @@ function updateInfoBox(selected){
     paperbox.select('.add-seed').html(p.seed ? 'Delete Seed':'Make Seed')
             .on('click', function(){p.seed ? deleteSeed(p) : makeSeed(p)})
     forceGraph.selectednode = p;
-}
-
-function updateSeedList(){    
-    var seedpapers = Papers.filter(function(p){return p.seed});
-    var paperbox = d3.select('#seed-paper-container').selectAll('.outer-paper-box')
-                    .data(seedpapers,function(d){return d.ID})
-
-    paperbox.exit().remove()
-
-    oldpapers = d3.select('#seed-paper-container').selectAll('.outer-paper-box').select('.inner-paper-box')
-    oldpapers.select('.paper-title').html(function(p){
-        return(p.title)
-    })
-    oldpapers.select('.metric').html(function(p){
-        return(p[metric]?p[metric]:'0')
-    })
-    oldpapers.select('.author-year').html(function(p){
-        if(p.author) {return p.author+' '+p.year}else{return(p.year)}
-    })
-    oldpapers.select('.doi-link').html(function(p){
-        return("<a target='_blank' href='https://doi.org/"+p.doi+"'>"+p.doi+"</a>")
-    })
-
-    paperbox = paperbox.enter()
-        .append('div')
-        .attr('class','outer-paper-box panel')
-    paperbox.append('button').attr('class','delete-seed')
-        .html('<i class="fa fa-times" color="red" aria-hidden="true"></i>')
-        .on('click',function(p){deleteSeed(p)})
-    paperbox = paperbox.append('div')
-        .attr('class','inner-paper-box panel')
-        .on('click',forceGraph.highlightNode)
-    paperbox.append('p').attr('class','paper-title')
-        .html(function(p){
-            return(p.title)
-        })
-    paperbox.append('p').attr('class','author-year')
-        .html(function(p){
-            if(p.author) {return p.author+' '+p.year}else{return(p.year)}
-        })
-    paperbox.append('p').attr('class','doi-link')
-        .html(function(p){
-            return("<a target='_blank' href='https://doi.org/"+p.doi+"'>"+p.doi+"</a>")
-        })
-};
-
-function updateConnectedList(metric){
-    
-    var nonSeeds = Papers.filter(function(p){return(!p.seed)})
-    paperbox = d3.select('#connected-paper-container').selectAll('tr')
-                     .data(nonSeeds,function(d){return d.ID});
-                     //.sort((a,b)=>b.seedsCitedBy<a.seedsCitedBy)
-    paperbox.exit().remove();
-    papers = d3.select('#connected-paper-container').selectAll('tr').select('td').select('.inner-paper-box')
-    papers.select('.paper-title').html(function(p){
-        return(p.title)
-    })
-    papers.select('.metric').html(function(p){
-        return(p[metric]?p[metric]:'0')
-    })
-    papers.select('.author-year').html(function(p){
-        if(p.author) {return p.author+' '+p.year}else{return(p.year)}
-    })
-    papers.select('.doi-link').html(function(p){
-        return("<a target='_blank' href='https://doi.org/"+p.doi+"'>"+p.doi+"</a>")
-    })
 }
 
 function printConnectedList(metric,pageNum,replot){
@@ -919,183 +1124,7 @@ function printConnectedList(metric,pageNum,replot){
     d3.select('#more-button').remove();
     d3.select('#connected-paper-container').append('div')
         .html('<button id="more-button" class = "button1">more...</button>')
-        .attr('onclick','printConnectedList("'+metric+'",'+(pageNum+1)+')')
-
-        console.log('print called')
-   
-}
-let forceGraph = {};
-
-forceGraph.minconnections = 0;
-forceGraph.mode = 'ref';
-forceGraph.sizeMetric = 'seedsCitedBy';
-forceGraph.selectednode = null;
-forceGraph.osvg =  d3.select('#force-graph')
-                        .on('click',function(){
-                            forceGraph.circles.style("opacity", 1);
-                            forceGraph.lines.style("opacity",1);
-                            forceGraph.circles.on('mouseover',function(){updateInfoBox(this)})
-                        })
-                        .call(d3.zoom().on("zoom", function () {forceGraph.svg.attr("transform", d3.event.transform)}))//enable zoom by scrolling
-                        .on("dblclick.zoom", null);//disable double click zooming
-forceGraph.width =  document.getElementById('network-view').offsetWidth; //extract the width and height attribute (the + converts to number)
-forceGraph.height =  document.getElementById('network-view').offsetHeight;
-forceGraph.svg =  forceGraph.osvg.append('g');
-forceGraph.lines =  forceGraph.svg.append("g").attr("class", "link").selectAll("line");
-forceGraph.circles =  forceGraph.svg.append("g").attr("class", "node").selectAll("circle");
-forceGraph.simulation =  d3.forceSimulation()
-                            .force("link", d3.forceLink().id(function(d){return d.ID;}))
-                            .force("charge", d3.forceManyBody().strength(-100))
-                            .force("center", d3.forceCenter(forceGraph.width / 2, forceGraph.height / 2))
-                            .force("xattract",d3.forceX())
-                            .force("yattract",d3.forceY())
-                            .force("collide",d3.forceCollide().radius(function(d){return (d.seed ? 7 : 5*d[forceGraph.sizeMetric])}));
-forceGraph.dragstarted =  function(d) {
-    if (!d3.event.active) forceGraph.simulation.alphaTarget(0.3).restart();
-    d.fx = d.x;
-    d.fy = d.y;
-};
-forceGraph.dragged =  function(d) {
-    d.fx = d3.event.x;
-    d.fy = d3.event.y;
-},
-forceGraph.dragended =  function(d) {
-    if (!d3.event.active) forceGraph.simulation.alphaTarget(0);
-    d.fx = null;
-    d.fy = null;
-};
-forceGraph.hideSingles =  function(){
-    let nodeid = this.__data__.ID;
-    childrenids = findUniqueChildren(nodeid);
-    Papers.filter(function(p){return childrenids.includes(p.ID)}).forEach(function(p){p.hide= !p.hide;});
-    Edges.filter(function(e){
-        let hiddenPapers = Papers.filter(function(p){return p.hide}).map(function(p){return p.ID});
-        return hiddenPapers.includes(e.source.ID) | hiddenPapers.includes(e.target.ID);
-    }).forEach(function(e){
-        e.hide=true
-    })
-    forceGraph.circles.style("visibility", function (p) {
-        return p.hide ? "hidden" : "visible" ;
-    });
-    forceGraph.lines.style("visibility", function(e){
-        var hiddenPapers = Papers.filter(function(p){return p.hide}).map(function(p){return p.ID});
-        return hiddenPapers.includes(e.source.ID) | hiddenPapers.includes(e.target.ID) ? "hidden":"visible";
-    })  
-    //forceGraph.update(Papers,Edges);   
-};
-forceGraph.neighboring =  function(a, b) {
-    return (
-        forceGraph.edges.filter(function(e){
-            return e.source == a | e.target == a
-        }).filter(function(e){
-            return e.source == b | e.target == b
-        }).length
-    )
-};
-forceGraph.highlightNode =  function(){
-    d = d3.select(this).node().__data__;
-    forceGraph.circles.style("opacity", 1);
-    forceGraph.lines.style("opacity",1);
-    forceGraph.circles.style("opacity", function (o) {
-        return forceGraph.neighboring(d, o) | forceGraph.neighboring(o, d) ? 1 : 0.15;
-    });
-    forceGraph.lines.style("opacity", function(o) {
-        return o.source === d || o.target === d ? 1 : 0.15;
-    });
-    updateInfoBox(this);
-    forceGraph.circles.on('mouseover',null)
-    d3.event.stopPropagation();
-};
-forceGraph.ticked =  function() {
-    
-        forceGraph.lines
-            .attr("x1", function(d) { return d.source.x; })
-            .attr("y1", function(d) { return d.source.y; })
-            .attr("x2", function(d) { return d.target.x; })
-            .attr("y2", function(d) { return d.target.y; });
-
-        forceGraph.circles
-            .attr("cx", function(d) { return d.x; })
-            .attr("cy", function(d) { return d.y; });
-};
-forceGraph.threshold =  function(value){
-    let metric;
-    switch(forceGraph.mode){
-        case 'ref':
-            metric = 'seedsCitedBy';
-            break;
-        case 'citedBy':
-            metric = 'seedsCited';
-            break;
-    } 
-    Papers.forEach(function(p){
-        p.hide = (p[metric]>=value || p.seed) ? false : true ;
-    });
-    forceGraph.circles.style("visibility", function (p) {
-        return p.hide ? "hidden" : "visible" ;
-    });
-    var hiddenPapers = Papers.filter(function(p){return p.hide}).map(function(p){return p.ID});        
-    forceGraph.lines.style("visibility", function(e){     
-        return hiddenPapers.includes(e.source.ID) | hiddenPapers.includes(e.target.ID) ? "hidden":"visible";  
-    })
-};
-forceGraph.update =  function(Papers,Edges){                
-    //Pick only edges that you want to display i.e. citedBy vs references
-    switch(forceGraph.mode){     
-        case 'ref':
-        forceGraph.edges = Edges.filter(function(e){return(e.source.seed)}).map(function(e){return {source: e.source.ID, target: e.target.ID}});
-        forceGraph.sizeMetric = 'seedsCitedBy';
-        break;
-        case 'citedBy':
-        forceGraph.edges = Edges.filter(function(e){return(e.target.seed)}).map(function(e){return {source: e.source.ID, target: e.target.ID}});       
-        forceGraph.sizeMetric = 'seedsCited';    
-        break;
-    }
-    //Pick only Papers that are connected to something
-    forceGraph.nodes = Papers.filter(function(p){
-        let ids = forceGraph.edges.map(function(e){return(e.source)}).concat(forceGraph.edges.map(function(e){return(e.target)}));
-        return(ids.includes(p.ID))
-    }); 
-    forceGraph.circles = forceGraph.circles.data(forceGraph.nodes,function(d){return d.ID});
-    forceGraph.circles.exit().remove();
-    forceGraph.circles = forceGraph.circles.enter().append("circle")
-                        .merge(forceGraph.circles)
-                        .attr("r", function(d){return d.seed ? 7 : 5*d[forceGraph.sizeMetric]})
-                        .attr("class", function(d) { 
-                            if(d.seed){return 'seed-node node'} else {return 'node'}
-                        })                                            
-                        .style("visibility", function (d) {return d.hide == 1 ? "hidden" : "visible";})
-                        .call(d3.drag()
-                            .on("start", forceGraph.dragstarted)
-                            .on("drag", forceGraph.dragged)
-                            .on("end", forceGraph.dragended))
-                        .on("dblclick",forceGraph.hideSingles)
-                        .on("click",forceGraph.highlightNode)
-                        .on("mouseover",function(){updateInfoBox(this)})
-    forceGraph.circles.append("title").text(function(d) { return d.title; }); //Label nodes with title on hover
-    forceGraph.lines = forceGraph.lines.data(forceGraph.edges, function(d) { return d.source.ID + "-" + d.target.ID; })
-    forceGraph.lines.exit().remove();
-    forceGraph.lines = forceGraph.lines.enter().append("line").attr("marker-end", "url(#end)").merge(forceGraph.lines);
-    // Update and restart the simulation.
-    forceGraph.simulation.nodes(forceGraph.nodes).on("tick", forceGraph.ticked);
-    forceGraph.simulation.force("link").links(forceGraph.edges);
-    forceGraph.simulation.force("collide").initialize(forceGraph.simulation.nodes());
-    forceGraph.simulation.alpha(1).restart();
-    forceGraph.threshold(forceGraph.minconnections);   
-    forceGraph.circles.style("opacity", 1);
-    forceGraph.lines.style("opacity",1);   
-}   
-                    
-
-
-
-
-  
-// When the user clicks anywhere outside of the modal, close it
-window.onclick = function(event) {
-    if (event.target.classList.contains('modal')) {
-        event.target.style.display = "none";
-    }
+        .attr('onclick','printConnectedList("'+metric+'",'+(pageNum+1)+')')   
 }
 function plotTimeGraph(){
 
@@ -1162,6 +1191,22 @@ timeGraph.update = function(){
 
 
 
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+    if (event.target.classList.contains('modal')) {
+        event.target.style.display = "none";
+    }
+}
+
+document.getElementById('connected-sort-by').style.display = 'none'
+document.getElementById('connected-sort-by').getElementsByTagName('select')[0].onchange = function(){
+    let metric = this.value;
+    papers = d3.select('#connected-paper-container').selectAll('.outer-paper-box').select('.inner-paper-box')
+    papers.select('.metric').html(function(p){
+        return(p[metric]?p[metric]:'0')
+    })
+    printConnectedList(metric,1,true)    
+}
 //For paper details panel switching. 
 document.getElementById('connected-paper-container').style.display = 'none';
 
@@ -1195,23 +1240,20 @@ document.getElementById('connected-list-button').onclick = function(){
 document.getElementById("add-seeds-button").onclick = function() {
     document.getElementById('add-seeds-modal').style.display = "block";
 }
-
-document.getElementById('connected-sort-by').style.display = 'none'
-document.getElementById('connected-sort-by').getElementsByTagName('select')[0].onchange = function(){
-    let metric = this.value;
-    papers = d3.select('#connected-paper-container').selectAll('.outer-paper-box').select('.inner-paper-box')
-    papers.select('.metric').html(function(p){
-        return(p[metric]?p[metric]:'0')
-    })
-    printConnectedList(metric,1,true)    
-}
 //For forceGraph display mode toggling
 document.getElementById('mode-toggle').onchange = function(){
     forceGraph.mode = (forceGraph.mode=='ref') ? 'citedBy' : 'ref';
-    forceGraph.update(Papers,Edges)
+    forceGraph.refresh()
     document.getElementById('connected-sort-by').getElementsByTagName('select')[0].value = (forceGraph.mode=='ref') ? 'seedsCitedBy' : 'seedsCited';
     printConnectedList(forceGraph.sizeMetric,1,true)
 } 
+
+//For forceGraph threshold slider
+document.getElementById('threshold-input').oninput = function(){
+    document.querySelector('#threshold-output').value = 'Minimum Connections: ' + this.value;
+    forceGraph.threshold(this.value)
+}
+
      
     document.getElementById("add-by-doi").onclick = function() {
         document.getElementById('add-seeds-modal').style.display = "none";
@@ -1227,26 +1269,6 @@ document.getElementById('mode-toggle').onchange = function(){
     } 
 
    
-
-//For forceGraph threshold slider
-document.getElementById('threshold-input').oninput = function(){
-    document.querySelector('#threshold-output').value = 'Minimum Connections: ' + this.value;
-    forceGraph.threshold(this.value)
-}
-
-var doiQuery; //Place holder for the user input field.
-
-//Update request based on doi query inputted by the user.
-var doiInput = document.querySelector("#doi-input").addEventListener("input",function(){
-    doiQuery=this.value;
-});
-
-document.getElementById("doi-input").onkeydown = function(event){
-    if (event.keyCode == 13){   
-        addPaper({doi:doiQuery},true)
-        document.getElementById('doi-input-loader').style.display = 'inline-block';
-    }
-}
 //For help modal
 document.getElementById('help-modal').style.display = "block";
 document.getElementById('help-button').onclick = function(){
@@ -1313,49 +1335,18 @@ function updateTitleSearchResults(results,pageNum,replot){
         .html('<button id="more-button2" class = "button1">more...</button>')
         .on('click',function(){updateTitleSearchResults(results,(pageNum+1))})
 }
-var bibtex = {
-    //Importing user uploaded Bibtex
-    importBibTex: function(evt) {
-        let files = evt.target.files; // FileList object
-        for (var i = 0, f; f = files[i]; i++) {
-            var reader = new FileReader();
-            reader.onload = function(e){
-                var papers = bibtexParse.toJSON(e.target.result);
-                if(papers.filter(function(p){
-                    return p.entryTags.doi;
-                }).length==0){
-                    alert("We couldn't find any dois in the BibTex you uploaded please check your export settings");
-                };
-                for(let i=0;i<papers.length;i++){
-                    if(papers[i].entryTags.doi){
-                        let newSeed = {doi: papers[i].entryTags.doi}
-                        addPaper(newSeed,true);
-                    }; 
-                };
-            };
-            reader.readAsText(f);       
-        };
-        document.getElementById('upload-bibtex-modal').style.display = "none"; //Hide modal once file selected
-    },
-    //Importing Example BibTex
-    importExampleBibTex: function(){
-        let url = window.location.href+'examples/exampleBibTex.bib'
-        fetch(url).then((resp) => resp.text()).then((data)=> {
-                var papers = bibtexParse.toJSON(data);
-                for(let i=0;i<papers.length;i++){
-                    let newSeed = {doi: papers[i].entryTags.doi}
-                    addPaper(newSeed,true);
-                };
-                document.getElementById('upload-bibtex-modal').style.display = "none";
-            }
-        )
+var doiQuery; //Place holder for the user input field.
+
+//Update request based on doi query inputted by the user.
+var doiInput = document.querySelector("#doi-input").addEventListener("input",function(){
+    doiQuery=this.value;
+});
+
+document.getElementById("doi-input").onkeydown = function(event){
+    if (event.keyCode == 13){   
+        addPaper({doi:doiQuery},true)
+        document.getElementById('doi-input-loader').style.display = 'inline-block';
     }
-}
-
-document.getElementById('files').addEventListener('change', bibtex.importBibTex, false);
-
-document.getElementById('demo-button').onclick = function(){
-    bibtex.importExampleBibTex()
 }
 d3.select('#add-seeds-modal').select('div').append('button').attr('id','add-by-zotero')
     .html("<img id='zotero-square' src='images/zotero/zotero2.png'>")
@@ -1626,4 +1617,48 @@ var zotero = {
             }).then(resp=>resp.json()).then(r=>console.log(r))  
         }) 
     }
+}
+var bibtex = {
+    //Importing user uploaded Bibtex
+    importBibTex: function(evt) {
+        let files = evt.target.files; // FileList object
+        for (var i = 0, f; f = files[i]; i++) {
+            var reader = new FileReader();
+            reader.onload = function(e){
+                var papers = bibtexParse.toJSON(e.target.result);
+                if(papers.filter(function(p){
+                    return p.entryTags.doi;
+                }).length==0){
+                    alert("We couldn't find any DOIs in the BibTex you uploaded please check your export settings");
+                };
+                for(let i=0;i<papers.length;i++){
+                    if(papers[i].entryTags.doi){
+                        let newSeed = {doi: papers[i].entryTags.doi}
+                        addPaper(newSeed,true);
+                    }; 
+                };
+            };
+            reader.readAsText(f);       
+        };
+        document.getElementById('upload-bibtex-modal').style.display = "none"; //Hide modal once file selected
+    },
+    //Importing Example BibTex
+    importExampleBibTex: function(){
+        let url = window.location.href+'examples/exampleBibTex.bib'
+        fetch(url).then((resp) => resp.text()).then((data)=> {
+                var papers = bibtexParse.toJSON(data);
+                for(let i=0;i<papers.length;i++){
+                    let newSeed = {doi: papers[i].entryTags.doi}
+                    addPaper(newSeed,true);
+                };
+                document.getElementById('upload-bibtex-modal').style.display = "none";
+            }
+        )
+    }
+}
+
+document.getElementById('files').addEventListener('change', bibtex.importBibTex, false);
+
+document.getElementById('demo-button').onclick = function(){
+    bibtex.importExampleBibTex()
 }
