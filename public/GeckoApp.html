@@ -6,8 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Citation Gecko</title>
 
-        <link href="https://fonts.googleapis.com/css?family=Comfortaa" rel="stylesheet">
-        <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
 
         <link rel="stylesheet" type="text/css" href='styles.css'/>
 
@@ -15,28 +14,33 @@
     </head>
     <body>
         <div class='main'>
-            <div id ='logo-panel' class = 'panel'>
-                <button id='help-button'><i class="fa fa-question-circle fa-2x" color ='green' aria-hidden="true"></i></button>
-                <img class='logo' src='images/gecko-logo/logo2.png'/>
+            <div id ='logo-panel'>
+                <button id='seed-list-button' class='side-bar-button'><img id='seed-icon'class='side-bar-icon'src='images/icons/seed-papers.png'></button>
+                <button id='connected-list-button' class='side-bar-button'><img id='connected-icon'class='side-bar-icon'src='images/icons/connected-papers.png'></button>
+                <button id='settings-button' class='side-bar-button'><img id='seed-icon'class='side-bar-icon'src='images/icons/settings.png'></button>
             </div>
             <div id='list-panel' class= 'panel'>
-                <div class = 'box-toggle'>
-                   <button id='seed-list-button'>Seeds</button><button id='connected-list-button'>Connected</button>
+                <div id='seed-list'>
+                    <div class='list-header'>
+                        <h1 class='list-title'>My Seed Papers</h1>
+                    </div>
+                    <div id='seed-paper-container'>
+                    </div>
+                    <div class='list-footer'>
+                        <button id='add-seeds-button' class='add-seed-button' onclick=''>Add more seed papers...</button>
+                    </div>
                 </div>
-                <div id='connected-sort-by'>
-                    <span>Sort By:</span>
-                    <select>
-                        <option value="seedsCitedBy">Seeds Cited-By</option>
-                        <option value="seedsCited">Seeds Cited</option>
-                    </select>
-                </div>
-                <div>
-                    <button id='add-seeds-button' class='add-seed-button' onclick=''><i class="fa fa-plus" aria-hidden="true"></i><span>add more seed papers...</span></button>
-                </div>
-                <div id='seed-paper-container'>
-                </div>
-                <div id='connected-paper-container'>
-
+                <div id='connected-list'>
+                    <h1 class='list-title'>Recommended Reading</h1>
+                    <div id='connected-sort-by'>
+                            <span>Sort By:</span>
+                            <select>
+                                <option value="seedsCitedBy">Seeds Cited-By</option>
+                                <option value="seedsCited">Seeds Cited</option>
+                            </select>
+                    </div>
+                    <div id='connected-paper-container'>
+                    </div>
                 </div>
             </div>
             <div id='graph-panel' class= 'panel'>
@@ -150,11 +154,72 @@
                     add seeds from bibTex: <input type="file" id="files" name="files[]" multiple /><output id="list"></output><button id='demo-button'>DEMO</button>
                 </div>
         </div>
+
+        <div id='onboarding-modal' class='modal'>
+                <div class='modal-content' id='onboarding-1'>
+                    <h1> Welcome to Gecko </h1>
+                    <p>
+                        Gecko is here to help you find the most relevant papers to your research and give you a more complete sense of the research landscape.
+                    </p>
+                    <p>
+                        Start from a small set of 'seed papers' that define an area you are interested. Gecko will search the citation network for connected papers allowing you to quickly identify important papers you may have missed.
+                    </p>
+                    <div class='modal-footer'>
+                        <button class='modal-btn' onClick='showAddInitialSeed()'>
+                            <span> Start discovering papers! </span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class='modal-content' id='onboarding-2'>
+                    <h1> Add seed papers... </h1>
+                    <p>
+                        The first step is to pick the seed papers that define your area of interest. There are a number of ways to do this....
+                    </p>
+                    <div class='large-button-list'>
+                        <button class='large-secondary-button' onClick='showZotero()'>
+                            Import from Zotero
+                        </button>
+                        <button class='large-secondary-button'>
+                            Import from Mendeley
+                        </button>
+                        <button class='large-secondary-button'>
+                            Import from BibTex
+                        </button>
+                        <button class='large-secondary-button'>
+                            Search for Papers
+                        </button>
+                    </div>
+                </div>
+                <div class='modal-content' id='onboarding-3'>
+                    <img src='images/onboarding/zotero.png'/>
+                    <div class='modal-footer'>
+                        <button class='modal-btn' onClick='showSeedType()'>
+                            <span> Add as seed papers </span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class='modal-content' id='onboarding-4'>
+                    <h1> What kind of papers are you looking for? </h1>
+                    <div class='large-button-list'>
+                        <button class='large-secondary-button'>
+                            <h1> Papers Cited-By Seed Papers </h1>
+                            <p> Papers cited by a lot of your seed papers are likely to be important older papers, perhaps foundational to the field.</p>
+                        </button>
+                        <button class='large-primary-button' onClick='startDemo()'>
+                            <h1> Papers Citing Seed Papers </h1>
+                            <p> Papers citing a lot of your seed papers are newer papers that are in your area of interest. </p>
+                        </button>
+                    </div>
+                </div>
+        </div>
         
-        <script src=  "https://d3js.org/d3.v4.js"></script>
+        <script src = "https://d3js.org/d3.v4.js"></script>
         <script src = "third-party/bibtexParse.js"></script>
         <script src = "third-party/crossref.min.js"></script>
         <script src = "zoterokey.js"></script>
+        <script src = "https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
         <script src = "main.js"></script>
     </body>
 </html>

@@ -3,7 +3,7 @@ var _ = require('lodash');
 var express = require('express');
 var bodyParser = require('body-parser');
 
-var appPort = 3000;
+var appPort = process.argv.slice(2)[0] || 3000;
 
 /**
  * Express server scaffolding
@@ -58,6 +58,12 @@ app.post('/api/v1/query/microsoft/search', require('./api/v1/query/microsoft/sea
  * API: Proxy to OpenCitations sparql
  */
 //app.post('/api/v1/query/occ/sparql', require('./api/v1/query/occ/sparql'));
+
+/**
+* API: Mocked response for the client-side refactor
+*/
+app.get('/api/v1/getMockResponse', require('./api/v1/getMockResponse'));
+
 
 /**
  * Start Express server

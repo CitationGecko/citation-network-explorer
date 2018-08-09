@@ -1,0 +1,27 @@
+#seed-paper-container, #connected-paper-container {   
+    height:600px;
+    overflow:auto;
+    font-size: 70%;
+    flex:
+}
+
+.list-header{
+    height:75px;
+}
+
+.list-footer{
+    height:150px;
+}
+
+.button1 {
+    width:95%;
+    margin-right:0;
+    margin-left:auto;
+    border-style: none;
+    background-color: white;
+    z-index: 1;
+}
+.button1>span {
+    position:relative;
+    margin-left: .5em;
+}

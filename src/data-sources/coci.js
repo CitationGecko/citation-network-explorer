@@ -1,43 +1,48 @@
 
-newDataModule('coci', {
-
+newModule('coci', {
     eventResponses:{
-        newSeed: function(paper){
-           /*  let url = 'https://w3id.org/oc/index/coci/api/v1/references/'+paper.DOI
-            fetch(url).then(resp=>resp.json()).then(data => {
-                coci.parseResponse(data,paper);
-            }) */
-            console.log('Querying COCI for '+paper.DOI)
-            let url = 'http://opencitations.net/index/coci/api/v1/citations/'+paper.DOI
-            fetch(url, {headers: {
-                'Accept': 'application/sparql-results+json'
-            }}).then(resp=>resp.json()).then(data => {
-                coci.parseResponse(data,paper);
-                refreshGraphics();
-            })
+        newSeed: {
+            listening: true,
+            action: function(paper){
+                /*  let url = 'https://w3id.org/oc/index/coci/api/v1/references/'+paper.doi
+                 fetch(url).then(resp=>resp.json()).then(data => {
+                     coci.parseResponse(data,paper);
+                 }) */
+                 console.log('Querying COCI for '+paper.doi)
+                 let url = 'https://w3id.org/oc/index/coci/api/v1/citations/'+paper.doi
+                 fetch(url, {headers: {
+                     'Accept': 'application/sparql-results+json'
+                 }}).then(resp=>resp.json()).then(data => {
+                    coci.parseResponse(data,paper);
+                    triggerEvent('newEdges')
+                 })
+            }
         },
     },
-    parseResponse: function(response,paper){
-        let ne = 0; //For bean counting only
-        let cited = paper;
+    methods:{
 
-        for(let i=0;i<response.length;i++){
-            let citer = {
-                DOI: response[i].citing
-            };
+        parseResponse: function(response,paper){
+            let ne = 0; //For bean counting only
+            let cited = paper;
 
-            citer = addPaper(citer);
+            for(let i=0;i<response.length;i++){
+                let citer = {
+                    doi: response[i].citing
+                };
 
-            let newEdge = {
-                source: citer,
-                target: cited,
-                coci: true,
-                hide: false
-            }
-            addEdge(newEdge);
-            ne++;//bean counting
-        };   
-        console.log('COCI found ' + ne + " citations")
-        return(cited)
+                citer = addPaper(citer);
+
+                let newEdge = {
+                    source: citer,
+                    target: cited,
+                    coci: true,
+                    hide: false
+                }
+                addEdge(newEdge);
+                ne++;//bean counting
+            };   
+            console.log('COCI found ' + ne + " citations")
+            return(cited)
+        }
     }
 }) 
