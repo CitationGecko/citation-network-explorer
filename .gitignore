@@ -4,3 +4,6 @@ public/zoterokey.js
 node_modules
 dynamo/*.tsv
 package-lock.json
+public/main.js
+public/styles.css
+
