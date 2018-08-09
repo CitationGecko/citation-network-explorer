@@ -100,11 +100,6 @@ newModule('connectedList',{
             newpapers = paperboxes.enter()
                 .append('div')
                 .attr('class','outer-paper-box panel')
-            newpapers.append('button').attr('class','delete-seed')
-                .html('<i class="fa fa-plus" color="green" aria-hidden="true"></i>')
-                .on('click',function(p){
-                    makeSeed(p)
-                })
             newpapers = newpapers.append('div')
                 .attr('class','inner-paper-box panel')
                 .on('click',forceGraph.highlightNode)
