@@ -1,8 +1,15 @@
+.list{
+    width:100%;
+    height:100%;
+    position: absolute;
+    display:flex;
+    flex-direction: column
+}
+
 #seed-paper-container, #connected-paper-container {   
-    height:600px;
     overflow:auto;
     font-size: 70%;
-    flex:
+    flex:auto
 }
 
 .list-header{
@@ -10,20 +17,13 @@
 }
 
 .list-footer{
-    height:150px;
-}
-
-.button1 {
-    width:95%;
-    margin-right:0;
-    margin-left:auto;
-    border-style: none;
-    background-color: white;
-    z-index: 1;
-}
-.button1>span {
-    position:relative;
-    margin-left: .5em;
+    height:110px;
+    bottom: 0px;
+    width:100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
 }
 
 h1 {

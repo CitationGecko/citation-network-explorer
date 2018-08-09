@@ -20,7 +20,7 @@
                 <button id='settings-button' class='side-bar-button'><img id='seed-icon'class='side-bar-icon'src='images/icons/settings.png'></button>
             </div>
             <div id='list-panel' class= 'panel'>
-                <div id='seed-list'>
+                <div id='seed-list' class='list'>
                     <div class='list-header'>
                         <h1>My Seed Papers</h1>
                     </div>
@@ -30,7 +30,7 @@
                         <button id='add-seeds-button' class='add-seed-button' onclick=''>Add more seed papers...</button>
                     </div>
                 </div>
-                <div id='connected-list'>
+                <div id='connected-list' class='list'>
                     <h1>Recommended Reading</h1>
                     <div id='connected-sort-by'>
                             <span>Sort By:</span>
@@ -40,6 +40,10 @@
                             </select>
                     </div>
                     <div id='connected-paper-container'>
+                    </div>
+                    <div class='list-footer'>
+                        <button id='export-button'>Export</button>
+                        <button id='make-seed'>Add as seed</button>
                     </div>
                 </div>
             </div>

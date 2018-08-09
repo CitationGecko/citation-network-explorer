@@ -791,6 +791,12 @@ function updateInfoBox(selected){
     forceGraph.selectednode = p;
 }
 
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+    if (event.target.classList.contains('modal')) {
+        event.target.style.display = "none";
+    }
+}
 //For paper details panel switching. 
 document.getElementById('connected-list').style.display = 'none';
 
@@ -813,12 +819,6 @@ document.getElementById('connected-list-button').onclick = function(){
     document.getElementById('seed-list').style.display = 'none';
 
     connectedList.print('seedsCitedBy',1);
-}
-// When the user clicks anywhere outside of the modal, close it
-window.onclick = function(event) {
-    if (event.target.classList.contains('modal')) {
-        event.target.style.display = "none";
-    }
 }
 newModule('seedList',{
     eventResponses:{
@@ -922,11 +922,6 @@ newModule('connectedList',{
             newpapers = paperboxes.enter()
                 .append('div')
                 .attr('class','outer-paper-box panel')
-            newpapers.append('button').attr('class','delete-seed')
-                .html('<i class="fa fa-plus" color="green" aria-hidden="true"></i>')
-                .on('click',function(p){
-                    makeSeed(p)
-                })
             newpapers = newpapers.append('div')
                 .attr('class','inner-paper-box panel')
                 .on('click',forceGraph.highlightNode)
@@ -1212,11 +1207,6 @@ timeGraph.update = function(){
     } 
 
    
-/* //For help modal
-document.getElementById('help-modal').style.display = "block";
-document.getElementById('help-button').onclick = function(){
-    document.getElementById('help-modal').style.display = "block";
-} */
 var doiQuery; //Place holder for the user input field.
 
 //Update request based on doi query inputted by the user.
@@ -1291,6 +1281,11 @@ function updateTitleSearchResults(results,pageNum,replot){
         .html('<button id="more-button2" class = "button1">more...</button>')
         .on('click',function(){updateTitleSearchResults(results,(pageNum+1))})
 }
+/* //For help modal
+document.getElementById('help-modal').style.display = "block";
+document.getElementById('help-button').onclick = function(){
+    document.getElementById('help-modal').style.display = "block";
+} */
 var bibtex = {
     //Importing user uploaded Bibtex
     importBibTex: function(evt) {
@@ -1605,10 +1600,13 @@ var zotero = {
         }) 
     }
 }
-// When the user clicks on the button, open the modal
-document.getElementById("add-seeds-button").onclick = function() {
-    document.getElementById('add-seeds-modal').style.display = "block";
-}
+//For forceGraph display mode toggling
+document.getElementById('mode-toggle').onchange = function(){
+    forceGraph.mode = (forceGraph.mode=='ref') ? 'citedBy' : 'ref';
+    forceGraph.refresh()
+    document.getElementById('connected-sort-by').getElementsByTagName('select')[0].value = (forceGraph.mode=='ref') ? 'seedsCitedBy' : 'seedsCited';
+    connectedList.print(forceGraph.sizeMetric,1,true)
+} 
 
 document.getElementById('connected-sort-by').style.display = 'none'
 document.getElementById('connected-sort-by').getElementsByTagName('select')[0].onchange = function(){
@@ -1619,13 +1617,10 @@ document.getElementById('connected-sort-by').getElementsByTagName('select')[0].o
     })
     connectedList.print(metric,1,true)    
 }
-//For forceGraph display mode toggling
-document.getElementById('mode-toggle').onchange = function(){
-    forceGraph.mode = (forceGraph.mode=='ref') ? 'citedBy' : 'ref';
-    forceGraph.refresh()
-    document.getElementById('connected-sort-by').getElementsByTagName('select')[0].value = (forceGraph.mode=='ref') ? 'seedsCitedBy' : 'seedsCited';
-    connectedList.print(forceGraph.sizeMetric,1,true)
-} 
+// When the user clicks on the button, open the modal
+document.getElementById("add-seeds-button").onclick = function() {
+    document.getElementById('add-seeds-modal').style.display = "block";
+}
 
 //For forceGraph threshold slider
 document.getElementById('threshold-input').oninput = function(){

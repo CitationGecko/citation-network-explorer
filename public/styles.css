@@ -28,6 +28,10 @@ h1 {
     font-size: 26px;
     margin: .5em;
 }
+
+button{
+    border:none;
+}
 html { 
     height:100%; 
 }
@@ -83,44 +87,6 @@ body {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
-#help-button {
-    background:none;
-    position: absolute;
-    bottom:.5em;
-    margin-left: auto;
-    margin-right: auto;
-    border-style:none;
-}
-
-#logo-panel {
-    background-color: #E0DFDF
-}
-
-.side-bar-button {
-    width:100%;
-    height:4em;
-    border-style:none;
-    display: block;
-    margin: 0px;
-    padding:5px
-}
-
-.side-bar-icon {
-    width:2em;
-    height:2em;
-    max-width: 20em;
-    max-height: 20em;
-    object-fit: contain;
-}
-
-#settings-button{
-    position: absolute;
-    bottom:0px
-}
-
-.box-toggle-on{
-    background:#C4C4C4
-}
 .modal {
     display: none; /* Hidden by default */
     position: fixed; /* Stay in place */
@@ -144,10 +110,57 @@ body {
     border-radius: .5em;
 }
 
+#help-button {
+    background:none;
+    position: absolute;
+    bottom:.5em;
+    margin-left: auto;
+    margin-right: auto;
+    border-style:none;
+}
+
+#logo-panel {
+    background-color: #E0DFDF
+}
+
+.side-bar-button {
+    width:100%;
+    height:4em;
+    border-style:none;
+    display: block;
+    margin: 0px;
+    padding:5px;
+    outline:none;
+}
+
+.side-bar-icon {
+    width:2em;
+    height:2em;
+    max-width: 20em;
+    max-height: 20em;
+    object-fit: contain;
+}
+
+#settings-button{
+    position: absolute;
+    bottom:0px
+}
+
+.box-toggle-on{
+    background:#C4C4C4
+}
+.list{
+    width:100%;
+    height:100%;
+    position: absolute;
+    display:flex;
+    flex-direction: column
+}
+
 #seed-paper-container, #connected-paper-container {   
-    height:600px;
     overflow:auto;
     font-size: 70%;
+    flex:auto
 }
 
 .list-header{
@@ -155,20 +168,13 @@ body {
 }
 
 .list-footer{
-    height:150px;
-}
-
-.button1 {
-    width:95%;
-    margin-right:0;
-    margin-left:auto;
-    border-style: none;
-    background-color: white;
-    z-index: 1;
-}
-.button1>span {
-    position:relative;
-    margin-left: .5em;
+    height:110px;
+    bottom: 0px;
+    width:100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
 }
 
 h1 {
@@ -220,13 +226,13 @@ h1 {
     width:100%;
     color:white;
 }
+#doi-input {
+    width:200px
+}
 #help-modal > .modal-content {
     width:60%;
     margin:7% auto;
     padding:2%;
-}
-#doi-input {
-    width:200px
 }
 .zotero-folder rect {
     cursor: pointer;
@@ -248,23 +254,6 @@ h1 {
     display: inline
 }
 
-
-#add-seeds-button{
-    
-    position: absolute;
-    width: 400px;
-    height: 75px;
-    left: 20px;
-    bottom: 20px;
-    background: #FFC700;
-    border-radius: 20px;
-    border:none;
-}
-#connected-sort-by {
-    margin-right:2em;
-    display:none;
-    text-align:right;
-}
 .outer-paper-box {
     width: 99%;
 }
@@ -369,6 +358,19 @@ h1 {
     white-space: nowrap;
     height:8px;
     padding:5px;
+}
+#connected-sort-by {
+    margin-right:2em;
+    display:none;
+    text-align:right;
+}
+
+#add-seeds-button{
+    width: 90%;
+    height: 80%;
+    margin: 10% 5%;
+    background: #FFC700;
+    border:none;
 }
 #threshold-slider {
     position:absolute;
