@@ -791,6 +791,12 @@ function updateInfoBox(selected){
     forceGraph.selectednode = p;
 }
 
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+    if (event.target.classList.contains('modal')) {
+        event.target.style.display = "none";
+    }
+}
 //For paper details panel switching. 
 document.getElementById('connected-list').style.display = 'none';
 
@@ -813,12 +819,6 @@ document.getElementById('connected-list-button').onclick = function(){
     document.getElementById('seed-list').style.display = 'none';
 
     connectedList.print('seedsCitedBy',1);
-}
-// When the user clicks anywhere outside of the modal, close it
-window.onclick = function(event) {
-    if (event.target.classList.contains('modal')) {
-        event.target.style.display = "none";
-    }
 }
 newModule('seedList',{
     eventResponses:{
@@ -954,6 +954,71 @@ newModule('connectedList',{
         }
     }
 })
+function plotTimeGraph(){
+
+    document.getElementById('timelineView').style.display = 'block';
+    document.getElementById('network-view').style.display = 'none';
+    timeGraph.update();
+}
+
+timeGraph = {}
+
+timeGraph.osvg = d3.select('#timelineGraph')
+                    .call(d3.zoom().on("zoom", function () {
+                            let transform = d3.event.transform;
+                            transform.k = 1;
+                            transform.x = 0;
+                            timeGraph.osvg.attr("transform", transform)
+                        })
+                    )//enable zoom by scrolling
+                     .on("dblclick.zoom", null);//disable double click zooming; // Select svg
+timeGraph.svg =  timeGraph.osvg.append('g');
+timeGraph.width =  document.getElementById('network-view').offsetWidth; //extract the width and height attribute (the + converts to number)
+timeGraph.height =  document.getElementById('network-view').offsetHeight;
+timeGraph.nodes = Papers;
+timeGraph.circles = timeGraph.svg.append("g").attr("class", "node").selectAll("circle");
+timeGraph.update = function(){
+    let years = timeGraph.nodes.map(p=>p.Year).filter(p=>p>1900);
+    let maxYear = Math.max(...years);
+    let minYear = Math.min(...years);
+    //timeGraph.osvg.attr('height',(maxYear-minYear+(6-1)/12)*70);
+    let y = d3.scaleLinear()
+        .domain([minYear,maxYear])
+        .range([0,maxYear*70])
+    let yAxis = d3.axisLeft(y);
+    timeGraph.nodes.sort((a,b)=>(a.year-b.year))
+    timeGraph.circles = timeGraph.circles.data(timeGraph.nodes,function(d){return d.ID})
+    timeGraph.circles.exit().remove();
+    timeGraph.circles = timeGraph.circles.enter().append("circle")
+        //.merge(timeGraph.circles)
+        .attr("r", function(d){
+            return d.seed ? 7 : 5*Math.max(d.seedsCited,d.seedsCitedBy);
+        })
+        .attr('cx',function(d){
+            let year = (d.year? d.year:maxyear);
+            let month = (d.month ? d.month:6);
+            let a = timeGraph.width*month/12;
+            let dir = year%2;
+            return (a*dir + (timeGraph.width-a)*(1-dir))
+        })
+        .attr('cy',function(d){
+            let year = (d.year? d.year:maxYear);
+            let month = (d.month ? d.month:6);
+            return (maxYear-year+(6-month)/12)*70;
+        })
+        .attr("class", function(d) { 
+            if(d.seed){return 'seed-node node'} else {return 'node'};
+        })                                            
+        .style("visibility", function (d) {return d.hide == 1 ? "hidden" : "visible";})
+        .on("click",timeGraph.highlightNode)
+        .on("mouseover",function(){updateInfoBox(this)})
+    timeGraph.circles.append("title").text(function(d) { return d.year + ' ' + d.month; }); //Label nodes with title on hover
+}
+
+
+
+
+
 newModule('forceGraph',{
     eventResponses:{
         newEdges:{
@@ -1132,71 +1197,6 @@ forceGraph.simulation =  d3.forceSimulation()
 
 
   
-function plotTimeGraph(){
-
-    document.getElementById('timelineView').style.display = 'block';
-    document.getElementById('network-view').style.display = 'none';
-    timeGraph.update();
-}
-
-timeGraph = {}
-
-timeGraph.osvg = d3.select('#timelineGraph')
-                    .call(d3.zoom().on("zoom", function () {
-                            let transform = d3.event.transform;
-                            transform.k = 1;
-                            transform.x = 0;
-                            timeGraph.osvg.attr("transform", transform)
-                        })
-                    )//enable zoom by scrolling
-                     .on("dblclick.zoom", null);//disable double click zooming; // Select svg
-timeGraph.svg =  timeGraph.osvg.append('g');
-timeGraph.width =  document.getElementById('network-view').offsetWidth; //extract the width and height attribute (the + converts to number)
-timeGraph.height =  document.getElementById('network-view').offsetHeight;
-timeGraph.nodes = Papers;
-timeGraph.circles = timeGraph.svg.append("g").attr("class", "node").selectAll("circle");
-timeGraph.update = function(){
-    let years = timeGraph.nodes.map(p=>p.Year).filter(p=>p>1900);
-    let maxYear = Math.max(...years);
-    let minYear = Math.min(...years);
-    //timeGraph.osvg.attr('height',(maxYear-minYear+(6-1)/12)*70);
-    let y = d3.scaleLinear()
-        .domain([minYear,maxYear])
-        .range([0,maxYear*70])
-    let yAxis = d3.axisLeft(y);
-    timeGraph.nodes.sort((a,b)=>(a.year-b.year))
-    timeGraph.circles = timeGraph.circles.data(timeGraph.nodes,function(d){return d.ID})
-    timeGraph.circles.exit().remove();
-    timeGraph.circles = timeGraph.circles.enter().append("circle")
-        //.merge(timeGraph.circles)
-        .attr("r", function(d){
-            return d.seed ? 7 : 5*Math.max(d.seedsCited,d.seedsCitedBy);
-        })
-        .attr('cx',function(d){
-            let year = (d.year? d.year:maxyear);
-            let month = (d.month ? d.month:6);
-            let a = timeGraph.width*month/12;
-            let dir = year%2;
-            return (a*dir + (timeGraph.width-a)*(1-dir))
-        })
-        .attr('cy',function(d){
-            let year = (d.year? d.year:maxYear);
-            let month = (d.month ? d.month:6);
-            return (maxYear-year+(6-month)/12)*70;
-        })
-        .attr("class", function(d) { 
-            if(d.seed){return 'seed-node node'} else {return 'node'};
-        })                                            
-        .style("visibility", function (d) {return d.hide == 1 ? "hidden" : "visible";})
-        .on("click",timeGraph.highlightNode)
-        .on("mouseover",function(){updateInfoBox(this)})
-    timeGraph.circles.append("title").text(function(d) { return d.year + ' ' + d.month; }); //Label nodes with title on hover
-}
-
-
-
-
-
      
     document.getElementById("add-by-doi").onclick = function() {
         document.getElementById('add-seeds-modal').style.display = "none";
@@ -1230,6 +1230,42 @@ document.getElementById("doi-input").onkeydown = function(event){
         document.getElementById('doi-input-loader').style.display = 'inline-block';
     }
 }
+var modalPage = 1;
+
+document.addEventListener('DOMContentLoaded', function() {
+  const hasViewedOnboarding = Cookies.get('viewed-onboarding');
+  if(hasViewedOnboarding !== 'false') {
+    showOnboardingModal();
+  }
+});
+
+
+function showOnboardingModal() {
+    document.getElementById('onboarding-modal').style.display = 'block';
+    Cookies.set('viewed-onboarding', 'true');
+}
+
+function showAddInitialSeed() {
+  document.getElementById('onboarding-1').style.display = 'none';
+  document.getElementById('onboarding-2').style.display = 'block';
+}
+
+function showZotero() {
+  document.getElementById('onboarding-2').style.display = 'none';
+  document.getElementById('onboarding-3').style.display = 'block';
+}
+
+function showSeedType() {
+  document.getElementById('onboarding-3').style.display = 'none';
+  document.getElementById('onboarding-4').style.display = 'block';
+}
+
+function startDemo() {
+  document.getElementById('onboarding-modal').style.display = 'none';
+  bibtex.importExampleBibTex();
+}
+
+
 var titleQuery; //Place holder for the user input field.
 //Update request based on title query inputted by the user.
 var titleInput = document.querySelector("#title-input").addEventListener("input", function() {
@@ -1290,50 +1326,6 @@ function updateTitleSearchResults(results,pageNum,replot){
     d3.select('#title-search-container').append('div')
         .html('<button id="more-button2" class = "button1">more...</button>')
         .on('click',function(){updateTitleSearchResults(results,(pageNum+1))})
-}
-var bibtex = {
-    //Importing user uploaded Bibtex
-    importBibTex: function(evt) {
-        let files = evt.target.files; // FileList object
-        for (var i = 0, f; f = files[i]; i++) {
-            var reader = new FileReader();
-            reader.onload = function(e){
-                var papers = bibtexParse.toJSON(e.target.result);
-                if(papers.filter(function(p){
-                    return p.entryTags.doi;
-                }).length==0){
-                    alert("We couldn't find any DOIs in the BibTex you uploaded please check your export settings");
-                };
-                for(let i=0;i<papers.length;i++){
-                    if(papers[i].entryTags.doi){
-                        let newSeed = {doi: papers[i].entryTags.doi}
-                        addPaper(newSeed,true);
-                    }; 
-                };
-            };
-            reader.readAsText(f);       
-        };
-        document.getElementById('upload-bibtex-modal').style.display = "none"; //Hide modal once file selected
-    },
-    //Importing Example BibTex
-    importExampleBibTex: function(){
-        let url = window.location.href+'examples/exampleBibTex.bib'
-        fetch(url).then((resp) => resp.text()).then((data)=> {
-                var papers = bibtexParse.toJSON(data);
-                for(let i=0;i<papers.length;i++){
-                    let newSeed = {doi: papers[i].entryTags.doi}
-                    addPaper(newSeed,true);
-                };
-                document.getElementById('upload-bibtex-modal').style.display = "none";
-            }
-        )
-    }
-}
-
-document.getElementById('files').addEventListener('change', bibtex.importBibTex, false);
-
-document.getElementById('demo-button').onclick = function(){
-    bibtex.importExampleBibTex()
 }
 d3.select('#add-seeds-modal').select('div').append('button').attr('id','add-by-zotero')
     .html("<img id='zotero-square' src='images/zotero/zotero2.png'>")
@@ -1608,6 +1600,50 @@ var zotero = {
 // When the user clicks on the button, open the modal
 document.getElementById("add-seeds-button").onclick = function() {
     document.getElementById('add-seeds-modal').style.display = "block";
+}
+var bibtex = {
+    //Importing user uploaded Bibtex
+    importBibTex: function(evt) {
+        let files = evt.target.files; // FileList object
+        for (var i = 0, f; f = files[i]; i++) {
+            var reader = new FileReader();
+            reader.onload = function(e){
+                var papers = bibtexParse.toJSON(e.target.result);
+                if(papers.filter(function(p){
+                    return p.entryTags.doi;
+                }).length==0){
+                    alert("We couldn't find any DOIs in the BibTex you uploaded please check your export settings");
+                };
+                for(let i=0;i<papers.length;i++){
+                    if(papers[i].entryTags.doi){
+                        let newSeed = {doi: papers[i].entryTags.doi}
+                        addPaper(newSeed,true);
+                    }; 
+                };
+            };
+            reader.readAsText(f);       
+        };
+        document.getElementById('upload-bibtex-modal').style.display = "none"; //Hide modal once file selected
+    },
+    //Importing Example BibTex
+    importExampleBibTex: function(){
+        let url = window.location.href+'examples/exampleBibTex.bib'
+        fetch(url).then((resp) => resp.text()).then((data)=> {
+                var papers = bibtexParse.toJSON(data);
+                for(let i=0;i<papers.length;i++){
+                    let newSeed = {doi: papers[i].entryTags.doi}
+                    addPaper(newSeed,true);
+                };
+                document.getElementById('upload-bibtex-modal').style.display = "none";
+            }
+        )
+    }
+}
+
+document.getElementById('files').addEventListener('change', bibtex.importBibTex, false);
+
+document.getElementById('demo-button').onclick = function(){
+    bibtex.importExampleBibTex()
 }
 
 document.getElementById('connected-sort-by').style.display = 'none'
