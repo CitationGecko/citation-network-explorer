@@ -2,9 +2,9 @@
     width: 99%;
 }
 .inner-paper-box{
-    background-color:rgb(255, 255, 255);
-    border: 1px solid;
-    margin: .5em;
+    background-color:#F7F7F7;
+    border: none;
+    margin: .1em;
 }
 .inner-paper-box:hover{
     background-color:rgb(255, 199, 0)

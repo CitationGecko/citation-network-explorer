@@ -1,0 +1,12 @@
+
+#add-seeds-button{
+    
+    position: absolute;
+    width: 400px;
+    height: 75px;
+    left: 20px;
+    bottom: 20px;
+    background: #FFC700;
+    border-radius: 20px;
+    border:none;
+}

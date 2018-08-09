@@ -1,16 +1,31 @@
+#connected-list{
+    display: none
+}
+#selected-paper-box {
+    display:none;
+    position: absolute;
+    font-size: 70%;
+    right:0em;
+    bottom:.2em;
+    max-width:50%;
+    background-color: rgb(212, 212, 212);
+}
+.add-seed {
+    text-align: right;
+}
 * {
-    font-family: 'Comfortaa',serif;
+    font-family: 'Roboto',serif;
     min-height: 0;
     min-width: 0;
     font-size:100%;
 }
 
 h1,h2,h3,h4 {
-    font-family: 'Comfortaa',serif
+    font-family: 'Roboto',serif
 }
 h1 {
     font-weight: 100;
-    font-size: 1em;
+    font-size: 26px;
     margin: .5em;
 }
 html { 
@@ -32,53 +47,24 @@ body {
 .panel {
      position: relative;
      overflow: hidden;
-     background-color: rgb(255, 255, 255)
+     background-color: rgb(255, 255, 255);
  }
 #logo-panel {
-    background-color: rgb(255, 255, 255);
-    width: 20em;
+    width: 200px;
     position: relative;
-    margin: .5em;
+    margin: 0;
 }
 #list-panel {
     width: 80em;
     margin-right:0;
-    border: 1px solid;   
+    border: none;   
 }
 #graph-panel {
     width:200em;
     display:flex;
     flex-direction: column;
-}
-#selected-paper-box {
-    display:none;
-    position: absolute;
-    font-size: 70%;
-    right:0em;
-    bottom:.2em;
-    max-width:50%;
-    background-color: rgb(212, 212, 212);
-}
-.add-seed {
-    text-align: right;
-}
-#seed-paper-container, #connected-paper-container {   
-    height:85%;
-    overflow:auto;
-    font-size: 70%;
-}
-
-.button1 {
-    width:95%;
-    margin-right:0;
-    margin-left:auto;
-    border-style: none;
-    background-color: white;
-    z-index: 1;
-}
-.button1>span {
-    position:relative;
-    margin-left: .5em;
+    flex-grow:1;
+    flex-shrink: 1;
 }
 .loader {
     display: none;
@@ -106,12 +92,34 @@ body {
     border-style:none;
 }
 
-.logo {
-    max-width: 95%;
-    max-height:70%;
+#logo-panel {
+    background-color: #E0DFDF
+}
+
+.side-bar-button {
+    width:100%;
+    height:4em;
+    border-style:none;
+    display: block;
+    margin: 0px;
+    padding:5px
+}
+
+.side-bar-icon {
+    width:2em;
+    height:2em;
+    max-width: 20em;
+    max-height: 20em;
+    object-fit: contain;
+}
+
+#settings-button{
     position: absolute;
-    top: 50%;                         /* 3 */
-    transform: translate(0, -50%);
+    bottom:0px
+}
+
+.box-toggle-on{
+    background:#C4C4C4
 }
 .modal {
     display: none; /* Hidden by default */
@@ -136,6 +144,37 @@ body {
     border-radius: .5em;
 }
 
+#seed-paper-container, #connected-paper-container {   
+    height:600px;
+    overflow:auto;
+    font-size: 70%;
+}
+
+.list-header{
+    height:75px;
+}
+
+.list-footer{
+    height:150px;
+}
+
+.button1 {
+    width:95%;
+    margin-right:0;
+    margin-left:auto;
+    border-style: none;
+    background-color: white;
+    z-index: 1;
+}
+.button1>span {
+    position:relative;
+    margin-left: .5em;
+}
+
+h1 {
+    padding-top: 10px;
+    padding-left:20px;   
+}
 #network-view, #force-graph {
     width:100%;
     height:100%;
@@ -172,37 +211,54 @@ body {
     height: 1000%;
 }
 
-.add-seed-button {
-    width:95%;
-    margin-right:0;
-    margin-left:auto;
+#add-seeds-modal > .modal-content > button {
+    display:block;
+    background-color: rgb(104, 104, 104);
     border-style: none;
-    background-color: white;
-    z-index: 1;
+    height: 6em;
+    margin:.5em 0em;
+    width:100%;
+    color:white;
 }
-.add-seed-button > span {
-    position:relative;
-    margin-left: .5em;
+#help-modal > .modal-content {
+    width:60%;
+    margin:7% auto;
+    padding:2%;
 }
-.add-seed-button .fa-plus {
-    color:green;
+#doi-input {
+    width:200px
+}
+.zotero-folder rect {
+    cursor: pointer;
+    fill: #fff;
+    fill-opacity: 0.5;
+    stroke: #979797;
+    stroke-width: 1.5px;
 }
 
-.box-toggle {
-    width:auto;
-    margin: .5em;
+#zotero-logo {
+    width: 40%
 }
-.box-toggle > button{
-    width:50%;
-    height: 3em; 
+
+#zotero-square {
+    height:90%
 }
-.box-toggle-on {
-    background-color:rgb(255, 255, 255);
-    border:3px solid;
+
+#add-by-zotero > div{
+    display: inline
 }
-.box-toggle-off {
-    background-color:rgb(200,200,200);
-    border:1px solid;
+
+
+#add-seeds-button{
+    
+    position: absolute;
+    width: 400px;
+    height: 75px;
+    left: 20px;
+    bottom: 20px;
+    background: #FFC700;
+    border-radius: 20px;
+    border:none;
 }
 #connected-sort-by {
     margin-right:2em;
@@ -213,9 +269,9 @@ body {
     width: 99%;
 }
 .inner-paper-box{
-    background-color:rgb(255, 255, 255);
-    border: 1px solid;
-    margin: .5em;
+    background-color:#F7F7F7;
+    border: none;
+    margin: .1em;
 }
 .inner-paper-box:hover{
     background-color:rgb(255, 199, 0)
@@ -250,43 +306,6 @@ body {
 /*     background-color: rgb(199, 5, 5)
  */
 }
-#add-seeds-modal > .modal-content > button {
-    display:block;
-    background-color: rgb(104, 104, 104);
-    border-style: none;
-    height: 6em;
-    margin:.5em 0em;
-    width:100%;
-    color:white;
-}
-#doi-input {
-    width:200px
-}
-#help-modal > .modal-content {
-    width:60%;
-    margin:7% auto;
-    padding:2%;
-}
-.zotero-folder rect {
-    cursor: pointer;
-    fill: #fff;
-    fill-opacity: 0.5;
-    stroke: #979797;
-    stroke-width: 1.5px;
-}
-
-#zotero-logo {
-    width: 40%
-}
-
-#zotero-square {
-    height:90%
-}
-
-#add-by-zotero > div{
-    display: inline
-}
-
 #network-key {
     position:absolute;
     left: 1%;

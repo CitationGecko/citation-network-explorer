@@ -3,5 +3,5 @@ document.getElementById('mode-toggle').onchange = function(){
     forceGraph.mode = (forceGraph.mode=='ref') ? 'citedBy' : 'ref';
     forceGraph.refresh()
     document.getElementById('connected-sort-by').getElementsByTagName('select')[0].value = (forceGraph.mode=='ref') ? 'seedsCitedBy' : 'seedsCited';
-    printConnectedList(forceGraph.sizeMetric,1,true)
+    connectedList.print(forceGraph.sizeMetric,1,true)
 } 
