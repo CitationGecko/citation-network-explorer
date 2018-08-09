@@ -6,7 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Citation Gecko</title>
 
-        <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Roboto:300,400" rel="stylesheet">
 
         <link rel="stylesheet" type="text/css" href='styles.css'/>
 
@@ -31,7 +31,9 @@
                     </div>
                 </div>
                 <div id='connected-list' class='list'>
-                    <h1>Recommended Reading</h1>
+                    <div class='list-header'>
+                        <h1>Recommended Reading</h1>
+                    </div>
                     <div id='connected-sort-by'>
                             <span>Sort By:</span>
                             <select>
@@ -42,8 +44,13 @@
                     <div id='connected-paper-container'>
                     </div>
                     <div class='list-footer'>
-                        <button id='export-button'>Export</button>
-                        <button id='make-seed'>Add as seed</button>
+                        <div>
+                            <p>1 paper selected | Select all | Unselect all</p>
+                        </div>
+                        <div>
+                            <button id='export-button'>Export</button>
+                            <button id='make-seed'>Add as seed</button>
+                        </div>
                     </div>
                 </div>
             </div>

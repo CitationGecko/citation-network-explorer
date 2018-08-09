@@ -10,8 +10,7 @@
     background-color:rgb(255, 199, 0)
 }
 .paper-title {
-    font-weight: 800;
-    margin:1em;
+    margin-left:33px;
     margin-right:5em;
 }
 .metric {
@@ -22,20 +21,11 @@
     margin: 1em;
 }
 .author-year {
-    text-align: right;
-    margin:.5em;
+    text-align: left;
+    margin-left:33px;
 } 
-.doi-link {
-    margin:.5em;
-    float:left;
-}
-.delete-seed {
-    position:absolute;
-    top:-0.1em;
-    left:-0.3em;
-    z-index: 1;
-    border-style:none;
-    background:none;
-/*     background-color: rgb(199, 5, 5)
- */
+.open-icon{
+    margin-left:.5em;
+    margin-top:.5em;
+    max-height: 10px;
 }

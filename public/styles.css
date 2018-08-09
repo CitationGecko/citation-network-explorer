@@ -1,6 +1,3 @@
-#connected-list{
-    display: none
-}
 #selected-paper-box {
     display:none;
     position: absolute;
@@ -13,18 +10,59 @@
 .add-seed {
     text-align: right;
 }
+.loader {
+    display: none;
+    position: relative;
+    left: 5px;
+    top:5px;
+    border: .1em solid #f3f3f3; /* Light grey */
+    border-top: .1em solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 1em;
+    height: 1em;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 3; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto; /* 15% from the top and centered */
+    padding: .5em .5em;
+    border: .1em solid #888;
+    width: 40%; 
+    position: relative;
+    border-style:none;
+    border-radius: .5em;
+}
+
 * {
     font-family: 'Roboto',serif;
+    font-weight:300;
     min-height: 0;
     min-width: 0;
     font-size:100%;
 }
 
-h1,h2,h3,h4 {
-    font-family: 'Roboto',serif
-}
 h1 {
-    font-weight: 100;
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 300;
+    line-height: normal;
     font-size: 26px;
     margin: .5em;
 }
@@ -70,46 +108,6 @@ body {
     flex-grow:1;
     flex-shrink: 1;
 }
-.loader {
-    display: none;
-    position: relative;
-    left: 5px;
-    top:5px;
-    border: .1em solid #f3f3f3; /* Light grey */
-    border-top: .1em solid #3498db; /* Blue */
-    border-radius: 50%;
-    width: 1em;
-    height: 1em;
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-.modal {
-    display: none; /* Hidden by default */
-    position: fixed; /* Stay in place */
-    z-index: 3; /* Sit on top */
-    left: 0;
-    top: 0;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    overflow: auto; /* Enable scroll if needed */
-    background-color: rgb(0,0,0); /* Fallback color */
-    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-}
-.modal-content {
-    background-color: #fefefe;
-    margin: 15% auto; /* 15% from the top and centered */
-    padding: .5em .5em;
-    border: .1em solid #888;
-    width: 40%; 
-    position: relative;
-    border-style:none;
-    border-radius: .5em;
-}
-
 #help-button {
     background:none;
     position: absolute;
@@ -149,38 +147,6 @@ body {
 .box-toggle-on{
     background:#C4C4C4
 }
-.list{
-    width:100%;
-    height:100%;
-    position: absolute;
-    display:flex;
-    flex-direction: column
-}
-
-#seed-paper-container, #connected-paper-container {   
-    overflow:auto;
-    font-size: 70%;
-    flex:auto
-}
-
-.list-header{
-    height:75px;
-}
-
-.list-footer{
-    height:110px;
-    bottom: 0px;
-    width:100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-}
-
-h1 {
-    padding-top: 10px;
-    padding-left:20px;   
-}
 #network-view, #force-graph {
     width:100%;
     height:100%;
@@ -204,6 +170,39 @@ h1 {
     stroke: rgb(97, 97, 97);
     stroke-width: 2px;  
 }
+.list{
+    width:100%;
+    height:100%;
+    position: absolute;
+    display:flex;
+    flex-direction: column
+}
+.list-header{
+    height:10%;
+}
+
+#seed-paper-container, #connected-paper-container {   
+    overflow:auto;
+    font-size: 70%;
+    flex:auto;
+    height:80%
+}
+
+.list-footer{
+    height:10%;
+    bottom: 0px;
+    width:100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+h1 {
+    margin-top: 25px;
+    margin-left: 33px   
+}
+
 #timeline-view {
     width:100%;
     height:100%;
@@ -254,52 +253,11 @@ h1 {
     display: inline
 }
 
-.outer-paper-box {
-    width: 99%;
-}
-.inner-paper-box{
-    background-color:#F7F7F7;
-    border: none;
-    margin: .1em;
-}
-.inner-paper-box:hover{
-    background-color:rgb(255, 199, 0)
-}
-.paper-title {
-    font-weight: 800;
-    margin:1em;
-    margin-right:5em;
-}
-.metric {
-    float:right;
-    position: absolute;
-    top: 0em;
-    right: 0em;
-    margin: 1em;
-}
-.author-year {
-    text-align: right;
-    margin:.5em;
-} 
-.doi-link {
-    margin:.5em;
-    float:left;
-}
-.delete-seed {
-    position:absolute;
-    top:-0.1em;
-    left:-0.3em;
-    z-index: 1;
-    border-style:none;
-    background:none;
-/*     background-color: rgb(199, 5, 5)
- */
-}
 #network-key {
     position:absolute;
     left: 1%;
     top: 1%;
-    font-size: .5em;
+    font-size: .8em;
 }
 .key-icon {
     float:left;
@@ -351,26 +309,14 @@ h1 {
 	height: 20px;
 }
 .key-label {
-    position: absolute;
+	position: absolute;
+	top:-3px;
     left:18px;
 }
 .key-label div {
     white-space: nowrap;
     height:8px;
     padding:5px;
-}
-#connected-sort-by {
-    margin-right:2em;
-    display:none;
-    text-align:right;
-}
-
-#add-seeds-button{
-    width: 90%;
-    height: 80%;
-    margin: 10% 5%;
-    background: #FFC700;
-    border:none;
 }
 #threshold-slider {
     position:absolute;
@@ -386,4 +332,48 @@ h1 {
    /*  display:block; */    
     width:10%;
     text-align: center;
+}
+#connected-sort-by {
+    margin-right:2em;
+    display:none;
+    text-align:right;
+}
+
+#add-seeds-button{
+    width: 90%;
+    height: 80%;
+    margin: 10% 5%;
+    background: #FFC700;
+    border:none;
+}
+.outer-paper-box {
+    width: 99%;
+}
+.inner-paper-box{
+    background-color:#F7F7F7;
+    border: none;
+    margin: .1em;
+}
+.inner-paper-box:hover{
+    background-color:rgb(255, 199, 0)
+}
+.paper-title {
+    margin-left:33px;
+    margin-right:5em;
+}
+.metric {
+    float:right;
+    position: absolute;
+    top: 0em;
+    right: 0em;
+    margin: 1em;
+}
+.author-year {
+    text-align: left;
+    margin-left:33px;
+} 
+.open-icon{
+    margin-left:.5em;
+    margin-top:.5em;
+    max-height: 10px;
 }

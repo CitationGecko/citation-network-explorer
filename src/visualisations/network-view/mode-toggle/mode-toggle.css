@@ -2,7 +2,7 @@
     position:absolute;
     left: 1%;
     top: 1%;
-    font-size: .5em;
+    font-size: .8em;
 }
 .key-icon {
     float:left;
@@ -54,7 +54,8 @@
 	height: 20px;
 }
 .key-label {
-    position: absolute;
+	position: absolute;
+	top:-3px;
     left:18px;
 }
 .key-label div {

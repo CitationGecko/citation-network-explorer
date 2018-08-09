@@ -5,19 +5,19 @@
     display:flex;
     flex-direction: column
 }
+.list-header{
+    height:10%;
+}
 
 #seed-paper-container, #connected-paper-container {   
     overflow:auto;
     font-size: 70%;
-    flex:auto
-}
-
-.list-header{
-    height:75px;
+    flex:auto;
+    height:80%
 }
 
 .list-footer{
-    height:110px;
+    height:10%;
     bottom: 0px;
     width:100%;
     display: flex;
@@ -27,6 +27,6 @@
 }
 
 h1 {
-    padding-top: 10px;
-    padding-left:20px;   
+    margin-top: 25px;
+    margin-left: 33px   
 }

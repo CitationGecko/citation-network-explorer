@@ -1,15 +1,16 @@
 * {
     font-family: 'Roboto',serif;
+    font-weight:300;
     min-height: 0;
     min-width: 0;
     font-size:100%;
 }
 
-h1,h2,h3,h4 {
-    font-family: 'Roboto',serif
-}
 h1 {
-    font-weight: 100;
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 300;
+    line-height: normal;
     font-size: 26px;
     margin: .5em;
 }

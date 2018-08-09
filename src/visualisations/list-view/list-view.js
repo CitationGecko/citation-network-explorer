@@ -21,7 +21,7 @@ newModule('seedList',{
             paperbox.exit().remove()
             var oldpapers = d3.select('#seed-paper-container').selectAll('.outer-paper-box').select('.inner-paper-box')
             oldpapers.select('.paper-title').html(function(p){
-                return(p.title)
+                return(p.title+"<a target='_blank' href='https://doi.org/"+p.doi+"'><img class='open-icon'src='images/icons/open.svg'></a>")
             })
             oldpapers.select('.metric').html(function(p){
                 return(p[metric]?p[metric]:'0')
@@ -29,9 +29,7 @@ newModule('seedList',{
             oldpapers.select('.author-year').html(function(p){
                 if(p.author) {return p.author+' '+p.year}else{return(p.year)}
             })
-            oldpapers.select('.doi-link').html(function(p){
-                return("<a target='_blank' href='https://doi.org/"+p.doi+"'>"+p.doi+"</a>")
-            })
+        
             paperbox = paperbox.enter()
                 .append('div')
                 .attr('class','outer-paper-box panel')
@@ -45,11 +43,7 @@ newModule('seedList',{
             paperbox.append('p').attr('class','author-year')
                 .html(function(p){
                     if(p.author) {return p.author+' '+p.year}else{return(p.year)}
-                })
-            paperbox.append('p').attr('class','doi-link')
-                .html(function(p){
-                    return("<a target='_blank' href='https://doi.org/"+p.doi+"'>"+p.doi+"</a>")
-                })          
+                })     
         }
     }
 })
@@ -86,7 +80,7 @@ newModule('connectedList',{
         
             oldpapers = d3.select('#connected-paper-container').selectAll('.outer-paper-box').select('.inner-paper-box')
             oldpapers.select('.paper-title').html(function(p){
-                return(p.title)
+                return(p.title+"<a target='_blank' href='https://doi.org/"+p.doi+"'><img class='open-icon'src='images/icons/open.svg'></a>")
             })
             oldpapers.select('.metric').html(function(p){
                 return(p[metric]?p[metric]:'0')
@@ -94,9 +88,7 @@ newModule('connectedList',{
             oldpapers.select('.author-year').html(function(p){
                 if(p.author) {return p.author+' '+p.year}else{return(p.year)}
             })
-            oldpapers.select('.doi-link').html(function(p){
-                return("<a target='_blank' href='https://doi.org/"+p.doi+"'>"+p.doi+"</a>")
-            })
+          
             newpapers = paperboxes.enter()
                 .append('div')
                 .attr('class','outer-paper-box panel')
@@ -105,7 +97,7 @@ newModule('connectedList',{
                 .on('click',forceGraph.highlightNode)
             newpapers.append('p').attr('class','paper-title')
                 .html(function(p){
-                    return(p.title)
+                    return(p.title+"<a target='_blank' href='https://doi.org/"+p.doi+"'><img class='open-icon'src='images/icons/open.svg'></a>")
                 })
             newpapers.append('p').attr('class','metric')
                 .html(function(p){
@@ -115,11 +107,7 @@ newModule('connectedList',{
                 .html(function(p){
                     if(p.author) {return p.author+' '+p.year}else{return(p.year)}
                 })
-            newpapers.append('p').attr('class','doi-link')
-                .html(function(p){
-                    return("<a target='_blank' href='https://doi.org/"+p.doi+"'>"+p.doi+"</a>")
-                })
-        
+           
             d3.select('#more-button').remove();
             d3.select('#connected-paper-container').append('div')
                 .html('<button id="more-button" class = "button1">more...</button>')
