@@ -1,15 +1,15 @@
 * {
-    font-family: 'Comfortaa',serif;
+    font-family: 'Roboto',serif;
     min-height: 0;
     min-width: 0;
     font-size:100%;
 }
 
 h1,h2,h3,h4 {
-    font-family: 'Comfortaa',serif
+    font-family: 'Roboto',serif
 }
 h1 {
     font-weight: 100;
-    font-size: 1em;
+    font-size: 26px;
     margin: .5em;
 }

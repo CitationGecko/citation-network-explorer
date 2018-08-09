@@ -15,28 +15,33 @@
     </head>
     <body>
         <div class='main'>
-            <div id ='logo-panel' class = 'panel'>
-                <button id='help-button'><i class="fa fa-question-circle fa-2x" color ='green' aria-hidden="true"></i></button>
-                <img class='logo' src='images/gecko-logo/logo2.png'/>
+            <div id ='logo-panel'>
+                <button id='seed-list-button' class='side-bar-button'><img id='seed-icon'class='side-bar-icon'src='images/icons/seed-papers.png'></button>
+                <button id='connected-list-button' class='side-bar-button'><img id='connected-icon'class='side-bar-icon'src='images/icons/connected-papers.png'></button>
+                <button id='settings-button' class='side-bar-button'><img id='seed-icon'class='side-bar-icon'src='images/icons/settings.png'></button>
             </div>
             <div id='list-panel' class= 'panel'>
-                <div class = 'box-toggle'>
-                   <button id='seed-list-button'>Seeds</button><button id='connected-list-button'>Connected</button>
+                <div id='seed-list'>
+                    <div class='list-header'>
+                        <h1>My Seed Papers</h1>
+                    </div>
+                    <div id='seed-paper-container'>
+                    </div>
+                    <div class='list-footer'>
+                        <button id='add-seeds-button' class='add-seed-button' onclick=''>Add more seed papers...</button>
+                    </div>
                 </div>
-                <div id='connected-sort-by'>
-                    <span>Sort By:</span>
-                    <select>
-                        <option value="seedsCitedBy">Seeds Cited-By</option>
-                        <option value="seedsCited">Seeds Cited</option>
-                    </select>
-                </div>
-                <div>
-                    <button id='add-seeds-button' class='add-seed-button' onclick=''><i class="fa fa-plus" aria-hidden="true"></i><span>add more seed papers...</span></button>
-                </div>
-                <div id='seed-paper-container'>
-                </div>
-                <div id='connected-paper-container'>
-
+                <div id='connected-list'>
+                    <h1>Recommended Reading</h1>
+                    <div id='connected-sort-by'>
+                            <span>Sort By:</span>
+                            <select>
+                                <option value="seedsCitedBy">Seeds Cited-By</option>
+                                <option value="seedsCited">Seeds Cited</option>
+                            </select>
+                    </div>
+                    <div id='connected-paper-container'>
+                    </div>
                 </div>
             </div>
             <div id='graph-panel' class= 'panel'>

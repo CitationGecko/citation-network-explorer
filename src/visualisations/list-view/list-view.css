@@ -1,7 +1,16 @@
 #seed-paper-container, #connected-paper-container {   
-    height:85%;
+    height:600px;
     overflow:auto;
     font-size: 70%;
+    flex:
+}
+
+.list-header{
+    height:75px;
+}
+
+.list-footer{
+    height:150px;
 }
 
 .button1 {
@@ -15,4 +24,9 @@
 .button1>span {
     position:relative;
     margin-left: .5em;
+}
+
+h1 {
+    padding-top: 10px;
+    padding-left:20px;   
 }

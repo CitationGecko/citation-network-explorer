@@ -17,21 +17,22 @@ body {
 .panel {
      position: relative;
      overflow: hidden;
-     background-color: rgb(255, 255, 255)
+     background-color: rgb(255, 255, 255);
  }
 #logo-panel {
-    background-color: rgb(255, 255, 255);
-    width: 20em;
+    width: 200px;
     position: relative;
-    margin: .5em;
+    margin: 0;
 }
 #list-panel {
     width: 80em;
     margin-right:0;
-    border: 1px solid;   
+    border: none;   
 }
 #graph-panel {
     width:200em;
     display:flex;
     flex-direction: column;
+    flex-grow:1;
+    flex-shrink: 1;
 }

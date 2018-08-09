@@ -6,5 +6,5 @@ document.getElementById('connected-sort-by').getElementsByTagName('select')[0].o
     papers.select('.metric').html(function(p){
         return(p[metric]?p[metric]:'0')
     })
-    printConnectedList(metric,1,true)    
+    connectedList.print(metric,1,true)    
 }
