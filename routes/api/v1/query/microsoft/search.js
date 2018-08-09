@@ -1,5 +1,5 @@
 var request = require('request');
-var config = require('../../../../config');
+var config = require('../../../../../config');
 var API_KEY_MICROSOFT = config.get('credentials.microsoft.key');
 
 
