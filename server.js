@@ -1,5 +1,4 @@
 var fs = require('fs');
-var _ = require('lodash');
 var express = require('express');
 var bodyParser = require('body-parser');
 
@@ -53,6 +52,13 @@ app.get('/api/v1/query/oadoi', require('./api/v1/query/oadoi'));
  * API: Proxy to Microsoft Academic Graph
  */
 app.post('/api/v1/query/microsoft/search', require('./api/v1/query/microsoft/search'));
+
+
+/**
+ * Zotero OAuth callback URL
+ */
+app.get('/auth/zotero/login', require('./auth/zotero/login'));
+app.get('/auth/zotero/verify', require('./auth/zotero/verify'));
 
 /**
  * API: Proxy to OpenCitations sparql
