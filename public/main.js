@@ -778,6 +778,182 @@ newModule('occ', {
         }
     }
 })
+//Functions for paper details panel
+function updateInfoBox(selected){
+    p = selected.__data__;
+    document.getElementById('selected-paper-box').style.display ='block';
+    var paperbox = d3.select('#selected-paper-box');
+    paperbox.select('.paper-title').html(p.title)
+    paperbox.select('.author-year').html((p.author ? p.author:'')+' '+p.year)
+    paperbox.select('.doi-link').html(p.doi ? ("<a target='_blank' href='https://doi.org/"+p.doi+"'>"+p.doi+"</a>"): '')
+    paperbox.select('.add-seed').html(p.seed ? 'Delete Seed':'Make Seed')
+            .on('click', function(){p.seed ? deleteSeed(p) : makeSeed(p)})
+    forceGraph.selectednode = p;
+}
+
+//For paper details panel switching. 
+document.getElementById('connected-list').style.display = 'none';
+
+d3.select('#seed-list-button').attr('class','side-bar-button box-toggle-on');
+d3.select('#connected-list-button').attr('class','side-bar-button box-toggle-off');
+
+document.getElementById('seed-list-button').onclick = function(){
+    d3.select('#seed-list-button').attr('class','side-bar-button box-toggle-on');
+    d3.select('#connected-list-button').attr('class','side-bar-button box-toggle-off');
+
+    document.getElementById('connected-list').style.display = 'none';
+    document.getElementById('seed-list').style.display = 'block';
+}
+
+document.getElementById('connected-list-button').onclick = function(){
+    d3.select('#seed-list-button').attr('class','side-bar-button box-toggle-off');
+    d3.select('#connected-list-button').attr('class','side-bar-button box-toggle-on');
+
+    document.getElementById('connected-list').style.display = 'block';
+    document.getElementById('seed-list').style.display = 'none';
+
+    connectedList.print('seedsCitedBy',1);
+}
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+    if (event.target.classList.contains('modal')) {
+        event.target.style.display = "none";
+    }
+}
+newModule('seedList',{
+    eventResponses:{
+        seedUpdate:{
+            listening: true,
+            action: function(){
+                seedList.refresh()
+            }
+        },
+        newSeed:{
+            listening: true,
+            action: function(){
+                seedList.refresh()
+            }
+        }
+    },
+    methods: {
+        refresh: function(){
+            var seedpapers = Papers.filter(function(p){return p.seed});
+            var paperbox = d3.select('#seed-paper-container').selectAll('.outer-paper-box')
+                            .data(seedpapers,function(d){return d.ID})
+            paperbox.exit().remove()
+            var oldpapers = d3.select('#seed-paper-container').selectAll('.outer-paper-box').select('.inner-paper-box')
+            oldpapers.select('.paper-title').html(function(p){
+                return(p.title)
+            })
+            oldpapers.select('.metric').html(function(p){
+                return(p[metric]?p[metric]:'0')
+            })
+            oldpapers.select('.author-year').html(function(p){
+                if(p.author) {return p.author+' '+p.year}else{return(p.year)}
+            })
+            oldpapers.select('.doi-link').html(function(p){
+                return("<a target='_blank' href='https://doi.org/"+p.doi+"'>"+p.doi+"</a>")
+            })
+            paperbox = paperbox.enter()
+                .append('div')
+                .attr('class','outer-paper-box panel')
+            paperbox = paperbox.append('div')
+                .attr('class','inner-paper-box panel')
+                .on('click',forceGraph.highlightNode)
+            paperbox.append('p').attr('class','paper-title')
+                .html(function(p){
+                    return(p.title)
+                })
+            paperbox.append('p').attr('class','author-year')
+                .html(function(p){
+                    if(p.author) {return p.author+' '+p.year}else{return(p.year)}
+                })
+            paperbox.append('p').attr('class','doi-link')
+                .html(function(p){
+                    return("<a target='_blank' href='https://doi.org/"+p.doi+"'>"+p.doi+"</a>")
+                })          
+        }
+    }
+})
+
+newModule('connectedList',{
+    eventResponses:{
+        newEdges:{
+            listening: true,
+            action: function(){
+                connectedList.print(forceGraph.sizeMetric,1)
+            }
+        },
+        paperUpdate:{
+            listening: true,
+            action: function(){
+                connectedList.print(forceGraph.sizeMetric,1)
+            }
+        }
+    },
+    methods:{
+       
+        print: function(metric,pageNum,replot){
+            let pageSize = 100;
+            let nonSeeds = Papers.filter(function(p){return(!p.seed)}).sort((a,b)=>b[metric]-a[metric]).slice(0,pageNum*pageSize)
+            //Select all non-seeds and sort by metric.
+            //Clear old table
+            if(replot){
+                d3.select('#connected-paper-container').selectAll('.outer-paper-box').remove();
+            }
+            let paperboxes = d3.select('#connected-paper-container').selectAll('.outer-paper-box')
+                             .data(nonSeeds,function(d){return d.ID});
+                             //.sort((a,b)=>b.seedsCitedBy<a.seedsCitedBy)
+            paperboxes.exit().remove();
+        
+            oldpapers = d3.select('#connected-paper-container').selectAll('.outer-paper-box').select('.inner-paper-box')
+            oldpapers.select('.paper-title').html(function(p){
+                return(p.title)
+            })
+            oldpapers.select('.metric').html(function(p){
+                return(p[metric]?p[metric]:'0')
+            })
+            oldpapers.select('.author-year').html(function(p){
+                if(p.author) {return p.author+' '+p.year}else{return(p.year)}
+            })
+            oldpapers.select('.doi-link').html(function(p){
+                return("<a target='_blank' href='https://doi.org/"+p.doi+"'>"+p.doi+"</a>")
+            })
+            newpapers = paperboxes.enter()
+                .append('div')
+                .attr('class','outer-paper-box panel')
+            newpapers.append('button').attr('class','delete-seed')
+                .html('<i class="fa fa-plus" color="green" aria-hidden="true"></i>')
+                .on('click',function(p){
+                    makeSeed(p)
+                })
+            newpapers = newpapers.append('div')
+                .attr('class','inner-paper-box panel')
+                .on('click',forceGraph.highlightNode)
+            newpapers.append('p').attr('class','paper-title')
+                .html(function(p){
+                    return(p.title)
+                })
+            newpapers.append('p').attr('class','metric')
+                .html(function(p){
+                    return(p[metric]?p[metric]:'')
+                })
+            newpapers.append('p').attr('class','author-year')
+                .html(function(p){
+                    if(p.author) {return p.author+' '+p.year}else{return(p.year)}
+                })
+            newpapers.append('p').attr('class','doi-link')
+                .html(function(p){
+                    return("<a target='_blank' href='https://doi.org/"+p.doi+"'>"+p.doi+"</a>")
+                })
+        
+            d3.select('#more-button').remove();
+            d3.select('#connected-paper-container').append('div')
+                .html('<button id="more-button" class = "button1">more...</button>')
+                .attr('onclick','connectedList.print("'+metric+'",'+(pageNum+1)+')')   
+        }
+    }
+})
 newModule('forceGraph',{
     eventResponses:{
         newEdges:{
@@ -956,176 +1132,6 @@ forceGraph.simulation =  d3.forceSimulation()
 
 
   
-newModule('seedList',{
-    eventResponses:{
-        seedUpdate:{
-            listening: true,
-            action: function(){
-                seedList.refresh()
-            }
-        },
-        newSeed:{
-            listening: true,
-            action: function(){
-                seedList.refresh()
-            }
-        }
-    },
-    methods: {
-        refresh: function(){
-            var seedpapers = Papers.filter(function(p){return p.seed});
-            var paperbox = d3.select('#seed-paper-container').selectAll('.outer-paper-box')
-                            .data(seedpapers,function(d){return d.ID})
-            paperbox.exit().remove()
-            var oldpapers = d3.select('#seed-paper-container').selectAll('.outer-paper-box').select('.inner-paper-box')
-            oldpapers.select('.paper-title').html(function(p){
-                return(p.title)
-            })
-            oldpapers.select('.metric').html(function(p){
-                return(p[metric]?p[metric]:'0')
-            })
-            oldpapers.select('.author-year').html(function(p){
-                if(p.author) {return p.author+' '+p.year}else{return(p.year)}
-            })
-            oldpapers.select('.doi-link').html(function(p){
-                return("<a target='_blank' href='https://doi.org/"+p.doi+"'>"+p.doi+"</a>")
-            })
-            paperbox = paperbox.enter()
-                .append('div')
-                .attr('class','outer-paper-box panel')
-            paperbox.append('button').attr('class','delete-seed')
-                .html('<i class="fa fa-times" color="red" aria-hidden="true"></i>')
-                .on('click',function(p){deleteSeed(p)})
-            paperbox = paperbox.append('div')
-                .attr('class','inner-paper-box panel')
-                .on('click',forceGraph.highlightNode)
-            paperbox.append('p').attr('class','paper-title')
-                .html(function(p){
-                    return(p.title)
-                })
-            paperbox.append('p').attr('class','author-year')
-                .html(function(p){
-                    if(p.author) {return p.author+' '+p.year}else{return(p.year)}
-                })
-            paperbox.append('p').attr('class','doi-link')
-                .html(function(p){
-                    return("<a target='_blank' href='https://doi.org/"+p.doi+"'>"+p.doi+"</a>")
-                })          
-        }
-    }
-})
-
-newModule('connectedList',{
-    eventResponses:{
-        newEdges:{
-            listening: true,
-            action: function(){
-                connectedList.refresh()
-            }
-        },
-        paperUpdate:{
-            listening: true,
-            action: function(){
-                connectedList.refresh()
-            }
-        }
-    },
-    methods:{
-        refresh: function(){
-            updateMetrics(Papers,Edges); // update citation metrics
-            var nonSeeds = Papers.filter(function(p){return(!p.seed)})
-            var paperbox = d3.select('#connected-paper-container').selectAll('tr')
-                            .data(nonSeeds,function(d){return d.ID});
-                            //.sort((a,b)=>b.seedsCitedBy<a.seedsCitedBy)
-            paperbox.exit().remove();
-            var papers = d3.select('#connected-paper-container').selectAll('tr').select('td').select('.inner-paper-box')
-            papers.select('.paper-title').html(function(p){
-                return(p.title)
-            })
-            papers.select('.metric').html(function(p){
-                return(p[metric]?p[metric]:'0')
-            })
-            papers.select('.author-year').html(function(p){
-                if(p.author) {return p.author+' '+p.year}else{return(p.year)}
-            })
-            papers.select('.doi-link').html(function(p){
-                return("<a target='_blank' href='https://doi.org/"+p.doi+"'>"+p.doi+"</a>")
-            })
-        }
-    }
-})
-//Functions for paper details panel
-function updateInfoBox(selected){
-    p = selected.__data__;
-    document.getElementById('selected-paper-box').style.display ='block';
-    var paperbox = d3.select('#selected-paper-box');
-    paperbox.select('.paper-title').html(p.title)
-    paperbox.select('.author-year').html((p.author ? p.author:'')+' '+p.year)
-    paperbox.select('.doi-link').html(p.doi ? ("<a target='_blank' href='https://doi.org/"+p.doi+"'>"+p.doi+"</a>"): '')
-    paperbox.select('.add-seed').html(p.seed ? 'Delete Seed':'Make Seed')
-            .on('click', function(){p.seed ? deleteSeed(p) : makeSeed(p)})
-    forceGraph.selectednode = p;
-}
-
-function printConnectedList(metric,pageNum,replot){
-    let pageSize = 100;
-    let nonSeeds = Papers.filter(function(p){return(!p.seed)}).sort((a,b)=>b[metric]-a[metric]).slice(0,pageNum*pageSize)
-    //Select all non-seeds and sort by metric.
-    //Clear old table
-    if(replot){
-        d3.select('#connected-paper-container').selectAll('.outer-paper-box').remove();
-    }
-    let paperboxes = d3.select('#connected-paper-container').selectAll('.outer-paper-box')
-                     .data(nonSeeds,function(d){return d.ID});
-                     //.sort((a,b)=>b.seedsCitedBy<a.seedsCitedBy)
-    paperboxes.exit().remove();
-
-    oldpapers = d3.select('#connected-paper-container').selectAll('.outer-paper-box').select('.inner-paper-box')
-    oldpapers.select('.paper-title').html(function(p){
-        return(p.title)
-    })
-    oldpapers.select('.metric').html(function(p){
-        return(p[metric]?p[metric]:'0')
-    })
-    oldpapers.select('.author-year').html(function(p){
-        if(p.author) {return p.author+' '+p.year}else{return(p.year)}
-    })
-    oldpapers.select('.doi-link').html(function(p){
-        return("<a target='_blank' href='https://doi.org/"+p.doi+"'>"+p.doi+"</a>")
-    })
-    newpapers = paperboxes.enter()
-        .append('div')
-        .attr('class','outer-paper-box panel')
-    newpapers.append('button').attr('class','delete-seed')
-        .html('<i class="fa fa-plus" color="green" aria-hidden="true"></i>')
-        .on('click',function(p){
-            makeSeed(p)
-        })
-    newpapers = newpapers.append('div')
-        .attr('class','inner-paper-box panel')
-        .on('click',forceGraph.highlightNode)
-    newpapers.append('p').attr('class','paper-title')
-        .html(function(p){
-            return(p.title)
-        })
-    newpapers.append('p').attr('class','metric')
-        .html(function(p){
-            return(p[metric]?p[metric]:'')
-        })
-    newpapers.append('p').attr('class','author-year')
-        .html(function(p){
-            if(p.author) {return p.author+' '+p.year}else{return(p.year)}
-        })
-    newpapers.append('p').attr('class','doi-link')
-        .html(function(p){
-            return("<a target='_blank' href='https://doi.org/"+p.doi+"'>"+p.doi+"</a>")
-        })
-
-    d3.select('#more-button').remove();
-    d3.select('#connected-paper-container').append('div')
-        .html('<button id="more-button" class = "button1">more...</button>')
-        .attr('onclick','printConnectedList("'+metric+'",'+(pageNum+1)+')')   
-}
 function plotTimeGraph(){
 
     document.getElementById('timelineView').style.display = 'block';
@@ -1191,69 +1197,6 @@ timeGraph.update = function(){
 
 
 
-// When the user clicks anywhere outside of the modal, close it
-window.onclick = function(event) {
-    if (event.target.classList.contains('modal')) {
-        event.target.style.display = "none";
-    }
-}
-
-document.getElementById('connected-sort-by').style.display = 'none'
-document.getElementById('connected-sort-by').getElementsByTagName('select')[0].onchange = function(){
-    let metric = this.value;
-    papers = d3.select('#connected-paper-container').selectAll('.outer-paper-box').select('.inner-paper-box')
-    papers.select('.metric').html(function(p){
-        return(p[metric]?p[metric]:'0')
-    })
-    printConnectedList(metric,1,true)    
-}
-//For paper details panel switching. 
-document.getElementById('connected-paper-container').style.display = 'none';
-
-d3.select('#seed-list-button').attr('class','box-toggle-on');
-d3.select('#connected-list-button').attr('class','box-toggle-off');
-
-document.getElementById('seed-list-button').onclick = function(){
-    d3.select('#seed-list-button').attr('class','box-toggle-on');
-    d3.select('#connected-list-button').attr('class','box-toggle-off');
-
-    document.getElementById('connected-sort-by').style.display = 'none';
-    document.getElementById('add-seeds-button').style.display = 'block';
-
-    document.getElementById('seed-paper-container').style.display = 'block';
-    document.getElementById('connected-paper-container').style.display = 'none';
-}
-
-document.getElementById('connected-list-button').onclick = function(){
-    d3.select('#seed-list-button').attr('class','box-toggle-off');
-    d3.select('#connected-list-button').attr('class','box-toggle-on');
-
-    document.getElementById('connected-sort-by').style.display = 'block';
-    document.getElementById('add-seeds-button').style.display = 'none';
-
-    document.getElementById('connected-paper-container').style.display = 'block';
-    document.getElementById('seed-paper-container').style.display = 'none';
-
-    printConnectedList('seedsCitedBy',1);
-}
-// When the user clicks on the button, open the modal
-document.getElementById("add-seeds-button").onclick = function() {
-    document.getElementById('add-seeds-modal').style.display = "block";
-}
-//For forceGraph display mode toggling
-document.getElementById('mode-toggle').onchange = function(){
-    forceGraph.mode = (forceGraph.mode=='ref') ? 'citedBy' : 'ref';
-    forceGraph.refresh()
-    document.getElementById('connected-sort-by').getElementsByTagName('select')[0].value = (forceGraph.mode=='ref') ? 'seedsCitedBy' : 'seedsCited';
-    printConnectedList(forceGraph.sizeMetric,1,true)
-} 
-
-//For forceGraph threshold slider
-document.getElementById('threshold-input').oninput = function(){
-    document.querySelector('#threshold-output').value = 'Minimum Connections: ' + this.value;
-    forceGraph.threshold(this.value)
-}
-
      
     document.getElementById("add-by-doi").onclick = function() {
         document.getElementById('add-seeds-modal').style.display = "none";
@@ -1269,10 +1212,23 @@ document.getElementById('threshold-input').oninput = function(){
     } 
 
    
-//For help modal
+/* //For help modal
 document.getElementById('help-modal').style.display = "block";
 document.getElementById('help-button').onclick = function(){
     document.getElementById('help-modal').style.display = "block";
+} */
+var doiQuery; //Place holder for the user input field.
+
+//Update request based on doi query inputted by the user.
+var doiInput = document.querySelector("#doi-input").addEventListener("input",function(){
+    doiQuery=this.value;
+});
+
+document.getElementById("doi-input").onkeydown = function(event){
+    if (event.keyCode == 13){   
+        addPaper({doi:doiQuery},true)
+        document.getElementById('doi-input-loader').style.display = 'inline-block';
+    }
 }
 var titleQuery; //Place holder for the user input field.
 //Update request based on title query inputted by the user.
@@ -1335,18 +1291,49 @@ function updateTitleSearchResults(results,pageNum,replot){
         .html('<button id="more-button2" class = "button1">more...</button>')
         .on('click',function(){updateTitleSearchResults(results,(pageNum+1))})
 }
-var doiQuery; //Place holder for the user input field.
-
-//Update request based on doi query inputted by the user.
-var doiInput = document.querySelector("#doi-input").addEventListener("input",function(){
-    doiQuery=this.value;
-});
-
-document.getElementById("doi-input").onkeydown = function(event){
-    if (event.keyCode == 13){   
-        addPaper({doi:doiQuery},true)
-        document.getElementById('doi-input-loader').style.display = 'inline-block';
+var bibtex = {
+    //Importing user uploaded Bibtex
+    importBibTex: function(evt) {
+        let files = evt.target.files; // FileList object
+        for (var i = 0, f; f = files[i]; i++) {
+            var reader = new FileReader();
+            reader.onload = function(e){
+                var papers = bibtexParse.toJSON(e.target.result);
+                if(papers.filter(function(p){
+                    return p.entryTags.doi;
+                }).length==0){
+                    alert("We couldn't find any DOIs in the BibTex you uploaded please check your export settings");
+                };
+                for(let i=0;i<papers.length;i++){
+                    if(papers[i].entryTags.doi){
+                        let newSeed = {doi: papers[i].entryTags.doi}
+                        addPaper(newSeed,true);
+                    }; 
+                };
+            };
+            reader.readAsText(f);       
+        };
+        document.getElementById('upload-bibtex-modal').style.display = "none"; //Hide modal once file selected
+    },
+    //Importing Example BibTex
+    importExampleBibTex: function(){
+        let url = window.location.href+'examples/exampleBibTex.bib'
+        fetch(url).then((resp) => resp.text()).then((data)=> {
+                var papers = bibtexParse.toJSON(data);
+                for(let i=0;i<papers.length;i++){
+                    let newSeed = {doi: papers[i].entryTags.doi}
+                    addPaper(newSeed,true);
+                };
+                document.getElementById('upload-bibtex-modal').style.display = "none";
+            }
+        )
     }
+}
+
+document.getElementById('files').addEventListener('change', bibtex.importBibTex, false);
+
+document.getElementById('demo-button').onclick = function(){
+    bibtex.importExampleBibTex()
 }
 d3.select('#add-seeds-modal').select('div').append('button').attr('id','add-by-zotero')
     .html("<img id='zotero-square' src='images/zotero/zotero2.png'>")
@@ -1618,47 +1605,30 @@ var zotero = {
         }) 
     }
 }
-var bibtex = {
-    //Importing user uploaded Bibtex
-    importBibTex: function(evt) {
-        let files = evt.target.files; // FileList object
-        for (var i = 0, f; f = files[i]; i++) {
-            var reader = new FileReader();
-            reader.onload = function(e){
-                var papers = bibtexParse.toJSON(e.target.result);
-                if(papers.filter(function(p){
-                    return p.entryTags.doi;
-                }).length==0){
-                    alert("We couldn't find any DOIs in the BibTex you uploaded please check your export settings");
-                };
-                for(let i=0;i<papers.length;i++){
-                    if(papers[i].entryTags.doi){
-                        let newSeed = {doi: papers[i].entryTags.doi}
-                        addPaper(newSeed,true);
-                    }; 
-                };
-            };
-            reader.readAsText(f);       
-        };
-        document.getElementById('upload-bibtex-modal').style.display = "none"; //Hide modal once file selected
-    },
-    //Importing Example BibTex
-    importExampleBibTex: function(){
-        let url = window.location.href+'examples/exampleBibTex.bib'
-        fetch(url).then((resp) => resp.text()).then((data)=> {
-                var papers = bibtexParse.toJSON(data);
-                for(let i=0;i<papers.length;i++){
-                    let newSeed = {doi: papers[i].entryTags.doi}
-                    addPaper(newSeed,true);
-                };
-                document.getElementById('upload-bibtex-modal').style.display = "none";
-            }
-        )
-    }
+// When the user clicks on the button, open the modal
+document.getElementById("add-seeds-button").onclick = function() {
+    document.getElementById('add-seeds-modal').style.display = "block";
 }
 
-document.getElementById('files').addEventListener('change', bibtex.importBibTex, false);
+document.getElementById('connected-sort-by').style.display = 'none'
+document.getElementById('connected-sort-by').getElementsByTagName('select')[0].onchange = function(){
+    let metric = this.value;
+    papers = d3.select('#connected-paper-container').selectAll('.outer-paper-box').select('.inner-paper-box')
+    papers.select('.metric').html(function(p){
+        return(p[metric]?p[metric]:'0')
+    })
+    connectedList.print(metric,1,true)    
+}
+//For forceGraph display mode toggling
+document.getElementById('mode-toggle').onchange = function(){
+    forceGraph.mode = (forceGraph.mode=='ref') ? 'citedBy' : 'ref';
+    forceGraph.refresh()
+    document.getElementById('connected-sort-by').getElementsByTagName('select')[0].value = (forceGraph.mode=='ref') ? 'seedsCitedBy' : 'seedsCited';
+    connectedList.print(forceGraph.sizeMetric,1,true)
+} 
 
-document.getElementById('demo-button').onclick = function(){
-    bibtex.importExampleBibTex()
+//For forceGraph threshold slider
+document.getElementById('threshold-input').oninput = function(){
+    document.querySelector('#threshold-output').value = 'Minimum Connections: ' + this.value;
+    forceGraph.threshold(this.value)
 }
