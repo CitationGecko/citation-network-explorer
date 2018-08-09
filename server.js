@@ -3,7 +3,7 @@ var _ = require('lodash');
 var express = require('express');
 var bodyParser = require('body-parser');
 
-var appPort = 3000;
+var appPort = process.argv.slice(2)[0] || 3000;
 
 /**
  * Express server scaffolding
