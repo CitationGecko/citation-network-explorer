@@ -12,13 +12,18 @@
 .paper-title {
     margin-left:33px;
     margin-right:5em;
+    margin-bottom:3em;
 }
 .metric {
     float:right;
     position: absolute;
-    top: 0em;
+    bottom: 0em;
     right: 0em;
     margin: 1em;
+    color:#FFC700
+}
+.metric-count{
+    color:#BE2121;
 }
 .author-year {
     text-align: left;
@@ -26,6 +31,19 @@
 } 
 .open-icon{
     margin-left:.5em;
-    margin-top:.5em;
     max-height: 10px;
 }
+
+.inner-paper-box:hover > .metric{
+    color:white;
+}
+
+.inner-paper-box:hover .stroke1 {
+    stroke:white;
+}
+.inner-paper-box:hover .fill1 {
+    fill:white;
+}
+
+
+

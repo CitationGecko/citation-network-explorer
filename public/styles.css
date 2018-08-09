@@ -1,152 +1,3 @@
-#selected-paper-box {
-    display:none;
-    position: absolute;
-    font-size: 70%;
-    right:0em;
-    bottom:.2em;
-    max-width:50%;
-    background-color: rgb(212, 212, 212);
-}
-.add-seed {
-    text-align: right;
-}
-.loader {
-    display: none;
-    position: relative;
-    left: 5px;
-    top:5px;
-    border: .1em solid #f3f3f3; /* Light grey */
-    border-top: .1em solid #3498db; /* Blue */
-    border-radius: 50%;
-    width: 1em;
-    height: 1em;
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-.modal {
-    display: none; /* Hidden by default */
-    position: fixed; /* Stay in place */
-    z-index: 3; /* Sit on top */
-    left: 0;
-    top: 0;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    overflow: auto; /* Enable scroll if needed */
-    background-color: rgb(0,0,0); /* Fallback color */
-    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-}
-.modal-content {
-    background-color: #fefefe;
-    margin: 15% auto; /* 15% from the top and centered */
-    padding: .5em .5em;
-    border: .1em solid #888;
-    width: 40%; 
-    position: relative;
-    border-style:none;
-    border-radius: .5em;
-}
-
-* {
-    font-family: 'Roboto',serif;
-    font-weight:300;
-    min-height: 0;
-    min-width: 0;
-    font-size:100%;
-}
-
-h1 {
-    font-family: 'Roboto';
-    font-style: normal;
-    font-weight: 300;
-    line-height: normal;
-    font-size: 26px;
-    margin: .5em;
-}
-
-button{
-    border:none;
-}
-html { 
-    height:100%; 
-}
-
-body {
-    display: flex;
-    flex-direction: column;
-    margin:0em;
-    height:100%; 
-}
-
-.main {
-    display: flex;
-    flex-direction: row;   
-    flex-grow: 1;
-}
-.panel {
-     position: relative;
-     overflow: hidden;
-     background-color: rgb(255, 255, 255);
- }
-#logo-panel {
-    width: 200px;
-    position: relative;
-    margin: 0;
-}
-#list-panel {
-    width: 80em;
-    margin-right:0;
-    border: none;   
-}
-#graph-panel {
-    width:200em;
-    display:flex;
-    flex-direction: column;
-    flex-grow:1;
-    flex-shrink: 1;
-}
-#help-button {
-    background:none;
-    position: absolute;
-    bottom:.5em;
-    margin-left: auto;
-    margin-right: auto;
-    border-style:none;
-}
-
-#logo-panel {
-    background-color: #E0DFDF
-}
-
-.side-bar-button {
-    width:100%;
-    height:4em;
-    border-style:none;
-    display: block;
-    margin: 0px;
-    padding:5px;
-    outline:none;
-}
-
-.side-bar-icon {
-    width:2em;
-    height:2em;
-    max-width: 20em;
-    max-height: 20em;
-    object-fit: contain;
-}
-
-#settings-button{
-    position: absolute;
-    bottom:0px
-}
-
-.box-toggle-on{
-    background:#C4C4C4
-}
 #network-view, #force-graph {
     width:100%;
     height:100%;
@@ -216,43 +67,170 @@ h1 {
     height: 1000%;
 }
 
-#add-seeds-modal > .modal-content > button {
-    display:block;
-    background-color: rgb(104, 104, 104);
-    border-style: none;
-    height: 6em;
-    margin:.5em 0em;
+* {
+    font-family: 'Roboto',serif;
+    font-weight:300;
+    min-height: 0;
+    min-width: 0;
+    font-size:100%;
+}
+
+h1 {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 300;
+    line-height: normal;
+    font-size: 26px;
+    margin: .5em;
+}
+
+button{
+    border:none;
+}
+html { 
+    height:100%; 
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    margin:0em;
+    height:100%; 
+}
+
+.main {
+    display: flex;
+    flex-direction: row;   
+    flex-grow: 1;
+}
+.panel {
+     position: relative;
+     overflow: hidden;
+     background-color: rgb(255, 255, 255);
+ }
+#logo-panel {
+    width: 200px;
+    position: relative;
+    margin: 0;
+}
+#list-panel {
+    width: 80em;
+    margin-right:0;
+    border: none;   
+}
+#graph-panel {
+    width:200em;
+    display:flex;
+    flex-direction: column;
+    flex-grow:1;
+    flex-shrink: 1;
+}
+#selected-paper-box {
+    display:none;
+    position: absolute;
+    font-size: 70%;
+    right:0em;
+    bottom:.2em;
+    max-width:50%;
+    background-color: rgb(212, 212, 212);
+}
+.add-seed {
+    text-align: right;
+}
+.loader {
+    display: none;
+    position: relative;
+    left: 5px;
+    top:5px;
+    border: .1em solid #f3f3f3; /* Light grey */
+    border-top: .1em solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 1em;
+    height: 1em;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+#help-button {
+    background:none;
+    position: absolute;
+    bottom:.5em;
+    margin-left: auto;
+    margin-right: auto;
+    border-style:none;
+}
+
+#logo-panel {
+    background-color: #E0DFDF
+}
+
+.side-bar-button {
     width:100%;
-    color:white;
-}
-#doi-input {
-    width:200px
-}
-#help-modal > .modal-content {
-    width:60%;
-    margin:7% auto;
-    padding:2%;
-}
-.zotero-folder rect {
-    cursor: pointer;
-    fill: #fff;
-    fill-opacity: 0.5;
-    stroke: #979797;
-    stroke-width: 1.5px;
+    height:4em;
+    border-style:none;
+    display: block;
+    margin: 0px;
+    padding:5px;
+    outline:none;
 }
 
-#zotero-logo {
-    width: 40%
+.side-bar-icon {
+    width:2em;
+    height:2em;
+    max-width: 20em;
+    max-height: 20em;
+    object-fit: contain;
 }
 
-#zotero-square {
-    height:90%
+#settings-button{
+    position: absolute;
+    bottom:0px
 }
 
-#add-by-zotero > div{
-    display: inline
+.box-toggle-on{
+    background:#C4C4C4
+}
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 3; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto; /* 15% from the top and centered */
+    padding: .5em .5em;
+    border: .1em solid #888;
+    width: 40%; 
+    position: relative;
+    border-style:none;
+    border-radius: .5em;
 }
 
+#threshold-slider {
+    position:absolute;
+    left:1em;
+    bottom:1em;
+    width:30%;
+}
+#threshold-input {
+    width:90%;
+    margin-bottom:.5em;
+}
+#threshold-output {
+   /*  display:block; */    
+    width:10%;
+    text-align: center;
+}
 #network-key {
     position:absolute;
     left: 1%;
@@ -318,26 +296,6 @@ h1 {
     height:8px;
     padding:5px;
 }
-#threshold-slider {
-    position:absolute;
-    left:1em;
-    bottom:1em;
-    width:30%;
-}
-#threshold-input {
-    width:90%;
-    margin-bottom:.5em;
-}
-#threshold-output {
-   /*  display:block; */    
-    width:10%;
-    text-align: center;
-}
-#connected-sort-by {
-    margin-right:2em;
-    display:none;
-    text-align:right;
-}
 
 #add-seeds-button{
     width: 90%;
@@ -345,6 +303,11 @@ h1 {
     margin: 10% 5%;
     background: #FFC700;
     border:none;
+}
+#connected-sort-by {
+    margin-right:2em;
+    display:none;
+    text-align:right;
 }
 .outer-paper-box {
     width: 99%;
@@ -360,13 +323,18 @@ h1 {
 .paper-title {
     margin-left:33px;
     margin-right:5em;
+    margin-bottom:3em;
 }
 .metric {
     float:right;
     position: absolute;
-    top: 0em;
+    bottom: 0em;
     right: 0em;
     margin: 1em;
+    color:#FFC700
+}
+.metric-count{
+    color:#BE2121;
 }
 .author-year {
     text-align: left;
@@ -374,6 +342,56 @@ h1 {
 } 
 .open-icon{
     margin-left:.5em;
-    margin-top:.5em;
     max-height: 10px;
+}
+
+.inner-paper-box:hover > .metric{
+    color:white;
+}
+
+.inner-paper-box:hover .stroke1 {
+    stroke:white;
+}
+.inner-paper-box:hover .fill1 {
+    fill:white;
+}
+
+
+
+
+#add-seeds-modal > .modal-content > button {
+    display:block;
+    background-color: rgb(104, 104, 104);
+    border-style: none;
+    height: 6em;
+    margin:.5em 0em;
+    width:100%;
+    color:white;
+}
+#doi-input {
+    width:200px
+}
+#help-modal > .modal-content {
+    width:60%;
+    margin:7% auto;
+    padding:2%;
+}
+.zotero-folder rect {
+    cursor: pointer;
+    fill: #fff;
+    fill-opacity: 0.5;
+    stroke: #979797;
+    stroke-width: 1.5px;
+}
+
+#zotero-logo {
+    width: 40%
+}
+
+#zotero-square {
+    height:90%
+}
+
+#add-by-zotero > div{
+    display: inline
 }

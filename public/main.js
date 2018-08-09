@@ -778,48 +778,6 @@ newModule('occ', {
         }
     }
 })
-//Functions for paper details panel
-function updateInfoBox(selected){
-    p = selected.__data__;
-    document.getElementById('selected-paper-box').style.display ='block';
-    var paperbox = d3.select('#selected-paper-box');
-    paperbox.select('.paper-title').html(p.title)
-    paperbox.select('.author-year').html((p.author ? p.author:'')+' '+p.year)
-    paperbox.select('.doi-link').html(p.doi ? ("<a target='_blank' href='https://doi.org/"+p.doi+"'>"+p.doi+"</a>"): '')
-    paperbox.select('.add-seed').html(p.seed ? 'Delete Seed':'Make Seed')
-            .on('click', function(){p.seed ? deleteSeed(p) : makeSeed(p)})
-    forceGraph.selectednode = p;
-}
-
-// When the user clicks anywhere outside of the modal, close it
-window.onclick = function(event) {
-    if (event.target.classList.contains('modal')) {
-        event.target.style.display = "none";
-    }
-}
-//For paper details panel switching. 
-document.getElementById('connected-list').style.display = 'none';
-
-d3.select('#seed-list-button').attr('class','side-bar-button box-toggle-on');
-d3.select('#connected-list-button').attr('class','side-bar-button box-toggle-off');
-
-document.getElementById('seed-list-button').onclick = function(){
-    d3.select('#seed-list-button').attr('class','side-bar-button box-toggle-on');
-    d3.select('#connected-list-button').attr('class','side-bar-button box-toggle-off');
-
-    document.getElementById('connected-list').style.display = 'none';
-    document.getElementById('seed-list').style.display = 'block';
-}
-
-document.getElementById('connected-list-button').onclick = function(){
-    d3.select('#seed-list-button').attr('class','side-bar-button box-toggle-off');
-    d3.select('#connected-list-button').attr('class','side-bar-button box-toggle-on');
-
-    document.getElementById('connected-list').style.display = 'block';
-    document.getElementById('seed-list').style.display = 'none';
-
-    connectedList.print('seedsCitedBy',1);
-}
 newModule('forceGraph',{
     eventResponses:{
         newEdges:{
@@ -998,6 +956,8 @@ forceGraph.simulation =  d3.forceSimulation()
 
 
   
+var mysvg = '<svg class="open-icon" width="17" height="15" viewBox="0 0 17 15" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="16" height="14" fill="black" fill-opacity="0" transform="translate(0 1)"/><path class="stroke1" d="M7.5 8.5L16 1M16 1H11.5M16 1V5.5" stroke="#FFC700" stroke-width="1.8"/><path class="fill1" fill-rule="evenodd" clip-rule="evenodd" d="M9.5459 3H3C2.44727 3 2 3.44775 2 4V12C2 12.5522 2.44727 13 3 13H12C12.5527 13 13 12.5522 13 12V6.6001H15V12C15 13.6567 13.6572 15 12 15H3C1.34277 15 0 13.6567 0 12V4C0 2.34326 1.34277 1 3 1H9.5459V3Z" fill="#FFC700"/></svg>'
+
 newModule('seedList',{
     eventResponses:{
         seedUpdate:{
@@ -1021,7 +981,7 @@ newModule('seedList',{
             paperbox.exit().remove()
             var oldpapers = d3.select('#seed-paper-container').selectAll('.outer-paper-box').select('.inner-paper-box')
             oldpapers.select('.paper-title').html(function(p){
-                return(p.title+"<a target='_blank' href='https://doi.org/"+p.doi+"'><img class='open-icon'src='images/icons/open.svg'></a>")
+                return(p.title+"<a target='_blank' href='https://doi.org/"+p.doi+"'>"+mysvg+"</a>")
             })
             oldpapers.select('.metric').html(function(p){
                 return(p[metric]?p[metric]:'0')
@@ -1038,7 +998,7 @@ newModule('seedList',{
                 .on('click',forceGraph.highlightNode)
             paperbox.append('p').attr('class','paper-title')
                 .html(function(p){
-                    return(p.title)
+                    return(p.title+"<a target='_blank' href='https://doi.org/"+p.doi+"'>"+mysvg+"</a>")
                 })
             paperbox.append('p').attr('class','author-year')
                 .html(function(p){
@@ -1080,10 +1040,16 @@ newModule('connectedList',{
         
             oldpapers = d3.select('#connected-paper-container').selectAll('.outer-paper-box').select('.inner-paper-box')
             oldpapers.select('.paper-title').html(function(p){
-                return(p.title+"<a target='_blank' href='https://doi.org/"+p.doi+"'><img class='open-icon'src='images/icons/open.svg'></a>")
+                return(p.title+"<a target='_blank' href='https://doi.org/"+p.doi+"'>"+mysvg+"</a>")
             })
             oldpapers.select('.metric').html(function(p){
-                return(p[metric]?p[metric]:'0')
+                if(!p[metric]){return('')}  
+                if(metric=='seedsCitedBy'){
+                    return('cited by <span class="metric-count">'+p[metric]+'</span> seed papers')
+                } 
+                if(metric=='seedsCited'){
+                    return('cites <span class="metric-count">'+p[metric]+'</span> seed papers')
+                }
             })
             oldpapers.select('.author-year').html(function(p){
                 if(p.author) {return p.author+' '+p.year}else{return(p.year)}
@@ -1097,11 +1063,18 @@ newModule('connectedList',{
                 .on('click',forceGraph.highlightNode)
             newpapers.append('p').attr('class','paper-title')
                 .html(function(p){
-                    return(p.title+"<a target='_blank' href='https://doi.org/"+p.doi+"'><img class='open-icon'src='images/icons/open.svg'></a>")
+                    return(p.title+"<a target='_blank' href='https://doi.org/"+p.doi+"'>"+mysvg+"</a>")
                 })
             newpapers.append('p').attr('class','metric')
                 .html(function(p){
-                    return(p[metric]?p[metric]:'')
+
+                    if(!p[metric]){return('')}  
+                    if(metric=='seedsCitedBy'){
+                        return('cited by <span class="metric-count">'+p[metric]+'</span> seed papers')
+                    } 
+                    if(metric=='seedsCited'){
+                        return('cites <span class="metric-count">'+p[metric]+'</span> seed papers')
+                    }
                 })
             newpapers.append('p').attr('class','author-year')
                 .html(function(p){
@@ -1180,6 +1153,76 @@ timeGraph.update = function(){
 
 
 
+//Functions for paper details panel
+function updateInfoBox(selected){
+    p = selected.__data__;
+    document.getElementById('selected-paper-box').style.display ='block';
+    var paperbox = d3.select('#selected-paper-box');
+    paperbox.select('.paper-title').html(p.title)
+    paperbox.select('.author-year').html((p.author ? p.author:'')+' '+p.year)
+    paperbox.select('.doi-link').html(p.doi ? ("<a target='_blank' href='https://doi.org/"+p.doi+"'>"+p.doi+"</a>"): '')
+    paperbox.select('.add-seed').html(p.seed ? 'Delete Seed':'Make Seed')
+            .on('click', function(){p.seed ? deleteSeed(p) : makeSeed(p)})
+    forceGraph.selectednode = p;
+}
+
+//For paper details panel switching. 
+document.getElementById('connected-list').style.display = 'none';
+
+d3.select('#seed-list-button').attr('class','side-bar-button box-toggle-on');
+d3.select('#connected-list-button').attr('class','side-bar-button box-toggle-off');
+
+document.getElementById('seed-list-button').onclick = function(){
+    d3.select('#seed-list-button').attr('class','side-bar-button box-toggle-on');
+    d3.select('#connected-list-button').attr('class','side-bar-button box-toggle-off');
+
+    document.getElementById('connected-list').style.display = 'none';
+    document.getElementById('seed-list').style.display = 'block';
+}
+
+document.getElementById('connected-list-button').onclick = function(){
+    d3.select('#seed-list-button').attr('class','side-bar-button box-toggle-off');
+    d3.select('#connected-list-button').attr('class','side-bar-button box-toggle-on');
+
+    document.getElementById('connected-list').style.display = 'block';
+    document.getElementById('seed-list').style.display = 'none';
+
+    connectedList.print('seedsCitedBy',1);
+}
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+    if (event.target.classList.contains('modal')) {
+        event.target.style.display = "none";
+    }
+}
+
+//For forceGraph threshold slider
+document.getElementById('threshold-input').oninput = function(){
+    document.querySelector('#threshold-output').value = 'Minimum Connections: ' + this.value;
+    forceGraph.threshold(this.value)
+}
+
+//For forceGraph display mode toggling
+document.getElementById('mode-toggle').onchange = function(){
+    forceGraph.mode = (forceGraph.mode=='ref') ? 'citedBy' : 'ref';
+    forceGraph.refresh()
+    document.getElementById('connected-sort-by').getElementsByTagName('select')[0].value = (forceGraph.mode=='ref') ? 'seedsCitedBy' : 'seedsCited';
+    connectedList.print(forceGraph.sizeMetric,1,true)
+} 
+// When the user clicks on the button, open the modal
+document.getElementById("add-seeds-button").onclick = function() {
+    document.getElementById('add-seeds-modal').style.display = "block";
+}
+
+document.getElementById('connected-sort-by').style.display = 'none'
+document.getElementById('connected-sort-by').getElementsByTagName('select')[0].onchange = function(){
+    let metric = this.value;
+    papers = d3.select('#connected-paper-container').selectAll('.outer-paper-box').select('.inner-paper-box')
+    papers.select('.metric').html(function(p){
+        return(p[metric]?p[metric]:'0')
+    })
+    connectedList.print(metric,1,true)    
+}
      
     document.getElementById("add-by-doi").onclick = function() {
         document.getElementById('add-seeds-modal').style.display = "none";
@@ -1587,32 +1630,4 @@ var zotero = {
             }).then(resp=>resp.json()).then(r=>console.log(r))  
         }) 
     }
-}
-//For forceGraph display mode toggling
-document.getElementById('mode-toggle').onchange = function(){
-    forceGraph.mode = (forceGraph.mode=='ref') ? 'citedBy' : 'ref';
-    forceGraph.refresh()
-    document.getElementById('connected-sort-by').getElementsByTagName('select')[0].value = (forceGraph.mode=='ref') ? 'seedsCitedBy' : 'seedsCited';
-    connectedList.print(forceGraph.sizeMetric,1,true)
-} 
-
-//For forceGraph threshold slider
-document.getElementById('threshold-input').oninput = function(){
-    document.querySelector('#threshold-output').value = 'Minimum Connections: ' + this.value;
-    forceGraph.threshold(this.value)
-}
-
-
-document.getElementById('connected-sort-by').style.display = 'none'
-document.getElementById('connected-sort-by').getElementsByTagName('select')[0].onchange = function(){
-    let metric = this.value;
-    papers = d3.select('#connected-paper-container').selectAll('.outer-paper-box').select('.inner-paper-box')
-    papers.select('.metric').html(function(p){
-        return(p[metric]?p[metric]:'0')
-    })
-    connectedList.print(metric,1,true)    
-}
-// When the user clicks on the button, open the modal
-document.getElementById("add-seeds-button").onclick = function() {
-    document.getElementById('add-seeds-modal').style.display = "block";
 }
