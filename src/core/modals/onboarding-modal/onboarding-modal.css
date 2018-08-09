@@ -1,0 +1,59 @@
+#onboarding-modal > .modal-content {
+    padding: 2em;
+}
+
+#onboarding-modal > .modal-content:not(:first-child) {
+    display: none;
+}
+
+#onboarding-3 > img {
+    width: 100%;
+}
+
+.modal-footer {
+    display: flex;
+    align-items: center;
+}
+
+.modal-btn {
+    background: #FFC700;
+    padding: 1em;
+    margin: 1em auto;
+    outline: none;
+}
+
+.large-button-list {
+    display: flex;
+    flex-flow: column wrap;
+    align-items: center;
+}
+
+.large-secondary-button {
+    width: 100%;
+    padding: 1em;
+    background: #5B5C5A;
+    color: #FFFFFF;
+    margin: 2px 0;
+    outline: none;
+    transition: background .3s;
+    cursor: pointer;
+}
+
+.large-primary-button {
+    width: 100%;
+    padding: 1em;
+    background: #FFC700;
+    color: #222222;
+    margin: 2px 0;
+    outline: none;
+    transition: background .3s;
+    cursor: pointer;
+}
+
+.large-secondary-button:hover {
+    background: #383A38;
+}
+
+.large-primary-button:hover {
+    background: #E2B104;
+}

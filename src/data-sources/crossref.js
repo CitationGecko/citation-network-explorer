@@ -1,99 +1,107 @@
 
-newDataModule('crossref', {
+newModule('crossref', {
     eventResponses: {
-        newSeed: async function(paper){
+        newSeed: {
+            listening: true,
+            action: async function(paper){
             
-            if(paper.crossref!='Complete'){
-                await paper.crossref
-                paper.crossref = 'Complete'
-                triggerEvent('seedUpdate',paper);
+                if(paper.crossref!='Complete'){
+                    await paper.crossref
+                    paper.crossref = 'Complete'
+                    triggerEvent('seedUpdate',paper);
+                }
+                if(paper.references){
+                    paper.references.forEach((ref)=>{
+                        let cited = addPaper(crossref.parseReference(ref))
+                        addEdge({
+                            source: paper,
+                            target: cited,
+                            crossref: true,
+                            hide: false
+                        });
+                        console.log('CrossRef found ' + paper.references.length + " citations")
+                    })
+                    triggerEvent('newEdges')
+                }
             }
-            if(paper.References){
-                paper.References.forEach((ref)=>{
-                    let cited = addPaper(crossref.parseReference(ref))
-                    addEdge({
-                        source: paper,
-                        target: cited,
-                        crossref: true,
-                        hide: false
-                    });
-                    console.log('CrossRef found ' + paper.References.length + " citations")
-                })
-            }
-            refreshGraphics();         
         },   
-        newPaper: function(paper){
-            if(paper.DOI){
-                console.log("querying crossRef for " +paper.DOI)
-                paper.crossref = new Promise((resolve,reject)=>{
-                    CrossRef.work(paper.DOI,function(err,response){          
-                        if(err){
-                            paper.crossref = false
-                            resolve('CrossRef info not found')
-                        } else {
-                            console.log("CrossRef data found for "+paper.DOI)
-                            paper.crossref = 'Complete'
-                            merge(paper,crossref.parsePaper(response))
-                            updateConnectedList(forceGraph.sizeMetric);
-                            resolve('CrossRef info found')
-                        }
-                    });
-                })   
-            };  
-        }
+        newPaper: {
+            listening: true,
+            action: function(paper){
+                if(paper.doi){
+                    console.log("querying crossRef for " +paper.doi)
+                    paper.crossref = new Promise((resolve,reject)=>{
+                        CrossRef.work(paper.doi,function(err,response){          
+                            if(err){
+                                paper.crossref = false
+                                resolve('CrossRef info not found')
+                            } else {
+                                console.log("CrossRef data found for "+paper.doi)
+                                paper.crossref = 'Complete'
+                                merge(paper,crossref.parsePaper(response))
+                                triggerEvent('paperUpdate')
+                                resolve('CrossRef info found')
+                            }
+                        });
+                    })   
+                };  
+            }
+        },
     },
-    parsePaper: function(response){
-       return {
-            DOI: response.DOI,
-            Title: response.title[0],
-            Author: response.author[0].family,
-            Month: response.created['date-parts'][0][1],
-            Year: response.created['date-parts'][0][0],
-            Timestamp: response.created.timestamp,
-            Journal: response['container-title'][0],
-            CitationCount: response['is-referenced-by-count'],
-            References: response['reference'] ? response['reference'] : false,
-            crossref: true
-        };
-
-    },
-    parseReference: function(ref){
+    methods:{
+        parsePaper: function(response){
         return {
-            DOI: ref.DOI ? ref.DOI : null,
-            Title: ref['article-title'] ? ref['article-title'] : 'unavailable',
-            Author: ref.author ? ref.author : null,
-            Year: ref.year ? ref.year : null ,
-            Journal: ref['journal-title'] ? ref['journal-title'] : null,
-        }
+                doi: response.DOI,
+                title: response.title[0],
+                author: response.author[0].family,
+                month: response.created['date-parts'][0][1],
+                year: response.created['date-parts'][0][0],
+                timestamp: response.created.timestamp,
+                journal: response['container-title'][0],
+                citationCount: response['is-referenced-by-count'],
+                references: response['reference'] ? response['reference'] : false,
+                crossref: true
+            };
 
-    },
-    parseResponse: function(response){
-        
-        let ne = 0; //For bean counting only
-        
-        let citer = crossref.parsePaper(response);
-        
-        citer = addPaper(citer,true);
+        },
+        parseReference: function(ref){
+            return {
+                doi: ref.DOI ? ref.DOI : null,
+                title: ref['article-title'] ? ref['article-title'] : 'unavailable',
+                author: ref.author ? ref.author : null,
+                year: ref.year ? ref.year : null ,
+                journal: ref['journal-title'] ? ref['journal-title'] : null,
+            }
 
-        if(!citer.References){return(citer)};
+        },
+        parseResponse: function(response){
+            
+            let ne = 0; //For bean counting only
+            
+            let citer = crossref.parsePaper(response);
+            
+            citer = addPaper(citer,true);
 
-        let refs = citer.References;
+            if(!citer.references){return(citer)};
 
-        for(let i=0;i<refs.length;i++){
+            let refs = citer.references;
 
-            let cited = crossref.parseReference(refs[i]);
+            for(let i=0;i<refs.length;i++){
 
-            cited = addPaper(cited);
+                let cited = crossref.parseReference(refs[i]);
 
-            addEdge({
-                source: citer,
-                target: cited,
-                crossref: true,
-                hide: false
-            });
-            ne++;//bean counting
-        };   
-        console.log('CrossRef found ' + ne + " citations")
-        return(citer)
-    } 
+                cited = addPaper(cited);
+
+                addEdge({
+                    source: citer,
+                    target: cited,
+                    crossref: true,
+                    hide: false
+                });
+                ne++;//bean counting
+            };   
+            console.log('CrossRef found ' + ne + " citations")
+            return(citer)
+        } 
+    }
 })

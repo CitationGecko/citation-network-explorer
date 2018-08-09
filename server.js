@@ -69,6 +69,12 @@ app.get('/auth/zotero/verify', require('./routes/auth/zotero/verify'));
 //app.post('/api/v1/query/occ/sparql', require('./routes/api/v1/query/occ/sparql'));
 
 /**
+* API: Mocked response for the client-side refactor
+*/
+app.get('/api/v1/getMockResponse', require('./api/v1/getMockResponse'));
+
+
+/**
  * Start Express server
  */
 app.listen(appPort, function () {

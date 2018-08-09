@@ -3,11 +3,11 @@ var Edges = [] //Array of edge objects, each is a pair of paper objects (source 
 
 //Collection of metric functions to compute for each paper
 var metrics = {  
-    "citedBy": function(paper,Edges){
+    "localCitedBy": function(paper,Edges){
         //Count number of times cited in the edges list supplied
         return Edges.filter(e=>e.target==paper).length
     },
-    "references": function(paper,Edges){
+    "localReferences": function(paper,Edges){
         //Count number of times a paper cites another paper (in the edge list provided) 
         return Edges.filter(e=>e.source==paper).length
     },
@@ -28,27 +28,31 @@ var events = {}; //Object of events comprising an array of methods to run when t
 //Function for defining new events.
 defineEvent = function(name){
     events[name] = {};
-    events[name].methods = [];
+    events[name].responses = [];
 }
 //Function for triggering a named event and passing the subject of the event.
 triggerEvent = function(name,subject){
-    for(let i=0;i<events[name].methods.length;i++){
-        events[name].methods[i].call(null,subject)
-     }
+    for(let i=0;i<events[name].responses.length;i++){
+        if(events[name].responses[i].listening){
+            events[name].responses[i].action.call(null,subject)
+        }
+    }
 }
 
 defineEvent('newSeed'); //Event triggered when a new seed is added.
-defineEvent('seedUpdate'); //Event triggered when more info is found on a seed i.e. title or DOI.
+defineEvent('seedUpdate'); //Event triggered when more info is found on a seed i.e. title or doi.
 defineEvent('newPaper'); //Event triggered when a new (non-seed) paper is added.
 defineEvent('paperUpdate') //Event trigger when non-seed paper is updated with more info. 
+defineEvent('newEdges') //Event triggered when new edges are added.
+defineEvent('seedDeleted')
 
 
 //Builds a new data source module.
-newDataModule = function(name,methods){
-    window[name] = methods; //add methods of module to there own namespace.
+function newModule(name,obj){
+    window[name] = obj.methods; //add methods of module to there own namespace.
     for(event in events){
-        if(methods.eventResponses[event]){ 
-            events[event].methods.push(methods.eventResponses[event]); //if module has event response methods add them to the appropriate array.
+        if(obj.eventResponses[event]){ 
+            events[event].responses.push(obj.eventResponses[event]); //if module has event response methods add them to the appropriate array.
         }
     } 
 }
@@ -76,7 +80,7 @@ function addPaper(paper,asSeed){
     return(paper)
 }
 
-addEdge = function(newEdge){
+function addEdge(newEdge){
     let edge = Edges.filter(function(e){
         return e.source == newEdge.source & e.target == newEdge.target;
     })
@@ -90,20 +94,20 @@ addEdge = function(newEdge){
 //For a new paper this function tries to find a match in the existing database
 function matchPapers(paper,Papers){
     var match;
-    if(paper.MicrosoftID){  
+    if(paper.microsoftID){  
         match = Papers.filter(function(p){
-            return p.ID==paper.ID
+            return p.microsoftID==paper.microsoftID
         })[0];
     };
-    if(!match && paper.DOI){
+    if(!match && paper.doi){
         match = Papers.filter(function(p){   
-            return (paper.DOI.toLowerCase() == (p.DOI ? p.DOI.toLowerCase() : null));      
+            return (paper.doi.toLowerCase() == (p.doi ? p.doi.toLowerCase() : null));      
         })[0];
     };
-    if(!match && paper.Title && paper.Author){
+    if(!match && paper.title && paper.author){
         match = Papers.filter(function(p){
-            if(p.Title){
-                return (p.Title.toLowerCase()==paper.Title.toLowerCase()) && (paper.Author.toLowerCase()==(p.Author ? p.Author.toLowerCase() : null))
+            if(p.title){
+                return (p.title.toLowerCase()==paper.title.toLowerCase()) && (paper.author.toLowerCase()==(p.author ? p.author.toLowerCase() : null))
             } 
         })[0]; 
     };  
@@ -113,7 +117,7 @@ function matchPapers(paper,Papers){
 //Given two paper/edge objects that are deemed to be matching, this merges the info in the two.
 function merge(oldrecord,newrecord){
     for(i in newrecord){
-        if(oldrecord[i]==undefined || oldrecord[i]==null ){
+        if(oldrecord[i]==undefined || oldrecord[i]==null || oldrecord[i]==0){
             oldrecord[i]=newrecord[i];
         }
     }
@@ -129,16 +133,9 @@ function updateMetrics(Papers,Edges){
         Papers.forEach(function(p){p[metric] = metrics[metric](p,Edges)});
     }
 }
-refreshGraphics = function(){
-    updateMetrics(Papers,Edges); // update citation metrics
-    updateSeedList(); //update HTML table
-    updateConnectedList(forceGraph.sizeMetric);
-    forceGraph.update(Papers,Edges);
-    //timeGraph.update();
-};
 
 //Removes seed status of a paper, deletes all edges to non-seeds and all now unconnected papers
-deleteSeed = function(paper){
+function deleteSeed(paper){
     //Set seed status to false
     paper.seed = false; 
     //Delete edges connecting the paper to non-seeds
@@ -149,5 +146,5 @@ deleteSeed = function(paper){
     Papers = Papers.filter(function(p){
         return (Edges.map(function(e){return e.source}).includes(p) || Edges.map(function(e){return e.target}).includes(p));         
     })
-    refreshGraphics();
+    triggerEvent('seedDeleted')
 };

@@ -1,0 +1,20 @@
+* {
+    font-family: 'Roboto',serif;
+    font-weight:300;
+    min-height: 0;
+    min-width: 0;
+    font-size:100%;
+}
+
+h1 {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 300;
+    line-height: normal;
+    font-size: 26px;
+    margin: .5em;
+}
+
+button{
+    border:none;
+}
