@@ -1,0 +1,49 @@
+.outer-paper-box {
+    width: 99%;
+}
+.inner-paper-box{
+    background-color:#F7F7F7;
+    border: none;
+    margin: .1em;
+}
+.inner-paper-box:hover{
+    background-color:rgb(255, 199, 0)
+}
+.paper-title {
+    margin-left:33px;
+    margin-right:5em;
+    margin-bottom:3em;
+}
+.metric {
+    float:right;
+    position: absolute;
+    bottom: 0em;
+    right: 0em;
+    margin: 1em;
+    color:#FFC700
+}
+.metric-count{
+    color:#BE2121;
+}
+.author-year {
+    text-align: left;
+    margin-left:33px;
+} 
+.open-icon{
+    margin-left:.5em;
+    max-height: 10px;
+}
+
+.inner-paper-box:hover > .metric{
+    color:white;
+}
+
+.inner-paper-box:hover .stroke1 {
+    stroke:white;
+}
+.inner-paper-box:hover .fill1 {
+    fill:white;
+}
+
+
+
