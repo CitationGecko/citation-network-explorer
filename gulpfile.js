@@ -1,14 +1,33 @@
 var gulp = require('gulp');
 var concat = require('gulp-concat');
 
-gulp.task('scripts', function() {
-  return gulp.src(['src/core.js','./src/**/*.js'])
-    .pipe(concat('main.js'))
-    .pipe(gulp.dest('./public/'));
-});
+var paths = {
+  styles: {
+    src: './src/**/*.css',
+  },
+  scripts: {
+    src: ['src/core.js','./src/**/*.js'],
+  },
+  dest: './public/',
+};
 
-gulp.task('styles', function() {
-  return gulp.src('./src/**/*.css')
+function scripts() {
+  return gulp.src(paths.scripts.src)
+    .pipe(concat('main.js'))
+    .pipe(gulp.dest(paths.dest));
+}
+
+function styles() {
+  return gulp.src(paths.styles.src)
     .pipe(concat('styles.css'))
-    .pipe(gulp.dest('./public/'));
-});
+    .pipe(gulp.dest(paths.dest));
+}
+
+function watch() {
+  gulp.watch(paths.scripts.src, scripts);
+  gulp.watch(paths.styles.src, styles);
+}
+
+gulp.task('scripts', scripts);
+gulp.task('styles', styles);
+gulp.task('watch', watch);
