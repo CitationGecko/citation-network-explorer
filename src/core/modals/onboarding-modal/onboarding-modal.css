@@ -57,3 +57,7 @@
 .large-primary-button:hover {
     background: #E2B104;
 }
+
+#onboarding-modal h1 {
+    margin-left:0
+}

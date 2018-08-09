@@ -1,4 +1,4 @@
-d3.select('#add-seeds-modal').select('div').append('button').attr('id','add-by-zotero')
+/* d3.select('#add-seeds-modal').select('div').append('button').attr('id','add-by-zotero')
     .html("<img id='zotero-square' src='images/zotero/zotero2.png'>")
 
 document.getElementById("add-by-zotero").onclick = function() {
@@ -13,7 +13,7 @@ var modal = d3.select('body').append('div').attr('id','zotero-modal').attr('clas
     .append('div').attr('class','modal-content')
     
     modal.append('div').html("<img id='zotero-logo' src='images/zotero/zotero-logo.png'>");
-    modal.append('svg').attr('id','zotero-collections');
+    modal.append('svg').attr('id','zotero-collections'); */
 
 
 var zotero = {
