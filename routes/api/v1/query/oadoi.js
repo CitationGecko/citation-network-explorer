@@ -1,5 +1,5 @@
 var request = require('request');
-var config = require('../../../config');
+var config = require('../../../../config');
 
 module.exports = function (req, res) {
   var doi = req.query.doi;

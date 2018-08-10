@@ -1,9 +1,17 @@
+require('dotenv').config();
+
 var fs = require('fs');
-var _ = require('lodash');
 var express = require('express');
 var bodyParser = require('body-parser');
+var session = require('express-session');
+var config = require('./config');
 
-var appPort = process.argv.slice(2)[0] || 3000;
+var appPort = config.get('app.port');
+var sessionOpts = {
+  secret: config.get('session.secret'),
+  resave: false,
+  saveUninitialized: true
+};
 
 /**
  * Express server scaffolding
@@ -13,6 +21,8 @@ app.disable('x-powered-by');
 app.use(bodyParser.json());
 app.use(bodyParser.text());
 app.use(bodyParser.urlencoded({ extended: false }));
+
+app.use(session(sessionOpts));
 
 /**
  * Main application route
@@ -30,7 +40,8 @@ app.get('/', function (req, res) {
       'Content-Type': 'text/html',
       'Content-Length': contents.length
     });
-    res.end(contents.toString());
+
+    return res.end(contents.toString());
   });
 });
 
@@ -39,30 +50,44 @@ app.get('/', function (req, res) {
  */
 app.use(express.static('public'));
 
+
 /**
- * API: Get citedBy from DynamoDB
+ * AUTH | Zotero
  */
-app.get('/api/v1/getCitedBy', require('./api/v1/getCitingArticles'));
+app.get('/auth/zotero/login', require('./routes/auth/zotero/login'));
+app.get('/auth/zotero/verify', require('./routes/auth/zotero/verify'));
+
 
 /**
-* API: Proxy to OA DOI
-*/
-app.get('/api/v1/query/oadoi', require('./api/v1/query/oadoi'));
-
-/**
- * API: Proxy to Microsoft Academic Graph
+ * USER | Session info getters
  */
-app.post('/api/v1/query/microsoft/search', require('./api/v1/query/microsoft/search'));
+app.get('/user/getAuthInfo', require('./routes/user/getAuthInfo'));
+
 
 /**
- * API: Proxy to OpenCitations sparql
+ * API  | Get citedBy from DynamoDB
  */
-//app.post('/api/v1/query/occ/sparql', require('./api/v1/query/occ/sparql'));
+app.get('/api/v1/getCitedBy', require('./routes/api/v1/getCitingArticles'));
 
 /**
-* API: Mocked response for the client-side refactor
-*/
-app.get('/api/v1/getMockResponse', require('./api/v1/getMockResponse'));
+ * API  | Proxy to OA DOI
+ */
+app.get('/api/v1/query/oadoi', require('./routes/api/v1/query/oadoi'));
+
+/**
+ * API  | Proxy to Microsoft Academic Graph
+ */
+app.post('/api/v1/query/microsoft/search', require('./routes/api/v1/query/microsoft/search'));
+
+/**
+ * API  | Proxy to OpenCitations sparql
+ */
+// app.post('/api/v1/query/occ/sparql', require('./routes/api/v1/query/occ/sparql'));
+
+/**
+ * API  | Mocked response for the client-side refactor
+ */
+app.get('/api/v1/getMockResponse', require('./routes/api/v1/getMockResponse'));
 
 
 /**

@@ -1,8 +1,9 @@
 {
   "extends": "airbnb-base",
   "env": {
-    "node": true,
-    "es6": true
+    "node": false,
+    "browser": true,
+    "es6": false
   },
   "rules": {
     "semi": 2,
@@ -11,7 +12,6 @@
     "prefer-template": 0,
     "prefer-arrow-callback": 0,
     "comma-dangle": 0,
-    "no-path-concat": 1,
     "vars-on-top": 0,
     "func-names": 0,
     "prefer-numeric-literals": 0,
@@ -26,6 +26,17 @@
     "eqeqeq": 1,
     "no-useless-concat": 1,
     "object-curly-newline": 1,
-    "indent": 1
+    "indent": 0,
+    "no-trailing-spaces": 0,
+    "object-curly-spacing": 0,
+    "space-infix-ops": 0,
+    "block-spacing": 0,
+    "comma-spacing": 0,
+    "no-shadow": 0,
+    "quotes": 0,
+    "space-before-blocks": 0,
+    "space-before-function-paren": 0,
+    "no-unused-vars": 1,
+    "semi": 1
   }
 }
