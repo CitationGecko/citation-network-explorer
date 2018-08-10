@@ -6,4 +6,4 @@ dynamo/*.tsv
 package-lock.json
 public/main.js
 public/styles.css
-
+.env
