@@ -1,12 +1,14 @@
 // http://localhost:3000/auth/zotero/login
 const _ = require('lodash');
-const ZoteroEndpoints = require('../../../lib/zotero').endpoints;
-const OAuthClient = require('../../../lib/zotero').OAuthClient;
+const ZoteroAuthLib = require('../../../lib/zotero/auth');
+
+const ZoteroEndpoints = ZoteroAuthLib.endpoints;
+const ZoteroOAuthClient = ZoteroAuthLib.OAuthClient;
 
 function AuthZoteroLoginRoute(req, res) {
   // const opts = { oauth_callback:  };
 
-  return OAuthClient.getOAuthRequestToken(function (err, token, tokenSecret, parsedQueryString) {
+  return ZoteroOAuthClient.getOAuthRequestToken(function (err, token, tokenSecret, parsedQueryString) {
     if (err) {
       return res.send('Couldn\'t obtain valid request token from Zotero.');
     }

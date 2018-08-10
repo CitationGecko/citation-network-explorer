@@ -55,14 +55,16 @@ app.use(express.static('public'));
 /**
  * AUTH | Zotero
  */
-app.get('/auth/zotero/login', require('./routes/auth/zotero/login'));
-app.get('/auth/zotero/verify', require('./routes/auth/zotero/verify'));
+app.get('/services/zotero/auth/login', require('./routes/services/zotero/auth/login'));
+app.get('/services/zotero/auth/verify', require('./routes/services/zotero/auth/verify'));
+
+app.get('/services/zotero/getCollections', require('./routes/services/zotero/getCollections'));
 
 
 /**
  * USER | Session info getters
  */
-app.get('/user/getAuthInfo', require('./routes/user/getAuthInfo'));
+app.get('/services/user/getAuthInfo', require('./routes/services/user/getAuthInfo'));
 
 
 /**

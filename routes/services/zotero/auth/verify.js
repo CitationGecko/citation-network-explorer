@@ -1,6 +1,6 @@
 // http://localhost:3000/auth/zotero/verify
 const _ = require('lodash');
-const OAuthClient = require('../../../lib/zotero').OAuthClient;
+const ZoteroOAuthClient = require('../../../lib/zotero/auth').OAuthClient;
 
 function AuthZoteroVerifyRoute(req, res) {
   const oauthVerifier = req.query.oauth_verifier;
@@ -17,7 +17,7 @@ function AuthZoteroVerifyRoute(req, res) {
     return res.redirect('/auth/zotero/login');
   }
 
-  return OAuthClient.getOAuthAccessToken(requestToken, requestSecret, oauthVerifier, function (err, accessToken, accessTokenSecret, results) {
+  return ZoteroOAuthClient.getOAuthAccessToken(requestToken, requestSecret, oauthVerifier, function (err, accessToken, accessTokenSecret, results) {
     if (err) {
       _.set(req.session, 'zotero', null);
       return res.send('Couldn\'t obtain valid access token from Zotero.');
