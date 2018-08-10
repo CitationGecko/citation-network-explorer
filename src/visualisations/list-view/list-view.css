@@ -17,13 +17,36 @@
 }
 
 .list-footer{
-    height:10%;
+    height:120px;
     bottom: 0px;
     width:100%;
     display: flex;
     align-items: center;
     justify-content: center;
-    position: relative;
+    position: absolute;
+    background: white;
+    flex-flow: column wrap;
+
+}
+
+.list-footer  p {
+    margin: .5em;
+}
+
+.list-footer-btn-group {
+    display: flex;
+
+}
+
+.list-footer-btn-group button {
+    margin: .5em;
+    padding: .8em 1em;
+    border-radius: 50px;
+    outline: none;
+}
+
+.list-footer-btn-group button:nth-child(2) {
+    background: #FFC700;
 }
 
 h1 {
