@@ -19,27 +19,25 @@ function updateTitleSearchResults(results,pageNum,replot){
     document.getElementById('title-search-results').style.width = '70%';
 
     if(replot){
-        d3.select('#title-search-container').selectAll('.outer-paper-box').remove();
+        d3.select('#title-search-container').selectAll('.paper-box').remove();
     }
-    let paperboxes = d3.select('#title-search-container').selectAll('.outer-paper-box')
+    let paperboxes = d3.select('#title-search-container').selectAll('.paper-box')
                      .data(papers,function(d){return d.CellID});
                      //.sort((a,b)=>b.seedsCitedBy<a.seedsCitedBy)
     newpapers = paperboxes.enter()
         .append('div')
-        .attr('class','outer-paper-box panel')
+        .attr('class','paper-box')
     
-    newpapers = newpapers.append('div')
-        .attr('class','inner-paper-box panel')
-    newpapers.append('p').attr('class','paper-title')
+    newpapers.append('div').attr('class','paper-title')
         .html(function(p){
             return(p.OriginalTitle+"<a target='_blank' href='https://doi.org/"+p.DOI+"'>"+mysvg+"</a>")
         })
-    newpapers.append('span').attr('class','author-year')
+    newpapers.append('div').attr('class','author-year')
         .html(function(p){
             return(p.PublishYear)
         })
 
-    newpapers.append('button')
+    newpapers.append('button').attr('class','add-from-search')
         .html('<i class="fa fa-plus" color="green" aria-hidden="true"></i>')
         .on('click',function(p){
             let newSeed = {

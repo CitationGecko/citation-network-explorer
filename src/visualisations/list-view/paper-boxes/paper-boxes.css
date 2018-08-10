@@ -1,18 +1,15 @@
-.outer-paper-box {
-    width: 99%;
-}
-.inner-paper-box{
+.paper-box {
     background-color:#F7F7F7;
     border: none;
-    margin: .1em;
+    margin: .1% 0;
+    padding: 5% 2% 5% 10%;
 }
-.inner-paper-box:hover{
+
+.paper-box:hover{
     background-color:rgb(255, 199, 0)
 }
 .paper-title {
-    margin-left:33px;
-    margin-right:5em;
-    margin-bottom:3em;
+    padding-bottom:1em;
 }
 .metric {
     float:right;
@@ -27,21 +24,21 @@
 }
 .author-year {
     text-align: left;
-    margin-left:33px;
+    padding:.5em oem;
 } 
 .open-icon{
     margin-left:.5em;
-    max-height: 10px;
+    max-height: 1em;
 }
 
-.inner-paper-box:hover > .metric{
+.paper-box:hover > .metric{
     color:white;
 }
 
-.inner-paper-box:hover .stroke1 {
+.paper-box:hover .stroke1 {
     stroke:white;
 }
-.inner-paper-box:hover .fill1 {
+.paper-box:hover .fill1 {
     fill:white;
 }
 

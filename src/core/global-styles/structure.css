@@ -15,9 +15,9 @@ body {
     flex-grow: 1;
 }
 .panel {
-     position: relative;
-     overflow: hidden;
-     background-color: rgb(255, 255, 255);
+    position: relative;
+    overflow: hidden;
+    background-color: rgb(255, 255, 255);
  }
 #logo-panel {
     width: 200px;

@@ -18,10 +18,10 @@ newModule('seedList',{
     methods: {
         refresh: function(){
             var seedpapers = Papers.filter(function(p){return p.seed});
-            var paperbox = d3.select('#seed-paper-container').selectAll('.outer-paper-box')
+            var paperbox = d3.select('#seed-paper-container').selectAll('.paper-box')
                             .data(seedpapers,function(d){return d.ID})
             paperbox.exit().remove()
-            var oldpapers = d3.select('#seed-paper-container').selectAll('.outer-paper-box').select('.inner-paper-box')
+            var oldpapers = d3.select('#seed-paper-container').selectAll('.paper-box')
             
             oldpapers.select('.paper-title').html(function(p){
                 return(p.title+"<a target='_blank' href='https://doi.org/"+p.doi+"'>"+mysvg+"</a>")
@@ -32,16 +32,14 @@ newModule('seedList',{
         
             paperbox = paperbox.enter()
                 .append('div')
-                .attr('class','outer-paper-box panel')
-            paperbox = paperbox.append('div')
-                .attr('class','inner-paper-box panel')
+                .attr('class','paper-box')
                 .on('click',forceGraph.highlightNode)
-                
-            paperbox.append('p').attr('class','paper-title')
+
+            paperbox.append('div').attr('class','paper-title')
                 .html(function(p){
                     return(p.title+"<a target='_blank' href='https://doi.org/"+p.doi+"'>"+mysvg+"</a>")
                 })
-            paperbox.append('p').attr('class','author-year')
+            paperbox.append('div').attr('class','author-year')
                 .html(function(p){
                     if(p.author) {return p.author+' '+p.year}else{return(p.year)}
                 })     
@@ -72,14 +70,14 @@ newModule('connectedList',{
             //Select all non-seeds and sort by metric.
             //Clear old table
             if(replot){
-                d3.select('#connected-paper-container').selectAll('.outer-paper-box').remove();
+                d3.select('#connected-paper-container').selectAll('.paper-box').remove();
             }
-            let paperboxes = d3.select('#connected-paper-container').selectAll('.outer-paper-box')
+            let paperboxes = d3.select('#connected-paper-container').selectAll('.paper-box')
                              .data(nonSeeds,function(d){return d.ID});
                              //.sort((a,b)=>b.seedsCitedBy<a.seedsCitedBy)
             paperboxes.exit().remove();
         
-            oldpapers = d3.select('#connected-paper-container').selectAll('.outer-paper-box').select('.inner-paper-box')
+            oldpapers = d3.select('#connected-paper-container').selectAll('.paper-box')
             oldpapers.select('.paper-title').html(function(p){
                 return(p.title+"<a target='_blank' href='https://doi.org/"+p.doi+"'>"+mysvg+"</a>")
             })
@@ -98,15 +96,13 @@ newModule('connectedList',{
           
             newpapers = paperboxes.enter()
                 .append('div')
-                .attr('class','outer-paper-box panel')
-            newpapers = newpapers.append('div')
-                .attr('class','inner-paper-box panel')
+                .attr('class','paper-box')
                 .on('click',forceGraph.highlightNode)
-            newpapers.append('p').attr('class','paper-title')
+            newpapers.append('div').attr('class','paper-title')
                 .html(function(p){
                     return(p.title+"<a target='_blank' href='https://doi.org/"+p.doi+"'>"+mysvg+"</a>")
                 })
-            newpapers.append('p').attr('class','metric')
+            newpapers.append('div').attr('class','metric')
                 .html(function(p){
 
                     if(!p[metric]){return('')}  
@@ -117,7 +113,7 @@ newModule('connectedList',{
                         return('cites <span class="metric-count">'+p[metric]+'</span> seed papers')
                     }
                 })
-            newpapers.append('p').attr('class','author-year')
+            newpapers.append('div').attr('class','author-year')
                 .html(function(p){
                     if(p.author) {return p.author+' '+p.year}else{return(p.year)}
                 })
