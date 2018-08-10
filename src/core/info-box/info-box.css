@@ -5,8 +5,20 @@
     right:0em;
     bottom:.2em;
     max-width:50%;
-    background-color: rgb(212, 212, 212);
+    background-color: rgb(255, 199, 0);
+    
 }
 .add-seed {
-    text-align: right;
+    position: absolute;
+    right:5px;
+    border:none;
+    background:#383A38;
+    color:white;
+}
+
+#selected-paper-box .stroke1 {
+    stroke:white;
+}
+#selected-paper-box .fill1 {
+    fill:white;
 }

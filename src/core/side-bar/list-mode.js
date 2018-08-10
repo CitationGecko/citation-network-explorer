@@ -2,7 +2,6 @@
 document.getElementById('connected-list').style.display = 'none';
 
 d3.select('#seed-list-button').attr('class','side-bar-button box-toggle-on');
-d3.select('#connected-list-button').attr('class','side-bar-button box-toggle-off');
 
 document.getElementById('seed-list-button').onclick = function(){
     d3.select('#seed-list-button').attr('class','side-bar-button box-toggle-on');
@@ -19,5 +18,5 @@ document.getElementById('connected-list-button').onclick = function(){
     document.getElementById('connected-list').style.display = 'block';
     document.getElementById('seed-list').style.display = 'none';
 
-    connectedList.print('seedsCitedBy',1);
+    connectedList.print('seedsCitedBy',1,true);
 }
