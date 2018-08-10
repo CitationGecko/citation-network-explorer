@@ -142,10 +142,10 @@
         <div id='add-seeds-modal' class='modal'>
             <div class='modal-content'>
                     <div class='large-button-list'>
-                        <button class='zotero-import-button large-secondary-button'>
+                        <button class='zotero-import-button large-secondary-button' onClick='showZotero()'>
                             Import from Zotero
                         </button>
-                        <button class='mendeley-import-button large-secondary-button'>
+                        <button class='mendeley-import-button large-secondary-button' onClick='showZotero()'>
                             Import from Mendeley
                         </button>
                         <button class='upload-bibtex-button large-secondary-button'>
@@ -159,82 +159,92 @@
         </div>
         <div id='doi-input-modal' class='modal'>
             <div class='modal-content'>
-                Enter DOI: <input id='doi-input' type="text"><div id='doi-input-loader' class='loader'></div></input>
+                <h1>DOI Input</h1>
+                <div>
+                    Enter DOI: <input id='doi-input' type="text"><div id='doi-input-loader' class='loader'></div></input>
+                </div>
 
             </div>
         </div>
         <div id='title-input-modal' class='modal'>
-                <div id='title-search-results' class='modal-content'>
-                    <i class='fa fa-search'></i>Search by Title: <input id='title-input' type="text"><div id='titleInputLoader' class='loader'></div></input>
-                    <div id='title-search-container'>
-                        
-                    </div>
+            <div id='title-search-results' class='modal-content'>
+                <h1>Search for seed papers</h1>
+                <div id='title-search-bar'>
+                    <span>Search by Title:</span><input id='title-input' type="text"><div id='titleInputLoader' class='loader'></div></input>
                 </div>
+                <div id='title-search-container'>
+                    
+                </div>
+            </div>
         </div>
         <div id='upload-bibtex-modal' class='modal'>
-                <div class='modal-content'>
-                    add seeds from bibTex: <input type="file" id="files" name="files[]" multiple /><output id="list"></output><button id='demo-button'>DEMO</button>
+            <div class='modal-content'>
+                <h1>Upload BibTex</h1>
+                <div>
+                    <input type="file" id="files" name="files[]" multiple /><output id="list"></output>
                 </div>
+            </div>
         </div>
 
         <div id='onboarding-modal' class='modal'>
-                <div class='modal-content' id='onboarding-1'>
-                    <h1> Welcome to Gecko </h1>
-                    <p>
-                        Gecko is here to help you find the most relevant papers to your research and give you a more complete sense of the research landscape.
-                    </p>
-                    <p>
-                        Start from a small set of 'seed papers' that define an area you are interested. Gecko will search the citation network for connected papers allowing you to quickly identify important papers you may have missed.
-                    </p>
-                    <div class='modal-footer'>
-                        <button class='modal-btn' onClick='showAddInitialSeed()'>
-                            <span> Start discovering papers! </span>
-                        </button>
-                    </div>
+            <div class='modal-content' id='onboarding-1'>
+                <h1> Welcome to Gecko </h1>
+                <p>
+                    Gecko is here to help you find the most relevant papers to your research and give you a more complete sense of the research landscape.
+                </p>
+                <p>
+                    Start from a small set of 'seed papers' that define an area you are interested. Gecko will search the citation network for connected papers allowing you to quickly identify important papers you may have missed.
+                </p>
+                <div class='modal-footer'>
+                    <button class='modal-btn' onClick='showAddInitialSeed()'>
+                        <span> Start discovering papers! </span>
+                    </button>
                 </div>
+                <div><button id='demo-button'>show me an example!</button></div>
+            </div>
 
-                <div class='modal-content' id='onboarding-2'>
-                    <h1> Add seed papers... </h1>
-                    <p>
-                        The first step is to pick the seed papers that define your area of interest. There are a number of ways to do this....
-                    </p>
-                    <div class='large-button-list'>
-                        <button class='large-secondary-button' onClick='showZotero()'>
-                            Import from Zotero
-                        </button>
-                        <button class='mendeley-import-button large-secondary-button'>
-                            Import from Mendeley
-                        </button>
-                        <button class='upload-bibtex-button large-secondary-button'>
-                            Import from BibTex
-                        </button>
-                        <button class='seed-search-button large-secondary-button'>
-                            Search for Papers
-                        </button>
-                    </div>
+            <div class='modal-content' id='onboarding-2'>
+                <h1> Add seed papers... </h1>
+                <p>
+                    The first step is to pick the seed papers that define your area of interest. There are a number of ways to do this....
+                </p>
+                <div class='large-button-list'>
+                    <button class='large-secondary-button' onClick='showZotero()'>
+                        Import from Zotero
+                    </button>
+                    <button class='mendeley-import-button large-secondary-button' onClick='showZotero()'>
+                        Import from Mendeley
+                    </button>
+                    <button class='upload-bibtex-button large-secondary-button' onclick>
+                        Import from BibTex
+                    </button>
+                    <button class='seed-search-button large-secondary-button'>
+                        Search for Papers
+                    </button>
                 </div>
-                <div class='modal-content' id='onboarding-3'>
-                    <img src='images/onboarding/zotero-mock.svg'/>
-                    <div class='modal-footer'>
-                        <button class='modal-btn' onClick='showSeedType()'>
-                            <span> Add as seed papers </span>
-                        </button>
-                    </div>
+            </div>
+            <div class='modal-content' id='onboarding-3'>
+                Coming soon...
+                <div class='modal-footer'>
+                    <button class='modal-btn' onClick='showAddInitialSeed()'>
+                        <span> Use another method </span>
+                    </button>
                 </div>
+            </div>
 
-                <div class='modal-content' id='onboarding-4'>
-                    <h1> What kind of papers are you looking for? </h1>
-                    <div class='large-button-list'>
-                        <button class='large-secondary-button' onClick='startDemo()'>
-                            <h1> Papers Cited-By Seed Papers </h1>
-                            <p> Papers cited by a lot of your seed papers are likely to be important older papers, perhaps foundational to the field.</p>
-                        </button>
-                        <button class='large-primary-button' onClick='startDemo()'>
-                            <h1> Papers Citing Seed Papers </h1>
-                            <p> Papers citing a lot of your seed papers are newer papers that are in your area of interest. </p>
-                        </button>
-                    </div>
+            <div class='modal-content' id='onboarding-4'>
+                <h1> What kind of papers are you looking for? </h1>
+                <div class='large-button-list'>
+                    <button class='large-secondary-button' onClick='startDemo()'>
+                        <h1> Papers Cited-By Seed Papers </h1>
+                        <p> Papers cited by a lot of your seed papers are likely to be important older papers, perhaps foundational to the field.</p>
+                    </button>
+                    <button class='large-primary-button' onClick='startDemo()'>
+                        <h1> Papers Citing Seed Papers </h1>
+                        <p> Papers citing a lot of your seed papers are newer papers that are in your area of interest. </p>
+                    </button>
                 </div>
+            </div>
         </div>
         
         <script src = "https://d3js.org/d3.v4.js"></script>

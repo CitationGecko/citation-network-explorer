@@ -1,7 +1,7 @@
 .paper-box {
     background-color:#F7F7F7;
     border: none;
-    margin: .1% 0;
+    margin: .1em 0;
     padding: 5% 2% 5% 10%;
 }
 
@@ -13,14 +13,16 @@
 }
 .metric {
     float:right;
-    position: absolute;
-    bottom: 0em;
+    position: relative;
+    bottom: 1em;
     right: 0em;
     margin: 1em;
-    color:#FFC700
+    color:black;
+    font-weight:400;
 }
 .metric-count{
     color:#BE2121;
+    font-weight:400;
 }
 .author-year {
     text-align: left;
@@ -29,10 +31,6 @@
 .open-icon{
     margin-left:.5em;
     max-height: 1em;
-}
-
-.paper-box:hover > .metric{
-    color:white;
 }
 
 .paper-box:hover .stroke1 {

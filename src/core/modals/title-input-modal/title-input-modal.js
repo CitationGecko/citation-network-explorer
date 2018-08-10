@@ -38,7 +38,7 @@ function updateTitleSearchResults(results,pageNum,replot){
         })
 
     newpapers.append('button').attr('class','add-from-search')
-        .html('<i class="fa fa-plus" color="green" aria-hidden="true"></i>')
+        .html('Add as seed')
         .on('click',function(p){
             let newSeed = {
                 title: p.OriginalTitle,
