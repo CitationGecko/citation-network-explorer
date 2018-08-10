@@ -3,9 +3,15 @@ require('dotenv').config();
 var fs = require('fs');
 var express = require('express');
 var bodyParser = require('body-parser');
+var session = require('express-session');
 var config = require('./config');
 
 var appPort = config.get('app.port');
+var sessionOpts = {
+  secret: config.get('session.secret'),
+  resave: false,
+  saveUninitialized: true
+};
 
 /**
  * Express server scaffolding
@@ -15,6 +21,8 @@ app.disable('x-powered-by');
 app.use(bodyParser.json());
 app.use(bodyParser.text());
 app.use(bodyParser.urlencoded({ extended: false }));
+
+app.use(session(sessionOpts));
 
 /**
  * Main application route
@@ -32,7 +40,8 @@ app.get('/', function (req, res) {
       'Content-Type': 'text/html',
       'Content-Length': contents.length
     });
-    res.end(contents.toString());
+
+    return res.end(contents.toString());
   });
 });
 
@@ -40,6 +49,14 @@ app.get('/', function (req, res) {
  * Serve static files from 'public' directory
  */
 app.use(express.static('public'));
+
+
+/**
+ * Zotero Authentication
+ */
+app.get('/auth/zotero/login', require('./routes/auth/zotero/login'));
+app.get('/auth/zotero/verify', require('./routes/auth/zotero/verify'));
+
 
 /**
  * API: Get citedBy from DynamoDB
@@ -56,22 +73,15 @@ app.get('/api/v1/query/oadoi', require('./routes/api/v1/query/oadoi'));
  */
 app.post('/api/v1/query/microsoft/search', require('./routes/api/v1/query/microsoft/search'));
 
-
-/**
- * Zotero OAuth callback URL
- */
-app.get('/auth/zotero/login', require('./routes/auth/zotero/login'));
-app.get('/auth/zotero/verify', require('./routes/auth/zotero/verify'));
-
 /**
  * API: Proxy to OpenCitations sparql
  */
-//app.post('/api/v1/query/occ/sparql', require('./routes/api/v1/query/occ/sparql'));
+// app.post('/api/v1/query/occ/sparql', require('./routes/api/v1/query/occ/sparql'));
 
 /**
 * API: Mocked response for the client-side refactor
 */
-app.get('/api/v1/getMockResponse', require('./api/v1/getMockResponse'));
+app.get('/api/v1/getMockResponse', require('./routes/api/v1/getMockResponse'));
 
 
 /**

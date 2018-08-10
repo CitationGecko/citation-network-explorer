@@ -1,26 +1,37 @@
 // http://localhost:3000/auth/zotero/verify
-
-const TokenStorage = require('./_tokenStorage');
+const _ = require('lodash');
 const OAuthClient = require('../../../lib/zotero').OAuthClient;
 
-module.exports = function (req, res) {
+function AuthZoteroVerifyRoute(req, res) {
   const oauthVerifier = req.query.oauth_verifier;
   if (!oauthVerifier) {
     return res.send('Invalid verifier signature.');
   }
 
-  const requestToken = TokenStorage.get('requestToken');
-  const requestSecret = TokenStorage.get('requestSecret');
-  TokenStorage.set('oauthVerifier', oauthVerifier);
+  _.set(req.session, 'zotero.oauthVerifier', oauthVerifier);
 
-  OAuthClient.getOAuthAccessToken(requestToken, requestSecret, oauthVerifier, function(err, oauth_access_token, oauth_access_token_secret, results) {
+  const requestToken = _.get(req.session, 'zotero.requestToken');
+  const requestSecret = _.get(req.session, 'zotero.requestSecret');
+
+  if (!requestToken || !requestSecret) {
+    return res.redirect('/auth/zotero/login');
+  }
+
+  return OAuthClient.getOAuthAccessToken(requestToken, requestSecret, oauthVerifier, function (err, accessToken, accessTokenSecret, results) {
     if (err) {
-      return res.send('Couldn\'t obtain valid access token.');
+      _.set(req.session, 'zotero', {});
+      return res.send('Couldn\'t obtain valid access token from Zotero.');
     }
 
-    TokenStorage.set('accessToken', oauth_access_token);
-    TokenStorage.debug();
+    _.set(req.session, 'zotero.accessToken', accessToken);
+    if (typeof results === 'object') {
+      _.set(req.session, 'zotero.userID', results.userID);
+      _.set(req.session, 'zotero.username', results.username);
+    }
 
-    res.redirect('/');
+    // console.log('req.session', req.session);
+    return res.redirect('/');
   });
 }
+
+module.exports = AuthZoteroVerifyRoute;

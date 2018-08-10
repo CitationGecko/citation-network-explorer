@@ -4,7 +4,10 @@ const parsedPort = parseInt(process.env.APP_PORT, 10);
 const config = {
   app: {
     url: process.env.APP_URL || 'http://localhost:3000',
-    port: Number.isInteger(parsedPort) ? parsedPort : 3000
+    port: Number.isInteger(parsedPort) ? parsedPort : 3000,
+  },
+  session: {
+    secret: process.env.SESSION_SECRET || 'D3f4uL7 5355ion 53crET p#r4se'
   },
   credentials: {
     aws: {

@@ -3,7 +3,8 @@
     "version": "0.1.0",
     "scripts": {
         "start": "node server.js",
-        "lint": "./node_modules/.bin/eslint ."
+        "lint": "./node_modules/.bin/eslint .",
+        "postinstall": "gulp scripts && gulp styles"
     },
     "main": "server.js",
     "engine": {
@@ -15,6 +16,7 @@
         "body-parser": "^1.18.2",
         "dotenv": "^6.0.0",
         "express": "^4.16.3",
+        "express-session": "^1.15.6",
         "lodash": "^4.17.10",
         "oauth": "^0.9.15",
         "request": "^2.85.0"
