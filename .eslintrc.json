@@ -7,7 +7,7 @@
   "rules": {
     "semi": 2,
     "no-console": 0,
-    "no-var": 0,
+    "no-var": 1,
     "prefer-template": 0,
     "prefer-arrow-callback": 0,
     "comma-dangle": 0,
@@ -26,6 +26,7 @@
     "eqeqeq": 1,
     "no-useless-concat": 1,
     "object-curly-newline": 1,
-    "indent": 1
+    "indent": 1,
+    "arrow-body-style": 0
   }
 }

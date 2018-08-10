@@ -1,4 +1,5 @@
 const _ = require('lodash');
+
 const parsedPort = parseInt(process.env.APP_PORT, 10);
 
 const config = {
