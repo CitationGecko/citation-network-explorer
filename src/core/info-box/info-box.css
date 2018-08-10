@@ -9,11 +9,13 @@
     
 }
 .add-seed {
-    position: absolute;
     right:5px;
     border:none;
     background:#383A38;
     color:white;
+    float: right;
+    font-size: 16px;
+    height: 40px;
 }
 
 #selected-paper-box .stroke1 {
