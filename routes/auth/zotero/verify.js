@@ -19,7 +19,7 @@ function AuthZoteroVerifyRoute(req, res) {
 
   return OAuthClient.getOAuthAccessToken(requestToken, requestSecret, oauthVerifier, function (err, accessToken, accessTokenSecret, results) {
     if (err) {
-      _.set(req.session, 'zotero', {});
+      _.set(req.session, 'zotero', null);
       return res.send('Couldn\'t obtain valid access token from Zotero.');
     }
 

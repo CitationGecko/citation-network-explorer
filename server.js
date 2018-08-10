@@ -52,35 +52,41 @@ app.use(express.static('public'));
 
 
 /**
- * Zotero Authentication
+ * AUTH | Zotero
  */
 app.get('/auth/zotero/login', require('./routes/auth/zotero/login'));
 app.get('/auth/zotero/verify', require('./routes/auth/zotero/verify'));
 
 
 /**
- * API: Get citedBy from DynamoDB
+ * USER | Session info getters
+ */
+app.get('/user/getAuthInfo', require('./routes/user/getAuthInfo'));
+
+
+/**
+ * API  | Get citedBy from DynamoDB
  */
 app.get('/api/v1/getCitedBy', require('./routes/api/v1/getCitingArticles'));
 
 /**
-* API: Proxy to OA DOI
-*/
+ * API  | Proxy to OA DOI
+ */
 app.get('/api/v1/query/oadoi', require('./routes/api/v1/query/oadoi'));
 
 /**
- * API: Proxy to Microsoft Academic Graph
+ * API  | Proxy to Microsoft Academic Graph
  */
 app.post('/api/v1/query/microsoft/search', require('./routes/api/v1/query/microsoft/search'));
 
 /**
- * API: Proxy to OpenCitations sparql
+ * API  | Proxy to OpenCitations sparql
  */
 // app.post('/api/v1/query/occ/sparql', require('./routes/api/v1/query/occ/sparql'));
 
 /**
-* API: Mocked response for the client-side refactor
-*/
+ * API  | Mocked response for the client-side refactor
+ */
 app.get('/api/v1/getMockResponse', require('./routes/api/v1/getMockResponse'));
 
 
