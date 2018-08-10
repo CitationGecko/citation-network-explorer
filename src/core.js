@@ -148,3 +148,24 @@ function deleteSeed(paper){
     })
     triggerEvent('seedDeleted')
 };
+
+function printPaperCards(paperbox,seed){
+    paperbox.select('.paper-title').html(function(p){
+        return(p.title+"<a target='_blank' href='https://doi.org/"+p.doi+"'>"+mysvg+"</a>")
+    })
+
+    if(!seed){
+        paperbox.select('.metric').html(function(p){
+            if(!p[metric]){return('')}  
+            if(metric=='seedsCitedBy'){
+                return('cited by <span class="metric-count">'+p[metric]+'</span> seed papers')
+            } 
+            if(metric=='seedsCited'){
+                return('cites <span class="metric-count">'+p[metric]+'</span> seed papers')
+            }
+        })
+    }
+    paperbox.select('.author-year').html(function(p){
+        if(p.author) {return p.author+' '+p.year}else{return(p.year)}
+    })
+}

@@ -27,6 +27,18 @@ function updateTitleSearchResults(results,pageNum,replot){
     newpapers = paperboxes.enter()
         .append('div')
         .attr('class','outer-paper-box panel')
+    
+    newpapers = newpapers.append('div')
+        .attr('class','inner-paper-box panel')
+    newpapers.append('p').attr('class','paper-title')
+        .html(function(p){
+            return(p.title+"<a target='_blank' href='https://doi.org/"+p.doi+"'>"+mysvg+"</a>")
+        })
+    newpapers.append('p').attr('class','author-year')
+        .html(function(p){
+            if(p.author) {return p.author+' '+p.year}else{return(p.year)}
+        })     
+
     newpapers.append('button').attr('class','delete-seed')
         .html('<i class="fa fa-plus" color="green" aria-hidden="true"></i>')
         .on('click',function(p){
@@ -38,21 +50,8 @@ function updateTitleSearchResults(results,pageNum,replot){
                 microsoftID: p.CellID,
             };
             addPaper(newSeed,true);
-        })
-    newpapers = newpapers.append('div')
-        .attr('class','inner-paper-box panel')
-    newpapers.append('p').attr('class','paper-title')
-        .html(function(p){
-            return(p.OriginalTitle)
-        })
-    newpapers.append('p').attr('class','author-year')
-        .html(function(p){
-            if(p.author) {return p.author+' '+p.year}else{return(p.year)}
-        })
-    newpapers.append('p').attr('class','doi-link')
-        .html(function(p){
-            return("<a target='_blank' href='https://doi.org/"+p.DOI+"'>"+p.DOI+"</a>")
-        })
+    })
+    
 
     d3.select('#more-button2').remove();
     d3.select('#title-search-container').append('div')

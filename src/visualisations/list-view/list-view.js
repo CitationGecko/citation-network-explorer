@@ -22,11 +22,9 @@ newModule('seedList',{
                             .data(seedpapers,function(d){return d.ID})
             paperbox.exit().remove()
             var oldpapers = d3.select('#seed-paper-container').selectAll('.outer-paper-box').select('.inner-paper-box')
+            
             oldpapers.select('.paper-title').html(function(p){
                 return(p.title+"<a target='_blank' href='https://doi.org/"+p.doi+"'>"+mysvg+"</a>")
-            })
-            oldpapers.select('.metric').html(function(p){
-                return(p[metric]?p[metric]:'0')
             })
             oldpapers.select('.author-year').html(function(p){
                 if(p.author) {return p.author+' '+p.year}else{return(p.year)}
@@ -38,6 +36,7 @@ newModule('seedList',{
             paperbox = paperbox.append('div')
                 .attr('class','inner-paper-box panel')
                 .on('click',forceGraph.highlightNode)
+                
             paperbox.append('p').attr('class','paper-title')
                 .html(function(p){
                     return(p.title+"<a target='_blank' href='https://doi.org/"+p.doi+"'>"+mysvg+"</a>")
