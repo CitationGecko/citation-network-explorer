@@ -141,9 +141,24 @@
         </div>
         <div id='add-seeds-modal' class='modal'>
             <div class='modal-content'>
-                <button id='add-by-doi'>add by DOI</button>
-                <button id='search-by-title'>search by title</button>
-                <button id='upload-bibtex'>upload BibTex</button>
+                <h1> Add seed papers... </h1>
+                    <p>
+                        The first step is to pick the seed papers that define your area of interest. There are a number of ways to do this....
+                    </p>
+                    <div class='large-button-list'>
+                        <button class='large-secondary-button' onClick='showZotero()'>
+                            Import from Zotero
+                        </button>
+                        <button class='large-secondary-button'>
+                            Import from Mendeley
+                        </button>
+                        <button id= 'upload-bibtex' class='large-secondary-button'>
+                            Import from BibTex
+                        </button>
+                        <button id='search-by-title' class='large-secondary-button'>
+                            Search for Papers
+                        </button>
+                    </div>
             </div>
         </div>
         <div id='doi-input-modal' class='modal'>
@@ -203,7 +218,7 @@
                     </div>
                 </div>
                 <div class='modal-content' id='onboarding-3'>
-                    <img src='images/onboarding/zotero.png'/>
+                    <img src='images/onboarding/zotero-mock.svg'/>
                     <div class='modal-footer'>
                         <button class='modal-btn' onClick='showSeedType()'>
                             <span> Add as seed papers </span>
@@ -214,7 +229,7 @@
                 <div class='modal-content' id='onboarding-4'>
                     <h1> What kind of papers are you looking for? </h1>
                     <div class='large-button-list'>
-                        <button class='large-secondary-button'>
+                        <button class='large-secondary-button' onClick='startDemo()'>
                             <h1> Papers Cited-By Seed Papers </h1>
                             <p> Papers cited by a lot of your seed papers are likely to be important older papers, perhaps foundational to the field.</p>
                         </button>

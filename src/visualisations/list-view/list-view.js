@@ -55,7 +55,7 @@ newModule('connectedList',{
         newEdges:{
             listening: true,
             action: function(){
-                connectedList.print(forceGraph.sizeMetric,1)
+                connectedList.print(forceGraph.sizeMetric,1,true)
             }
         },
         paperUpdate:{
