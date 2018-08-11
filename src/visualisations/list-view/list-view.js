@@ -36,7 +36,11 @@ newModule('seedList',{
             var newpapers = paperboxes.enter()
                 .append('div')
                 .attr('class','paper-box')
-                .on('click',forceGraph.highlightNode)
+                .on('click',function(p){
+                    forceGraph.highlightNode(p)
+                    d3.selectAll('.paper-box').classed('selected-paper',false)
+                    d3.select(this).classed('selected-paper',true)
+                })
 
             newpapers.append('div').attr('class','paper-title')
                 .html(function(p){
@@ -108,6 +112,8 @@ newModule('connectedList',{
                 .attr('class','paper-box')
                 .on('click',function(p){
                     forceGraph.highlightNode(p)
+                    d3.selectAll('.paper-box').classed('selected-paper',false)
+                    d3.select(this).classed('selected-paper',true)
                     d3.select('#make-seed').on('click',function(){makeSeed(p)})
                 })
             newpapers.append('div').attr('class','paper-title')

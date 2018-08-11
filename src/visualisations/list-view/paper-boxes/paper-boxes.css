@@ -4,10 +4,6 @@
     margin: .1em 0;
     padding: 5% 2% 5% 10%;
 }
-
-.paper-box:hover{
-    background-color:rgb(255, 199, 0)
-}
 .paper-title {
     padding-bottom:.2em;
 }
@@ -37,12 +33,25 @@
     max-height: 1em;
 }
 
+/* .paper-box:hover{
+    background-color:rgb(255, 199, 0)
+}
+
 .paper-box:hover .stroke1 {
     stroke:white;
 }
 .paper-box:hover .fill1 {
     fill:white;
-}
+} */
 
+.selected-paper {
+    background-color:rgb(255, 199, 0)
+}
+.selected-paper .stroke1 {
+    stroke:white;
+}
+.selected-paper .fill1 {
+    fill:white;
+}
 
 
