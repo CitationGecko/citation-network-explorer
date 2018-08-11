@@ -8,10 +8,10 @@ function AuthZoteroVerifyRoute(req, res) {
     return res.send('Invalid verifier signature.');
   }
 
-  _.set(req.session, 'zotero.oauthVerifier', oauthVerifier);
+  _.set(req.session, 'auth.zotero.oauthVerifier', oauthVerifier);
 
-  const requestToken = _.get(req.session, 'zotero.requestToken');
-  const requestSecret = _.get(req.session, 'zotero.requestSecret');
+  const requestToken = _.get(req.session, 'auth.zotero.requestToken');
+  const requestSecret = _.get(req.session, 'auth.zotero.requestSecret');
 
   if (!requestToken || !requestSecret) {
     return res.redirect('/auth/zotero/login');
@@ -19,14 +19,14 @@ function AuthZoteroVerifyRoute(req, res) {
 
   return ZoteroOAuthClient.getOAuthAccessToken(requestToken, requestSecret, oauthVerifier, function (err, accessToken, accessTokenSecret, results) {
     if (err) {
-      _.set(req.session, 'zotero', null);
+      _.set(req.session, 'auth.zotero', null);
       return res.send('Couldn\'t obtain valid access token from Zotero.');
     }
 
-    _.set(req.session, 'zotero.accessToken', accessToken);
+    _.set(req.session, 'auth.zotero.accessToken', accessToken);
     if (typeof results === 'object') {
-      _.set(req.session, 'zotero.userID', results.userID);
-      _.set(req.session, 'zotero.username', results.username);
+      _.set(req.session, 'auth.zotero.userID', results.userID);
+      _.set(req.session, 'auth.zotero.username', results.username);
     }
 
     // console.log('req.session', req.session);

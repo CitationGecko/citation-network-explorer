@@ -1,9 +1,9 @@
-const crossref = require('../../../../lib/data/crossref');
+const CrossRef = require('../../../../lib/data/crossref');
 
 module.exports = function (req, res) {
   const doi = req.query.doi;
 
-  crossref(doi, function (err, body) {
+  CrossRef.getByDOI(doi, function (err, body) {
     if (err) {
       return res.json({ success: false, error: err });
     }

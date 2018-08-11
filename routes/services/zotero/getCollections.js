@@ -3,8 +3,8 @@ const ZoteroCollections = require('../../../lib/zotero/collections');
 
 function ZoteroGetCollectionsRoute(req, res) {
   const opts = {
-    userId: _.get(req.session, 'zotero.userID'),
-    userApiKey: _.get(req.session, 'zotero.accessToken')
+    userId: _.get(req.session, 'auth.zotero.userID'),
+    userApiKey: _.get(req.session, 'auth.zotero.accessToken')
   };
 
   if (!opts.userId || !opts.userApiKey) {

@@ -5,8 +5,8 @@ function ZoteroGetCollectionsRoute(req, res) {
   const collectionId = req.query.collectionId;
 
   const opts = {
-    userId: _.get(req.session, 'zotero.userID'),
-    userApiKey: _.get(req.session, 'zotero.accessToken')
+    userId: _.get(req.session, 'auth.zotero.userID'),
+    userApiKey: _.get(req.session, 'auth.zotero.accessToken')
   };
 
   if (!collectionId) {

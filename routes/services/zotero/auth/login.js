@@ -17,8 +17,8 @@ function AuthZoteroLoginRoute(req, res) {
       return res.send('Couldn\'t get OAuth callback confirmation from Zotero.');
     }
 
-    _.set(req.session, 'zotero.requestToken', token);
-    _.set(req.session, 'zotero.requestSecret', tokenSecret);
+    _.set(req.session, 'auth.zotero.requestToken', token);
+    _.set(req.session, 'auth.zotero.requestSecret', tokenSecret);
 
     const redirectUrl = `${ZoteroEndpoints.authorize}?oauth_token=${token}`;
 
