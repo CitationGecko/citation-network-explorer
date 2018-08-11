@@ -18,31 +18,37 @@ newModule('seedList',{
     methods: {
         refresh: function(){
             var seedpapers = Papers.filter(function(p){return p.seed});
-            var paperbox = d3.select('#seed-paper-container').selectAll('.paper-box')
+            var paperboxes = d3.select('#seed-paper-container').selectAll('.paper-box')
                             .data(seedpapers,function(d){return d.ID})
-            paperbox.exit().remove()
+            paperboxes.exit().remove()
             var oldpapers = d3.select('#seed-paper-container').selectAll('.paper-box')
             
             oldpapers.select('.paper-title').html(function(p){
                 return(p.title+"<a target='_blank' href='https://doi.org/"+p.doi+"'>"+mysvg+"</a>")
             })
             oldpapers.select('.author-year').html(function(p){
-                if(p.author) {return p.author+' '+p.year}else{return(p.year)}
+                if(p.author) {return p.author+' ('+p.year+')'}else{return(p.year)}
+            })
+            oldpapers.select('.journal').html(function(p){
+                if(p.journal) {return p.journal}else{return('')}
             })
         
-            paperbox = paperbox.enter()
+            var newpapers = paperboxes.enter()
                 .append('div')
                 .attr('class','paper-box')
                 .on('click',forceGraph.highlightNode)
 
-            paperbox.append('div').attr('class','paper-title')
+            newpapers.append('div').attr('class','paper-title')
                 .html(function(p){
                     return(p.title+"<a target='_blank' href='https://doi.org/"+p.doi+"'>"+mysvg+"</a>")
                 })
-            paperbox.append('div').attr('class','author-year')
+            newpapers.append('div').attr('class','author-year')
                 .html(function(p){
-                    if(p.author) {return p.author+' '+p.year}else{return(p.year)}
-                })     
+                    if(p.author) {return p.author+' ('+p.year+')'}else{return(p.year)}
+                })  
+            newpapers.append('div').attr('class','journal').html(function(p){
+                    if(p.journal) {return p.journal}else{return('')}
+                })   
         }
     }
 })
@@ -77,7 +83,7 @@ newModule('connectedList',{
                              //.sort((a,b)=>b.seedsCitedBy<a.seedsCitedBy)
             paperboxes.exit().remove();
         
-            oldpapers = d3.select('#connected-paper-container').selectAll('.paper-box')
+            var oldpapers = d3.select('#connected-paper-container').selectAll('.paper-box')
             oldpapers.select('.paper-title').html(function(p){
                 return(p.title+"<a target='_blank' href='https://doi.org/"+p.doi+"'>"+mysvg+"</a>")
             })
@@ -91,10 +97,13 @@ newModule('connectedList',{
                 }
             })
             oldpapers.select('.author-year').html(function(p){
-                if(p.author) {return p.author+' '+p.year}else{return(p.year)}
+                if(p.author) {return p.author+' ('+p.year+')'}else{return(p.year)}
+            })
+            oldpapers.select('.journal').html(function(p){
+                if(p.journal) {return p.journal}else{return('')}
             })
           
-            newpapers = paperboxes.enter()
+            var newpapers = paperboxes.enter()
                 .append('div')
                 .attr('class','paper-box')
                 .on('click',function(p){
@@ -105,6 +114,13 @@ newModule('connectedList',{
                 .html(function(p){
                     return(p.title+"<a target='_blank' href='https://doi.org/"+p.doi+"'>"+mysvg+"</a>")
                 })
+            
+         
+            newpapers.append('div').attr('class','author-year')
+                .html(function(p){
+                    if(p.author) {return p.author+' ('+p.year+')'}else{return(p.year)}
+                })  
+
             newpapers.append('div').attr('class','metric')
                 .html(function(p){
 
@@ -116,10 +132,11 @@ newModule('connectedList',{
                         return('cites <span class="metric-count">'+p[metric]+'</span> seed papers')
                     }
                 })
-            newpapers.append('div').attr('class','author-year')
-                .html(function(p){
-                    if(p.author) {return p.author+' '+p.year}else{return(p.year)}
-                })
+            newpapers.append('div').attr('class','journal').html(function(p){
+                    if(p.journal) {return p.journal}else{return('')}
+                })  
+                
+            
            
             d3.select('#more-button').remove();
             d3.select('#connected-paper-container').append('div')

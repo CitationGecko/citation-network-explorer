@@ -81,11 +81,27 @@
                 </div>
                 <div id='selected-paper-box' class='panel'>
                     <div class='paper-title'></div>
+                    <button type='button' class='add-seed'>Add as seed</button>
                     <div class='author-year'></div>
-                    <button type='button' class='add-seed'>Make Seed</button>
+                    <div class='journal'></div>
+                    
             </div>
         </div>
-
+        <div id='coming-soon' class='modal' style="display:none">
+                <div class='modal-content'>
+                        Feature Coming soon...
+                </div>
+            </div>
+        <div id='import-coming-soon' class='modal' style="display:none">
+            <div class='modal-content'>
+                    Coming soon...
+                    <div class='modal-footer'>
+                        <button class='pick-again modal-btn' onClick='showAddInitialSeed()'>
+                            <span> Use another method </span>
+                        </button>
+                    </div>
+            </div>
+        </div>
         <div id='help-modal' class='modal'>
             <div class='modal-content'>
                 <h2> Welcome to Citation Gecko!</h2>
@@ -141,10 +157,10 @@
         <div id='add-seeds-modal' class='modal'>
             <div class='modal-content'>
                     <div class='large-button-list'>
-                        <button class='zotero-import-button large-secondary-button' onClick='showZotero()'>
+                        <button class='zotero-import-button large-secondary-button'>
                             Import from Zotero
                         </button>
-                        <button class='mendeley-import-button large-secondary-button' onClick='showZotero()'>
+                        <button class='mendeley-import-button large-secondary-button'>
                             Import from Mendeley
                         </button>
                         <button class='upload-bibtex-button large-secondary-button'>
@@ -152,6 +168,9 @@
                         </button>
                         <button class='seed-search-button large-secondary-button'>
                             Search for Papers
+                        </button>
+                        <button class='doi-input-button large-secondary-button'>
+                            Enter DOIs
                         </button>
                     </div>
             </div>
@@ -172,8 +191,13 @@
                     <span>Search by Title:</span><input id='title-input' type="text"><div id='titleInputLoader' class='loader'></div></input>
                 </div>
                 <div id='title-search-container'>
-                    
+                    Coming soon...
                 </div>
+                <div class='modal-footer'>
+                        <button class='pick-again modal-btn' onClick='showAddInitialSeed()'>
+                            <span> Use another method </span>
+                        </button>
+                    </div>
             </div>
         </div>
         <div id='upload-bibtex-modal' class='modal'>
@@ -208,25 +232,17 @@
                     The first step is to pick the seed papers that define your area of interest. There are a number of ways to do this....
                 </p>
                 <div class='large-button-list'>
-                    <button class='large-secondary-button' onClick='showZotero()'>
+                    <button class='zotero-import-button large-secondary-button'>
                         Import from Zotero
                     </button>
-                    <button class='mendeley-import-button large-secondary-button' onClick='showZotero()'>
+                    <button class='mendeley-import-button large-secondary-button'>
                         Import from Mendeley
                     </button>
-                    <button class='upload-bibtex-button large-secondary-button' onclick>
+                    <button class='upload-bibtex-button large-secondary-button'>
                         Import from BibTex
                     </button>
                     <button class='seed-search-button large-secondary-button'>
                         Search for Papers
-                    </button>
-                </div>
-            </div>
-            <div class='modal-content' id='onboarding-3'>
-                Coming soon...
-                <div class='modal-footer'>
-                    <button class='modal-btn' onClick='showAddInitialSeed()'>
-                        <span> Use another method </span>
                     </button>
                 </div>
             </div>

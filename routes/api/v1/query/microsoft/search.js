@@ -23,7 +23,7 @@ module.exports = function (req, res) {
       console.error(error);
       return res.send('ERR');
     }
-
+    console.log(response)
     // console.log('Response from MAG:\n', body);
 
     res.writeHead(response.statusCode, {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'});

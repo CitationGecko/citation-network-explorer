@@ -20,3 +20,7 @@ document.getElementById('connected-list-button').onclick = function(){
 
     connectedList.print('seedsCitedBy',1,true);
 }
+
+document.getElementById('settings-button').onclick = function(){
+    document.getElementById('coming-soon').style.display = 'block';
+}

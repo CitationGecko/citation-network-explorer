@@ -9,18 +9,18 @@
     padding:2em;
     
 }
-#selected-paper-box > .author-year {
-    float:left
-    
-}
+
 .add-seed {
     right:5px;
     border:none;
     background:#383A38;
+    float:right;
     color:white;
-    float: right;
     font-size: 16px;
     height: 40px;
+    border-radius: 20px;
+    padding: .5em 1em;
+    margin:.5em;
 }
 
 #selected-paper-box .stroke1 {

@@ -9,14 +9,13 @@
     background-color:rgb(255, 199, 0)
 }
 .paper-title {
-    padding-bottom:1em;
+    padding-bottom:.2em;
 }
 .metric {
     float:right;
     position: relative;
-    bottom: 1em;
     right: 0em;
-    margin: 1em;
+    padding:.2em 0em;
     color:black;
     font-weight:400;
 }
@@ -26,7 +25,12 @@
 }
 .author-year {
     text-align: left;
-    padding:.5em oem;
+    padding:.2em 0em;
+} 
+.journal {
+    text-align: left;
+    padding:.2em 0em;
+    font-style: italic;
 } 
 .open-icon{
     margin-left:.5em;
