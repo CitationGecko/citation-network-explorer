@@ -1,13 +1,14 @@
 require('dotenv').config();
 
-var fs = require('fs');
-var express = require('express');
-var bodyParser = require('body-parser');
-var session = require('express-session');
-var config = require('./config');
+const fs = require('fs');
+const path = require('path');
+const bodyParser = require('body-parser');
+const express = require('express');
+const session = require('express-session');
+const config = require('./config');
 
-var appPort = config.get('app.port');
-var sessionOpts = {
+const appPort = config.get('app.port');
+const sessionOpts = {
   secret: config.get('session.secret'),
   resave: false,
   saveUninitialized: true
@@ -16,7 +17,7 @@ var sessionOpts = {
 /**
  * Express server scaffolding
  */
-var app = express();
+const app = express();
 app.disable('x-powered-by');
 app.use(bodyParser.json());
 app.use(bodyParser.text());
@@ -29,7 +30,7 @@ app.use(session(sessionOpts));
  * Gets the html output to the page
  */
 app.get('/', function (req, res) {
-  var filePath = __dirname + '/public/GeckoApp.html';
+  const filePath = path.join(__dirname, '/public/GeckoApp.html');
 
   fs.readFile(filePath, function (err, contents) {
     if (err) {

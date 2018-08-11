@@ -1,0 +1,45 @@
+{
+  "id": "10def5c61eb0466f8f6ee50c8115b882",
+  "doi": "10.1111/j.1365-2958.2009.07028.x",
+  "microsoftId": "6789012345",
+
+  "isSeed": true,
+  "title": "The SciZ protein anchors the enteroaggregative Escherichia coli Type VI secretion system to the cell wall",
+
+  "pubDate": "2012-08-17T00:00:00.000Z",
+  "journal": "Molecular Macrobiology",
+  "publisher": "Wiley",
+
+  "references": ["f15df7ca1eb0466f8f6ee50c8115b413", "d01ff5c61eb0466f8f6ee50c8115b409"],
+  "citationCount": 64,
+  "openaccess": true,
+  "url": "https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1365-2958.2009.07028.x",
+
+  "authors": [
+    {
+      "firstName": "Marie‐Stéphanie",
+      "lastName": "Aschtgen",
+      "orcid": "123456"
+    },
+    {
+      "firstName": "Marthe",
+      "lastName": "Gavioli",
+      "orcid": "654321"
+    },
+    {
+      "firstName": "Andrea",
+      "lastName": "Dessen",
+      "orcid": "654321"
+    },
+    {
+      "firstName": "Roland",
+      "lastName": "Lloubès",
+      "orcid": "654321"
+    },
+    {
+      "firstName": "Eric",
+      "lastName": "Cascales",
+      "orcid": "654321"
+    }
+  ]
+}

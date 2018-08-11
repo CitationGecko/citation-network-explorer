@@ -5,12 +5,7 @@
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Citation Gecko</title>
-
-        <link href="https://fonts.googleapis.com/css?family=Roboto:300,400" rel="stylesheet">
-
         <link rel="stylesheet" type="text/css" href='styles.css'/>
-
-        <script defer src="https://use.fontawesome.com/releases/v5.0.4/js/all.js"></script>
     </head>
     <body>
         <div class='main'>
@@ -62,7 +57,7 @@
                             <input id='threshold-input' type='range' min='1' max='10' value='1'>
                             <output id="threshold-output" for="threshold-input">Minimum Connections: 1</output>
                     </div>
-                
+
                     <div id='network-key'>
                         <div class='key-icon'>
                             <div id='seed-key'></div>
@@ -261,12 +256,13 @@
                 </div>
             </div>
         </div>
-        
-        <script src = "https://d3js.org/d3.v4.js"></script>
-        <script src = "third-party/bibtexParse.js"></script>
-        <script src = "third-party/crossref.min.js"></script>
-        <script src = "zoterokey.js"></script>
-        <script src = "https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
-        <script src = "main.js"></script>
+
+        <script src="vendor/d3.v4.js"></script>
+        <script src="vendor/bibtexParse.js"></script>
+        <script src="vendor/crossref.min.js"></script>
+        <script src="vendor/js.cookie.min.js"></script>
+        <script src="main.js"></script>
+        <link href="https://fonts.googleapis.com/css?family=Roboto:300,400" rel="stylesheet">
+        <script defer src="https://use.fontawesome.com/releases/v5.0.4/js/all.js"></script>
     </body>
 </html>

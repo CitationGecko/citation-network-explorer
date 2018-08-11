@@ -1,12 +1,12 @@
-var gulp = require('gulp');
-var concat = require('gulp-concat');
+const gulp = require('gulp');
+const concat = require('gulp-concat');
 
-var paths = {
+const paths = {
   styles: {
     src: './src/**/*.css',
   },
   scripts: {
-    src: ['src/core.js','./src/**/*.js'],
+    src: ['src/core.js', './src/**/*.js'],
   },
   dest: './public/',
 };
