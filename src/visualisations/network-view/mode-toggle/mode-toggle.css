@@ -61,5 +61,7 @@
 .key-label div {
     white-space: nowrap;
     height:8px;
-    padding:5px;
+	padding:5px;
+	position: relative;
+    top: -.15em;
 }

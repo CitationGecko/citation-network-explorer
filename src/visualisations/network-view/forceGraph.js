@@ -154,6 +154,8 @@ forceGraph.osvg =  d3.select('#force-graph')
                             forceGraph.circles.style("opacity", 1);
                             forceGraph.lines.style("opacity",1);
                             forceGraph.circles.on('mouseover',p=>updateInfoBox(p))
+                            d3.selectAll('.paper-box').classed('selected-paper',false)
+                            document.getElementById('selected-paper-box').style.display ='none';
                         })
                         .call(d3.zoom().on("zoom", function () {forceGraph.svg.attr("transform", d3.event.transform)}))//enable zoom by scrolling
                         .on("dblclick.zoom", null);//disable double click zooming
