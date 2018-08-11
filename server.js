@@ -59,6 +59,7 @@ app.get('/services/zotero/auth/login', require('./routes/services/zotero/auth/lo
 app.get('/services/zotero/auth/verify', require('./routes/services/zotero/auth/verify'));
 
 app.get('/services/zotero/getCollections', require('./routes/services/zotero/getCollections'));
+app.get('/services/zotero/getItemsInCollection', require('./routes/services/zotero/getItemsInCollection'));
 
 
 /**

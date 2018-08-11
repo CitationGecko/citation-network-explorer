@@ -1,6 +1,6 @@
 // http://localhost:3000/auth/zotero/login
 const _ = require('lodash');
-const ZoteroAuthLib = require('../../../lib/zotero/auth');
+const ZoteroAuthLib = require('../../../../lib/zotero/auth');
 
 const ZoteroEndpoints = ZoteroAuthLib.endpoints;
 const ZoteroOAuthClient = ZoteroAuthLib.OAuthClient;

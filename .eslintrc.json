@@ -9,7 +9,8 @@
     "no-console": 0,
     "no-var": 1,
     "prefer-template": 0,
-    "prefer-arrow-callback": 0,
+    "prefer-arrow-callback": 1,
+    "arrow-parens": 0,
     "comma-dangle": 0,
     "no-path-concat": 1,
     "vars-on-top": 0,
@@ -53,7 +54,8 @@
         "space-before-blocks": 0,
         "space-before-function-paren": 0,
         "no-unused-vars": 1,
-        "semi": 1
+        "semi": 1,
+        "prefer-arrow-callback": 0
       }
     }
   ]
