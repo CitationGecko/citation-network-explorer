@@ -97,7 +97,10 @@ newModule('connectedList',{
             newpapers = paperboxes.enter()
                 .append('div')
                 .attr('class','paper-box')
-                .on('click',forceGraph.highlightNode)
+                .on('click',function(p){
+                    forceGraph.highlightNode(p)
+                    d3.select('#make-seed').on('click',function(){makeSeed(p)})
+                })
             newpapers.append('div').attr('class','paper-title')
                 .html(function(p){
                     return(p.title+"<a target='_blank' href='https://doi.org/"+p.doi+"'>"+mysvg+"</a>")

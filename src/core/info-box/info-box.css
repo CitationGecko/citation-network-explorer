@@ -6,6 +6,11 @@
     bottom:.2em;
     max-width:50%;
     background-color: rgb(255, 199, 0);
+    padding:2em;
+    
+}
+#selected-paper-box > .author-year {
+    float:left
     
 }
 .add-seed {
