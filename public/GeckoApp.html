@@ -204,8 +204,8 @@
             </div>
         </div>
 
-        <div id='onboarding-modal' class='modal'>
-            <div class='modal-content' id='onboarding-1'>
+        <div id='onboarding-1' class='modal'>
+            <div class='modal-content'>
                 <h1> Welcome to Gecko </h1>
                 <p>
                     Gecko is here to help you find the most relevant papers to your research and give you a more complete sense of the research landscape.
@@ -220,8 +220,10 @@
                 </div>
                 <div><button id='demo-button'>show me an example!</button></div>
             </div>
-
-            <div class='modal-content' id='onboarding-2'>
+        </div>
+        
+        <div id='onboarding-2' class='modal'>
+            <div class='modal-content'>
                 <h1> Add seed papers... </h1>
                 <p>
                     The first step is to pick the seed papers that define your area of interest. There are a number of ways to do this....
@@ -239,21 +241,55 @@
                     <button class='seed-search-button large-secondary-button'>
                         Search for Papers
                     </button>
+                    <button class='doi-input-button large-secondary-button'>
+                        Enter DOIs
+                    </button>
                 </div>
             </div>
-
-            <div class='modal-content' id='onboarding-4'>
+        </div>
+        <div id='onboarding-3' class='modal'>
+            <div class='modal-content'>
                 <h1> What kind of papers are you looking for? </h1>
                 <div class='large-button-list'>
-                    <button class='large-secondary-button' onClick='startDemo()'>
+                    <button class='cited-by-mode large-secondary-button'>
                         <h1> Papers Cited-By Seed Papers </h1>
                         <p> Papers cited by a lot of your seed papers are likely to be important older papers, perhaps foundational to the field.</p>
                     </button>
-                    <button class='large-primary-button' onClick='startDemo()'>
+                    <button class='citing-mode large-secondary-button'>
                         <h1> Papers Citing Seed Papers </h1>
                         <p> Papers citing a lot of your seed papers are newer papers that are in your area of interest. </p>
                     </button>
                 </div>
+            </div>
+        </div>
+        <div id='onboarding-4' class='modal'>
+            <div class='modal-content'>
+                <table>
+                    <tr>
+                        <td><img class='demo-screenshot' src='images/onboarding/seed-paper-demo.png'></td>
+                        <td>Your seed papers are shown as yellow circles.</td>
+                    </tr>
+                    <tr>
+                        <td><img class='demo-screenshot' src='images/onboarding/seed-list-demo.png'></td>
+                        <td>To view / add / remove seed papers click the yellow circle in the side bar.</td>
+                    </tr>
+                    <tr>
+                        <td><img class='demo-screenshot' src='images/onboarding/connected-paper-demo.png'></td>
+                        <td><p>Papers connected to them are shown in grey.</p>
+                            <p>The size corresponds to the number of seed paper connections.</p></td>
+                    </tr>
+                    <tr>
+                        <td><img class='demo-screenshot' src='images/onboarding/connected-list-demo.png'></td>
+                        <td>To view a list of connected papers click the three grey circles in the side bar.</td>
+                    </tr>
+                    <tr>
+                        <td><img class='demo-screenshot' src='images/onboarding/mode-toggle-demo.png'></td>
+                        <td>To switch between papers cited by seeds and papers citing seeds, click the toggle switch in the key.</td>
+                    </tr>
+                </table>
+                <button id='lets-go' class='large-secondary-button'>
+                    Okay, let's go!
+                </button>
             </div>
         </div>
 

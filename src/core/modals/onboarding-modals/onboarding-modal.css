@@ -6,10 +6,6 @@
     display: none;
 }
 
-#onboarding-3 > img {
-    width: 100%;
-}
-
 .modal-footer {
     display: flex;
     align-items: center;
@@ -43,22 +39,7 @@
     cursor: pointer;
 }
 
-.large-primary-button {
-    width: 100%;
-    padding: 1em;
-    background: #FFC700;
-    color: #222222;
-    margin: 2px 0;
-    outline: none;
-    transition: background .3s;
-    cursor: pointer;
-}
-
 .large-secondary-button:hover {
-    background: #383A38;
-}
-
-.large-primary-button:hover {
     background: #E2B104;
 }
 
@@ -73,4 +54,16 @@
     text-align: right;
     width:100%;
     padding-right: 20%;
+}
+
+.demo-screenshot{
+    max-width: 100px;
+}
+
+#onboarding-4 td{
+    padding:1em;
+}
+
+#onboarding-4 >.modal-content{
+    width:40%;
 }

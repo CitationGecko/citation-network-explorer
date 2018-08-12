@@ -23,11 +23,13 @@ body {
     width: 200px;
     position: relative;
     margin: 0;
+    flex-grow:0;
 }
 #list-panel {
     width: 80em;
     margin-right:0;
-    border: none;   
+    border: none; 
+    flex-grow:0;  
 }
 #graph-panel {
     width:200em;
