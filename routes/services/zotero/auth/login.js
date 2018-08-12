@@ -8,7 +8,7 @@ const ZoteroOAuthClient = ZoteroAuthLib.OAuthClient;
 function AuthZoteroLoginRoute(req, res) {
   // const opts = { oauth_callback:  };
 
-  return ZoteroOAuthClient.getOAuthRequestToken(function (err, token, tokenSecret, parsedQueryString) {
+  return ZoteroOAuthClient.getOAuthRequestToken((err, token, tokenSecret, parsedQueryString) => {
     if (err) {
       return res.send('Couldn\'t obtain valid request token from Zotero.');
     }

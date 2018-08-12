@@ -18,6 +18,7 @@ function getCitingArticlesRoute(req, res) {
         citeTo: _.get(item, 'citeTo.S', '')
       });
     });
+
     return res.json(citationsMapped);
   });
 }

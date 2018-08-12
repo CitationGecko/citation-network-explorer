@@ -1,7 +1,7 @@
 const PaperLib = require('../../../lib/paper');
 
 function paperGetByDOIRoute(req, res) {
-  PaperLib.getByDOI(req.query.dois || req.query.doi, function (err, data) {
+  PaperLib.getByDOI(req.query.dois || req.query.doi, (err, data) => {
     return res.json(data);
   });
 }

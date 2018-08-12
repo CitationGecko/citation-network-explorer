@@ -29,10 +29,10 @@ app.use(session(sessionOpts));
  * Main application route
  * Gets the html output to the page
  */
-app.get('/', function (req, res) {
+app.get('/', (req, res) => {
   const filePath = path.join(__dirname, '/public/GeckoApp.html');
 
-  fs.readFile(filePath, function (err, contents) {
+  fs.readFile(filePath, (err, contents) => {
     if (err) {
       return res.send('Something went wrong when reading the main html file');
     }
@@ -110,6 +110,6 @@ app.get('/api/v1/getMockResponse', require('./routes/api/v1/getMockResponse'));
 /**
  * Start Express server
  */
-app.listen(appPort, function () {
+app.listen(appPort, () => {
   console.log('CitationGecko server listening on port', appPort);
 });
