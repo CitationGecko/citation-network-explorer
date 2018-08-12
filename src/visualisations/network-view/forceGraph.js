@@ -6,6 +6,13 @@ newModule('forceGraph',{
                 updateMetrics(Papers,Edges); // update citation metrics
                 forceGraph.refresh()
             }
+        },
+        seedDeleted:{
+            listening:true,
+            action: function(){
+                updateMetrics(Papers,Edges); // update citation metrics
+                forceGraph.refresh()
+            }
         }
     },
     methods:{

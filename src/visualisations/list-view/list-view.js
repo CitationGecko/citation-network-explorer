@@ -13,6 +13,12 @@ newModule('seedList',{
             action: function(){
                 seedList.refresh()
             }
+        },
+        seedDeleted:{
+            listening: true,
+            action: function(){
+                seedList.refresh()
+            }
         }
     },
     methods: {
