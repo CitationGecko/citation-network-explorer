@@ -13,7 +13,7 @@
     box-sizing: border-box;
 }
 .list-header > h1 {
-    font-size:120%;
+    font-size:24px;
     margin:0   
 }
 
@@ -21,12 +21,12 @@
     overflow: auto;
     font-size: 70%;
     flex:auto;
-    height:70%;
+    height:75%;
     box-sizing: border-box;
 }
 
 .list-footer{
-    height:20%;
+    height:15%;
     bottom: 0px;
     width:100%;
     display: flex;

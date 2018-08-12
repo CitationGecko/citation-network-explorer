@@ -31,7 +31,6 @@ var bibtex = {
                     let newSeed = {doi: papers[i].entryTags.doi}
                     addPaper(newSeed,true);
                 };
-                document.getElementById('upload-bibtex-modal').style.display = "none";
             }
         )
     }
@@ -41,4 +40,7 @@ document.getElementById('files').addEventListener('change', bibtex.importBibTex,
 
 document.getElementById('demo-button').onclick = function(){
     bibtex.importExampleBibTex()
+    document.getElementById('onboarding-modal').style.display = "none";
+
+
 }

@@ -54,8 +54,8 @@ timeGraph.update = function(){
             if(d.seed){return 'seed-node node'} else {return 'node'};
         })                                            
         .style("visibility", function (d) {return d.hide == 1 ? "hidden" : "visible";})
-        .on("click",timeGraph.highlightNode)
-        .on("mouseover",function(){updateInfoBox(this)})
+        .on("click",p=>timeGraph.highlightNode(p))
+        .on("mouseover",p=>updateInfoBox(p))
     timeGraph.circles.append("title").text(function(d) { return d.year + ' ' + d.month; }); //Label nodes with title on hover
 }
 

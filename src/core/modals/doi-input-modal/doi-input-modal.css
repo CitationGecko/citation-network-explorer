@@ -1,3 +1,5 @@
 #doi-input {
-    width:200px
+    width:400px;
+    border:solid 1px;
+    margin-left:1em;
 }

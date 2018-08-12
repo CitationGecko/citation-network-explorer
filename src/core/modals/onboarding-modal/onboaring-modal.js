@@ -16,15 +16,12 @@ function showOnboardingModal() {
 function showAddInitialSeed() {
   document.getElementById('onboarding-1').style.display = 'none';
   document.getElementById('onboarding-2').style.display = 'block';
-}
-
-function showZotero() {
-  document.getElementById('onboarding-2').style.display = 'none';
-  document.getElementById('onboarding-3').style.display = 'block';
+  document.getElementById('onboarding-4').style.display = 'none';
 }
 
 function showSeedType() {
-  document.getElementById('onboarding-3').style.display = 'none';
+  document.getElementById('onboarding-1').style.display = 'none';
+  document.getElementById('onboarding-2').style.display = 'none';
   document.getElementById('onboarding-4').style.display = 'block';
 }
 

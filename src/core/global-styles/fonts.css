@@ -3,7 +3,7 @@
     font-weight:300;
     min-height: 0;
     min-width: 0;
-    font-size:100%;
+    font-size:16px;
 }
 
 h1 {
@@ -13,8 +13,5 @@ h1 {
     line-height: normal;
     font-size: 26px;
     margin: .5em;
-}
-
-button{
-    border:none;
+    margin-left:0;
 }

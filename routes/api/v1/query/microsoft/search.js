@@ -8,7 +8,7 @@ function apiQueryMicrosoftSearchRoute(req, res) {
       console.error(error);
       return res.send('ERR');
     }
-
+    console.log(response)
     // console.log('Response from MAG:\n', body);
 
     return res.json(body);

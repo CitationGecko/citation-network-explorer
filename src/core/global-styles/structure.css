@@ -36,3 +36,11 @@ body {
     flex-grow:1;
     flex-shrink: 1;
 }
+
+#logo{
+    position: absolute;
+    bottom:0em;
+    right:0em;
+    margin:2em;
+    max-width:40%;
+}

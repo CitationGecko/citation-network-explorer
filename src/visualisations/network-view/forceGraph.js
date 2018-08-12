@@ -40,8 +40,8 @@ newModule('forceGraph',{
                                     .on("drag", forceGraph.dragged)
                                     .on("end", forceGraph.dragended))
                                 .on("dblclick",forceGraph.hideSingles)
-                                .on("click",forceGraph.highlightNode)
-                                .on("mouseover",function(){updateInfoBox(this)})
+                                .on("click",p=>forceGraph.highlightNode(p))
+                                .on("mouseover",p=>updateInfoBox(p))
             forceGraph.circles.append("title").text(function(d) { return d.title; }); //Label nodes with title on hover
             forceGraph.lines = forceGraph.lines.data(forceGraph.edges, function(d) { return d.source.ID + "-" + d.target.ID; })
             forceGraph.lines.exit().remove();
@@ -96,8 +96,7 @@ newModule('forceGraph',{
                 }).length
             )
         },
-        highlightNode: function(){
-            d = d3.select(this).node().__data__;
+        highlightNode: function(d){
             forceGraph.circles.style("opacity", 1);
             forceGraph.lines.style("opacity",1);
             forceGraph.circles.style("opacity", function (o) {
@@ -106,7 +105,7 @@ newModule('forceGraph',{
             forceGraph.lines.style("opacity", function(o) {
                 return o.source === d || o.target === d ? 1 : 0.15;
             });
-            updateInfoBox(this);
+            updateInfoBox(d);
             forceGraph.circles.on('mouseover',null)
             d3.event.stopPropagation();
         },
@@ -154,7 +153,9 @@ forceGraph.osvg =  d3.select('#force-graph')
                         .on('click',function(){
                             forceGraph.circles.style("opacity", 1);
                             forceGraph.lines.style("opacity",1);
-                            forceGraph.circles.on('mouseover',function(){updateInfoBox(this)})
+                            forceGraph.circles.on('mouseover',p=>updateInfoBox(p))
+                            d3.selectAll('.paper-box').classed('selected-paper',false)
+                            document.getElementById('selected-paper-box').style.display ='none';
                         })
                         .call(d3.zoom().on("zoom", function () {forceGraph.svg.attr("transform", d3.event.transform)}))//enable zoom by scrolling
                         .on("dblclick.zoom", null);//disable double click zooming
