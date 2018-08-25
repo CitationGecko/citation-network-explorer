@@ -36,7 +36,7 @@ timeGraph.update = function(){
     timeGraph.circles = timeGraph.circles.enter().append("circle")
         //.merge(timeGraph.circles)
         .attr("r", function(d){
-            return d.seed ? 7 : 5*Math.max(d.seedsCited,d.seedsCitedBy);
+            return d.isSeed ? 7 : 5*Math.max(d.seedsCited,d.seedsCitedBy);
         })
         .attr('cx',function(d){
             let year = (d.year? d.year:maxyear);
@@ -51,7 +51,7 @@ timeGraph.update = function(){
             return (maxYear-year+(6-month)/12)*70;
         })
         .attr("class", function(d) { 
-            if(d.seed){return 'seed-node node'} else {return 'node'};
+            if(d.isSeed){return 'seed-node node'} else {return 'node'};
         })                                            
         .style("visibility", function (d) {return d.hide == 1 ? "hidden" : "visible";})
         .on("click",p=>timeGraph.highlightNode(p))

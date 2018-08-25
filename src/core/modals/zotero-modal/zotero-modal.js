@@ -20,41 +20,15 @@ var zotero = {
     status: false,
     getCollections: function(){
 
-    if (!ZOTERO_USER_ID || !ZOTERO_USER_API_KEY) {
-        ZOTERO_USER_ID = prompt('Enter Zotero User ID');
-        ZOTERO_USER_API_KEY = prompt('Enter Zotero User API Key');
-    }
+        let url = 'http://localhost:3000/services/zotero/getCollections'
 
-        let url = 'https://api.zotero.org/users/' + ZOTERO_USER_ID + '/collections?limit=100';
-
-        fetch(url,
-            {
-                headers:{'Zotero-API-Key': ZOTERO_USER_API_KEY}
-            }
-        ).then(resp => {
+        fetch(url).then(resp => {
             console.log('response from Zotero!');
-            zotero.totalCollections = resp.headers.get('Total-Results')
             resp.json().then(json=>{
+                zotero.totalCollections = json.data.length
                 zotero.status = true;
-                zotero.collections = json;
-
-                if(zotero.totalCollections==zotero.collections.length){
-                    zotero.displayCollections(zotero.collections);
-                }
-
-                for(let i=0;i<Math.ceil(zotero.totalCollections/100);i++){
-    
-                    let url = 'https://api.zotero.org/users/' + ZOTERO_USER_ID + '/collections?limit=100' + '&start=' + (100 * (i+1));
-                    fetch(url,{headers:{'Zotero-API-Key': ZOTERO_USER_API_KEY}})
-                        .then(resp=>resp.json())
-                        .then(json => {
-                            zotero.collections = zotero.collections.concat(json);
-                            if(i==(Math.ceil(zotero.totalCollections/100)-1)){
-                                zotero.displayCollections(zotero.collections);
-                            }
-                        }
-                    )                    
-                }
+                zotero.collections = json.data;
+                zotero.displayCollections(zotero.collections)
             })
         })
     },
@@ -101,7 +75,7 @@ var zotero = {
     displayCollections: function(collections){
 
         var margin = {top: 30, right: 20, bottom: 30, left: 20},
-            width = d3.select('#zotero-modal').select('.modal-content').node().getBoundingClientRect().width,
+            width = d3.select('#zotero-import-modal').select('.modal-content').node().getBoundingClientRect().width,
             barHeight = 40,
             barWidth = (width - margin.left - margin.right) * 0.7;
 

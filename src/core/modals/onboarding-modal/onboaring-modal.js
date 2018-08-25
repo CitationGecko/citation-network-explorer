@@ -14,6 +14,7 @@ function showOnboardingModal() {
 }
 
 function showAddInitialSeed() {
+
   document.getElementById('onboarding-1').style.display = 'none';
   document.getElementById('onboarding-2').style.display = 'block';
   document.getElementById('onboarding-4').style.display = 'none';
