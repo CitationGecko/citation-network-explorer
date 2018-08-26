@@ -15,9 +15,49 @@ var modal = d3.select('body').append('div').attr('id','zotero-modal').attr('clas
     modal.append('div').html("<img id='zotero-logo' src='images/zotero/zotero-logo.png'>");
     modal.append('svg').attr('id','zotero-collections'); */
 
+document.querySelector('#zoteroSelectAll').onclick = (a)=>{
+    var checked = document.querySelector('#zoteroSelectAll').checked;
+
+    if(checked){
+        document.querySelectorAll('.zotero-item-select').forEach(e=>e.checked=true)
+    } else {
+        document.querySelectorAll('.zotero-item-select').forEach(e=>e.checked=false)
+    }
+}
+
+d3.selectAll('.zotero-item-select').on('click',(item)=>{
+    zotero.selectedItems.push(item)
+})
+
+d3.select('#add-zotero-items').on('click',()=>{
+    var dois = d3.selectAll('.zotero-item-select:checked').data().map(a=>a.DOI)
+    dois.forEach(doi=>{
+        if(doi){
+            addPaper({doi:doi},true);
+        }
+    });
+})
 
 var zotero = {
+    selectedItems: [],
     status: false,
+    dropdown: function(){
+        document.getElementById("zoteroDropdown").classList.toggle("show");
+    },
+    filterCollections: function(){
+        var input, filter, ul, li, a, i;
+        input = document.getElementById("zoteroInput");
+        filter = input.value.toUpperCase();
+        div = document.getElementById("zoteroDropdown");
+        a = div.getElementsByTagName("div");
+        for (i = 0; i < a.length; i++) {
+            if (a[i].innerHTML.toUpperCase().indexOf(filter) > -1) {
+            a[i].style.display = "";
+            } else {
+            a[i].style.display = "none";
+            }
+        }
+    },
     getCollections: function(){
 
         let url = 'http://localhost:3000/services/zotero/getCollections'
@@ -74,151 +114,66 @@ var zotero = {
 
     displayCollections: function(collections){
 
-        var margin = {top: 30, right: 20, bottom: 30, left: 20},
-            width = d3.select('#zotero-import-modal').select('.modal-content').node().getBoundingClientRect().width,
-            barHeight = 40,
-            barWidth = (width - margin.left - margin.right) * 0.7;
-
-        var i = 0,
-            duration = 400,
-            root;
-
-        var svg = d3.select("#zotero-collections")
-            .attr("width", width) // + margin.left + margin.right)
-            .append("g")
-            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-        root = d3.hierarchy(zotero.parseCollectionTree(collections));
-        root.x0 = 0;
-        root.y0 = 0;
-
-        root.children.forEach(collapse);
-
-        update(root);
-
-        function collapse(d) {
-            if (d.children) {
-              d._children = d.children;
-              d._children.forEach(collapse)
-              d.children = null;
-            } else {
-              d.children = d._children;
-              d._children = null;
-            }
-            update(d);
-        }
-        function click(d) {
-            /* if (d.children) {
-              d._children = d.children;
-              d.children = null;
-            } else {
-              d.children = d._children;
-              d._children = null;
-            }
-            update(d); */
-            zotero.collection = d.data.key
-            zotero.getItems(zotero.collection)
-            document.getElementById('zotero-modal').style.display = "none";
-          }
-
-          function color(d) {
-            return d._children ? "rgb(255, 199, 0)" : d.children ? "rgb(155, 155, 155)" : "rgb(250, 250, 250)";
-          }
-
-        function update(source) {
-
-            // Compute the flattened node list.
-            var nodes = root.descendants();
-
-            var height = Math.max(500, nodes.length * barHeight + margin.top + margin.bottom);
-
-            d3.select("#zotero-collections").transition()
-                .duration(duration)
-                .attr("height", height);
-
-            d3.select(self.frameElement).transition()
-                .duration(duration)
-                .style("height", height + "px");
-
-            // Compute the "layout". TODO https://github.com/d3/d3-hierarchy/issues/67
-            var index = -1;
-            root.eachBefore(function(n) {
-              n.x = ++index * barHeight;
-              n.y = n.depth * 20;
-            });
-
-            // Update the nodes…
-            var node = svg.selectAll(".zotero-folder")
-              .data(nodes, function(d) { return d.id || (d.id = ++i); });
-
-            var nodeEnter = node.enter().append("g")
-                .attr("class", "zotero-folder")
-                .attr("transform", function(d) { return "translate(" + source.y0 + "," + source.x0 + ")"; })
-                .style("opacity", 0);
-
-            // Enter any new nodes at the parent's previous position.
-            nodeEnter.append("rect")
-                .attr("y", -barHeight / 2)
-                .attr("height", barHeight)
-                .attr("width", 0.9*barWidth)
-                .style("fill", color)
-                .on("click", click);
-
-            nodeEnter.append('rect')
-                .attr("y", -barHeight / 2)
-                .attr("x", 0.9*barWidth)
-                .attr("height", barHeight)
-                .attr("width", 0.1*barWidth)
-                .style("fill", 'rgb(208, 208, 208)')
-                .on('click',collapse)
-
-
-            nodeEnter.append("text")
-                .attr("dy", 3.5)
-                .attr("dx", 5.5)
-                .text(function(d) { return d.data.name; });
-
-            // Transition nodes to their new position.
-            nodeEnter.transition()
-                .duration(duration)
-                .attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; })
-                .style("opacity", 1);
-
-            node.transition()
-                .duration(duration)
-                .attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; })
-                .style("opacity", 1)
-              .select("rect")
-                .style("fill", color);
-
-            // Transition exiting nodes to the parent's new position.
-            node.exit().transition()
-                .duration(duration)
-                .attr("transform", function(d) { return "translate(" + source.y + "," + source.x + ")"; })
-                .style("opacity", 0)
-                .remove();
-
-            // Stash the old positions for transition.
-            root.each(function(d) {
-              d.x0 = d.x;
-              d.y0 = d.y;
-            });
-          }
+        d3.select('#zoteroDropdown')
+            .selectAll('a')
+                .data(collections)
+                .enter()
+                    .append('div')
+                    .attr('class','dropdown-item')
+                    .text(c=>c.name)
+                    .on('click',c=>{
+                        d3.select('.dropbtn').html(`<img src='/images/zotero/zotero-collection.png'>${c.name}`)
+                        document.getElementById("zoteroDropdown").classList.toggle("show")
+                        console.log(`adding papers from collection ${c.key}`)
+                        zotero.getItems(c.key)
+                    })
     },
 
     getItems: function(collectionID){
-        url = 'https://api.zotero.org/users/' + ZOTERO_USER_ID + '/collections/' + collectionID + '/items/top';
         
-        fetch(url,{
-            headers: {'Zotero-API-Key':ZOTERO_USER_API_KEY}
-        }).then(resp=>resp.json()).then(items=>{
-            for(let i=0;i<items.length;i++){
+        let url = `http://localhost:3000/services/zotero/getItemsInCollection/?collectionId=${collectionID}`;
+        
+        fetch(url).then(resp=>resp.json()).then(json=>{
+
+            var items = json.data.map(a=>a.data)
+
+            d3.select('#zotero-items').select('tbody').selectAll('tr').remove()
+
+            var row = d3.select('#zotero-items').select('tbody').selectAll('tr').data(items).enter()
+                        .append('tr')
+                        .classed('table-item',true)
+
+            row.append('td')
+                .classed('table-cell table-check',true)
+                .append('input')
+                .classed('zotero-item-select',true)
+                .attr('type','checkbox')
+                .data(items)                    
+
+            row.append('td')
+                .text(item=>item.title || 'n.a')
+                .classed('table-cell table-title',true)
+                
+
+            row.append('td')
+                .text(item=> item.creators.length>0 ? item.creators[0].lastName : 'n.a')
+                .classed('table-cell table-author',true)
+
+            row.append('td')
+                .text(item=> (new Date(item.date)).getFullYear())
+                .classed('table-cell table-year',true)
+            
+            row.append('td')
+                .text(item=>item.journalAbbreviation || item.journal)
+                .classed('table-cell table-journal',true)
+                
+            /*  for(let i=0;i<items.length;i++){
                 item = items[i];
                 //item.data.title;
                 //item.meta.creatorSummary;
                 //item.meta.parsedDate;
                 addPaper({doi:item.data.DOI},true);
-            }
+            } */
         })
     },
 

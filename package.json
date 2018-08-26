@@ -4,7 +4,8 @@
     "scripts": {
         "start": "node server.js",
         "lint": "./node_modules/.bin/eslint .",
-        "postinstall": "gulp scripts && gulp styles"
+        "postinstall": "gulp scripts && gulp styles",
+        "launch": "gulp scripts && gulp styles && node server.js"
     },
     "main": "server.js",
     "engine": {

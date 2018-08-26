@@ -206,10 +206,31 @@
         <div id='zotero-import-modal' class='modal'>
             <div class='modal-content'>
                 <h1>Zotero Import</h1>
-                <div><h2>Filter by Collection:</h2><select></select></div>
+                <div><span>Filter by Collection:</span> <div class="dropdown">
+                    <button onclick="zotero.dropdown()" class="dropbtn"><img src='/images/zotero/zotero-library.png'>My Library</button>
+                    <div id="zoteroDropdown" class="dropdown-content">
+                      <input type="text" placeholder="Search.." id="zoteroInput" onkeyup="zotero.filterCollections()">
+                    </div>
+                  </div> </div>
                 <div>
-                   <svg id='zotero-collections'></svg>
+                    <table>
+                        <thead>
+                            <td class= 'table-cell'><input id='zoteroSelectAll' type="checkbox"></td>
+                            <td class='table-cell table-title'>TITLE</td>
+                            <td class='table-cell table-author'>AUTHOR</td>
+                            <td class='table-cell table-year'>YEAR</td>
+                            <td class='table-cell table-journal'>PUBLICATION</td>
+                        </thead>
+                    </table>
                 </div>
+                <div class="table-body">
+                    <table id='zotero-items'>
+                        <tbody></tbody>
+                    </table>
+                </div>  
+                <button id='add-zotero-items' class='large-secondary-button'>
+                    <span>Add selected as seed papers</span>
+                </button>
             </div>
         </div>
 
