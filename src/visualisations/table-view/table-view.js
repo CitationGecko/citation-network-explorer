@@ -28,4 +28,21 @@ function printTable(tableID,items){
     row.append('td')
         .text(item=>item.journal)
         .classed('table-cell table-journal',true)
+
+    document.querySelector(`${tableID} .select-all`).onclick = (a)=>{
+        var checked = document.querySelector(`${tableID} .select-all`).checked;
+    
+        if(checked){
+            document.querySelectorAll(`${tableID} .item-select`).forEach(e=>e.checked=true)
+        } else {
+            document.querySelectorAll(`${tableID} .item-select`).forEach(e=>e.checked=false)
+        }
+    }
+    
+    d3.select(`${tableID} .add-selected-items`).on('click',()=>{
+        var papers = d3.selectAll(`${tableID} .item-select:checked`).data()
+        papers.forEach(paper=>{
+            addPaper(paper,true);
+        });
+    })
 }

@@ -59,14 +59,14 @@ newModule('crossref', {
                     return {
                         doi: a.DOI,
                         title: a.title[0],
-                        author: a.author[0].family,
+                        author: a.author ? a.author[0].family : 'n.a',
                         month: a.created['date-parts'][0][1],
                         year: a.created['date-parts'][0][0],
                         timestamp: a.created.timestamp,
-                        journal: a['container-title'][0]
+                        journal: a['container-title'] ? a['container-title'][0] : 'n.a'
                     }
                 })
-                printTable('#search-items',items)
+                printTable('#title-search-table',items)
 
             })
         },
@@ -98,21 +98,14 @@ newModule('crossref', {
         parseResponse: function(response){
             
             let ne = 0; //For bean counting only
-            
             let citer = crossref.parsePaper(response);
-            
             citer = addPaper(citer,true);
-
             if(!citer.references){return(citer)};
-
             let refs = citer.references;
 
             for(let i=0;i<refs.length;i++){
-
                 let cited = crossref.parseReference(refs[i]);
-
                 cited = addPaper(cited);
-
                 addEdge({
                     source: citer,
                     target: cited,

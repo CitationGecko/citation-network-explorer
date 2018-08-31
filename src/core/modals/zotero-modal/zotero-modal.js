@@ -15,23 +15,6 @@ var modal = d3.select('body').append('div').attr('id','zotero-modal').attr('clas
     modal.append('div').html("<img id='zotero-logo' src='images/zotero/zotero-logo.png'>");
     modal.append('svg').attr('id','zotero-collections'); */
 
-document.querySelector('#zoteroSelectAll').onclick = (a)=>{
-    var checked = document.querySelector('#zoteroSelectAll').checked;
-
-    if(checked){
-        document.querySelectorAll('#zotero-items .item-select').forEach(e=>e.checked=true)
-    } else {
-        document.querySelectorAll('#zotero-items .item-select').forEach(e=>e.checked=false)
-    }
-}
-
-d3.select('#add-zotero-items').on('click',()=>{
-    var papers = d3.selectAll('#zotero-items .item-select:checked').data()
-    papers.forEach(paper=>{
-        addPaper(paper,true);
-    });
-})
-
 var zotero = {
     selectedItems: [],
     status: false,
@@ -114,7 +97,7 @@ var zotero = {
                 .enter()
                     .append('div')
                     .attr('class','dropdown-item')
-                    .text(c=>c.name)
+                    .html(c=>`<img src='/images/zotero/zotero-collection.png'>${c.name}`)
                     .on('click',c=>{
                         d3.select('.dropbtn').html(`<img src='/images/zotero/zotero-collection.png'>${c.name}`)
                         document.getElementById("zoteroDropdown").classList.toggle("show")
@@ -140,7 +123,7 @@ var zotero = {
                 })
             })
 
-            printTable('#zotero-items',items)
+            printTable('#zotero-import-table',items)
         })
     },
 

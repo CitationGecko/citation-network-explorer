@@ -11,23 +11,6 @@ document.getElementById("title-input").onkeydown = function(event){
     }
 }
 
-document.querySelector('#searchSelectAll').onclick = (a)=>{
-    var checked = document.querySelector('#searchSelectAll').checked;
-
-    if(checked){
-        document.querySelectorAll('#search-items .item-select').forEach(e=>e.checked=true)
-    } else {
-        document.querySelectorAll('#search-items .item-select').forEach(e=>e.checked=false)
-    }
-}
-
-d3.select('#add-search-items').on('click',()=>{
-    var papers = d3.selectAll('#search-items .item-select:checked').data()
-    papers.forEach(paper=>{
-        addPaper(paper,true);
-    });
-})
-
 function updateTitleSearchResults(results,pageNum,replot){
     
     let pageSize=50;
