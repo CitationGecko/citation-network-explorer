@@ -34,3 +34,19 @@
 #title-search-container > .paper-box{
     padding: 1em 2em;
 }
+
+#title-input-modal .modal-content {
+    height: 90%;
+}
+
+#add-search-items{
+    transition: background 0.3s;
+    position:absolute;
+    bottom:1em;
+    width:95%;
+    height:10%;
+}
+
+#add-search-items:hover{
+    background: #FFC700;
+}

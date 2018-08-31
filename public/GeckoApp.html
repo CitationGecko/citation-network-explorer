@@ -185,14 +185,25 @@
                 <div id='title-search-bar'>
                     <span>Search by Title:</span><input id='title-input' type="text"><div id='titleInputLoader' class='loader'></div></input>
                 </div>
-                <div id='title-search-container'>
-                    Coming soon...
+                <div>
+                    <table>
+                        <thead>
+                            <td class= 'table-cell'><input id='searchSelectAll' type="checkbox"></td>
+                            <td class='table-cell table-title'>TITLE</td>
+                            <td class='table-cell table-author'>AUTHOR</td>
+                            <td class='table-cell table-year'>YEAR</td>
+                            <td class='table-cell table-journal'>PUBLICATION</td>
+                        </thead>
+                    </table>
                 </div>
-                <div class='modal-footer'>
-                        <button class='pick-again modal-btn' onClick='showAddInitialSeed()'>
-                            <span> Use another method </span>
-                        </button>
-                    </div>
+                <div class="table-body">
+                    <table id='search-items'>
+                        <tbody></tbody>
+                    </table>
+                </div>  
+                <button id='add-search-items' class='large-secondary-button'>
+                    <span>Add selected as seed papers</span>
+                </button>
             </div>
         </div>
         <div id='upload-bibtex-modal' class='modal'>

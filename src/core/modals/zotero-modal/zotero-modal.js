@@ -19,22 +19,16 @@ document.querySelector('#zoteroSelectAll').onclick = (a)=>{
     var checked = document.querySelector('#zoteroSelectAll').checked;
 
     if(checked){
-        document.querySelectorAll('.zotero-item-select').forEach(e=>e.checked=true)
+        document.querySelectorAll('#zotero-items .item-select').forEach(e=>e.checked=true)
     } else {
-        document.querySelectorAll('.zotero-item-select').forEach(e=>e.checked=false)
+        document.querySelectorAll('#zotero-items .item-select').forEach(e=>e.checked=false)
     }
 }
 
-d3.selectAll('.zotero-item-select').on('click',(item)=>{
-    zotero.selectedItems.push(item)
-})
-
 d3.select('#add-zotero-items').on('click',()=>{
-    var dois = d3.selectAll('.zotero-item-select:checked').data().map(a=>a.DOI)
-    dois.forEach(doi=>{
-        if(doi){
-            addPaper({doi:doi},true);
-        }
+    var papers = d3.selectAll('#zotero-items .item-select:checked').data()
+    papers.forEach(paper=>{
+        addPaper(paper,true);
     });
 })
 
@@ -135,45 +129,18 @@ var zotero = {
         
         fetch(url).then(resp=>resp.json()).then(json=>{
 
-            var items = json.data.map(a=>a.data)
+            var items = json.data.map(a=>{
+                let item = a.data
+                return({
+                    title: item.title,
+                    author: item.creators.length>0 ? item.creators[0].lastName : 'n.a',
+                    year: (new Date(item.date)).getFullYear(),
+                    journal: item.journalAbbreviation || item.journal,
+                    doi:item.DOI
+                })
+            })
 
-            d3.select('#zotero-items').select('tbody').selectAll('tr').remove()
-
-            var row = d3.select('#zotero-items').select('tbody').selectAll('tr').data(items).enter()
-                        .append('tr')
-                        .classed('table-item',true)
-
-            row.append('td')
-                .classed('table-cell table-check',true)
-                .append('input')
-                .classed('zotero-item-select',true)
-                .attr('type','checkbox')
-                .data(items)                    
-
-            row.append('td')
-                .text(item=>item.title || 'n.a')
-                .classed('table-cell table-title',true)
-                
-
-            row.append('td')
-                .text(item=> item.creators.length>0 ? item.creators[0].lastName : 'n.a')
-                .classed('table-cell table-author',true)
-
-            row.append('td')
-                .text(item=> (new Date(item.date)).getFullYear())
-                .classed('table-cell table-year',true)
-            
-            row.append('td')
-                .text(item=>item.journalAbbreviation || item.journal)
-                .classed('table-cell table-journal',true)
-                
-            /*  for(let i=0;i<items.length;i++){
-                item = items[i];
-                //item.data.title;
-                //item.meta.creatorSummary;
-                //item.meta.parsedDate;
-                addPaper({doi:item.data.DOI},true);
-            } */
+            printTable('#zotero-items',items)
         })
     },
 

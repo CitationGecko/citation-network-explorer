@@ -91,7 +91,7 @@
 }
 
 .table-item:hover {
-    background: #E2B104;
+    background: #FFC700;
 }
 
 .table-cell{
@@ -138,5 +138,5 @@ td {
 }
 
 #add-zotero-items:hover{
-    background: #E2B104;
+    background: #FFC700;
 }

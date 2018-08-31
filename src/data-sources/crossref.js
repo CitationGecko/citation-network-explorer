@@ -49,6 +49,27 @@ newModule('crossref', {
         },
     },
     methods:{
+        titleSearch: function(input){
+
+            let query = input.replace(' ','+')
+            let url = `https://api.crossref.org/works?query.title=${query}`
+            fetch(url).then((resp)=>resp.json()).then(json=>{
+                
+                items = json.message.items.map(a=>{
+                    return {
+                        doi: a.DOI,
+                        title: a.title[0],
+                        author: a.author[0].family,
+                        month: a.created['date-parts'][0][1],
+                        year: a.created['date-parts'][0][0],
+                        timestamp: a.created.timestamp,
+                        journal: a['container-title'][0]
+                    }
+                })
+                printTable('#search-items',items)
+
+            })
+        },
         parsePaper: function(response){
         return {
                 doi: response.DOI,

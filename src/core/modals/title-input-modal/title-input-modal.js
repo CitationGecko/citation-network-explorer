@@ -6,9 +6,27 @@ var titleInput = document.querySelector("#title-input").addEventListener("input"
 
 document.getElementById("title-input").onkeydown = function(event){
     if (event.keyCode == 13){
-        microsoft.titleSearch(titleQuery)
+        //microsoft.titleSearch(titleQuery)
+        crossref.titleSearch(titleQuery)
     }
 }
+
+document.querySelector('#searchSelectAll').onclick = (a)=>{
+    var checked = document.querySelector('#searchSelectAll').checked;
+
+    if(checked){
+        document.querySelectorAll('#search-items .item-select').forEach(e=>e.checked=true)
+    } else {
+        document.querySelectorAll('#search-items .item-select').forEach(e=>e.checked=false)
+    }
+}
+
+d3.select('#add-search-items').on('click',()=>{
+    var papers = d3.selectAll('#search-items .item-select:checked').data()
+    papers.forEach(paper=>{
+        addPaper(paper,true);
+    });
+})
 
 function updateTitleSearchResults(results,pageNum,replot){
     

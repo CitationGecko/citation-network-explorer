@@ -6,7 +6,7 @@ d3.selectAll(".doi-input-button").on('click', function() {
 d3.selectAll(".seed-search-button").on('click', function() {
     document.getElementById('add-seeds-modal').style.display = "none";
     document.getElementById('onboarding-modal').style.display = "none";
-    document.getElementById('import-coming-soon').style.display = "block";
+    document.getElementById('title-input-modal').style.display = "block";
 })
 d3.selectAll(".upload-bibtex-button").on('click', function() {
     document.getElementById('add-seeds-modal').style.display = "none";
