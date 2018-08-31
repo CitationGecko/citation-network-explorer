@@ -54,7 +54,7 @@ var zotero = {
     },
     getCollections: function(){
 
-        let url = 'http://localhost:3000/services/zotero/getCollections'
+        let url = '/services/zotero/getCollections'
 
         fetch(url).then(resp => {
             console.log('response from Zotero!');
@@ -125,7 +125,7 @@ var zotero = {
 
     getItems: function(collectionID){
         
-        let url = `http://localhost:3000/services/zotero/getItemsInCollection/?collectionId=${collectionID}`;
+        let url = `/services/zotero/getItemsInCollection/?collectionId=${collectionID}`;
         
         fetch(url).then(resp=>resp.json()).then(json=>{
 
