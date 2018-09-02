@@ -6,7 +6,7 @@ function userGetAuthInfoRoute(req, res) {
     zotero: {}
   };
 
-  const zoteroData = _.get(req.session, 'zotero');
+  const zoteroData = _.get(req.session, 'auth.zotero');
   if (zoteroData) {
     response.zotero = zoteroData;
   }

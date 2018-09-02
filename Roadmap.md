@@ -1,17 +1,3 @@
-## To do before next release
-
-* Redirect Zotero and Mendeley import and export buttons to a modal saying 'Coming soon...'
-* Hook up the 'Add Seed' button in Recommended Reading list.
-* Hook up the upload bibtex and search by title buttons in the onboarding modal
-* Make sure graph mode corresponds to which button they click in onboarding.
-* Design and implement final onboarding modal
-  * These are seeds
-  * The size corresponds to...
-  * Switch modes here...
-  * Seeds list here...
-* Fix search by title
-  * Loading wheel
-  * Display of results
 
 ## To do before Open Citations Workshop
 

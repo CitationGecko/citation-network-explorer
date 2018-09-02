@@ -6,7 +6,8 @@ var titleInput = document.querySelector("#title-input").addEventListener("input"
 
 document.getElementById("title-input").onkeydown = function(event){
     if (event.keyCode == 13){
-        microsoft.titleSearch(titleQuery)
+        //microsoft.titleSearch(titleQuery)
+        crossref.titleSearch(titleQuery)
     }
 }
 

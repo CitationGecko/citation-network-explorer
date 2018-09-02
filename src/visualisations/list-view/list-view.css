@@ -23,6 +23,7 @@
     flex:auto;
     height:75%;
     box-sizing: border-box;
+    cursor: pointer;
 }
 
 .list-footer{

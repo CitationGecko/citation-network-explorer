@@ -4,7 +4,8 @@
     "scripts": {
         "start": "node server.js",
         "lint": "./node_modules/.bin/eslint .",
-        "postinstall": "gulp scripts && gulp styles"
+        "postinstall": "gulp scripts && gulp styles",
+        "launch": "gulp scripts && gulp styles && node server.js"
     },
     "main": "server.js",
     "engine": {
@@ -12,6 +13,7 @@
         "npm": "*"
     },
     "dependencies": {
+        "async": "^2.6.1",
         "aws-sdk": "^2.236.1",
         "body-parser": "^1.18.2",
         "dotenv": "^6.0.0",

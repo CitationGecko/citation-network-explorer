@@ -1,6 +1,10 @@
 var Papers = []  //Array of paper objects with bibliographic information for each paper 
 var Edges = [] //Array of edge objects, each is a pair of paper objects (source and target).
 
+var authInfo;
+
+fetch('/services/user/getAuthInfo').then(resp=>resp.json()).then(json=>authInfo=json)
+
 //Collection of metric functions to compute for each paper
 var metrics = {  
     "localCitedBy": function(paper,Edges){

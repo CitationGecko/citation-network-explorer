@@ -185,14 +185,27 @@
                 <div id='title-search-bar'>
                     <span>Search by Title:</span><input id='title-input' type="text"><div id='titleInputLoader' class='loader'></div></input>
                 </div>
-                <div id='title-search-container'>
-                    Coming soon...
+                <div id='title-search-table' class='table-view'>
+                <div>
+                    <table>
+                        <thead>
+                            <td class='table-cell'><input class='select-all' type="checkbox"></td>
+                            <td class='table-cell table-title'>TITLE</td>
+                            <td class='table-cell table-author'>AUTHOR</td>
+                            <td class='table-cell table-year'>YEAR</td>
+                            <td class='table-cell table-journal'>PUBLICATION</td>
+                        </thead>
+                    </table>
                 </div>
-                <div class='modal-footer'>
-                        <button class='pick-again modal-btn' onClick='showAddInitialSeed()'>
-                            <span> Use another method </span>
-                        </button>
-                    </div>
+                <div class="table-body">
+                    <table>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <button class='add-selected-items large-secondary-button'>
+                    <span>Add selected as seed papers</span>
+                </button>
+                </div>  
             </div>
         </div>
         <div id='upload-bibtex-modal' class='modal'>
@@ -200,6 +213,40 @@
                 <h1>Upload BibTex</h1>
                 <div>
                     <input type="file" id="files" name="files[]" multiple /><output id="list"></output>
+                </div>
+            </div>
+        </div>
+        <div id='zotero-import-modal' class='modal'>
+            <div class='modal-content'>
+                <h1><img src='/images/zotero/new-logo.svg'></h1>
+                <div><span>Filter by Collection:</span> 
+                    <div class="dropdown">
+                        <button onclick="zotero.dropdown()" class="dropbtn"><img src='/images/zotero/zotero-library.png'>My Library</button>
+                    <div id="zoteroDropdown" class="dropdown-content">
+                      <input type="text" placeholder="Search.." id="zoteroInput" onkeyup="zotero.filterCollections()">
+                    </div>
+                  </div> 
+                </div>
+                <div id='zotero-import-table' class='table-view'>
+                    <div>
+                        <table>
+                            <thead>
+                                <td class='table-cell'><input class='select-all' type="checkbox"></td>
+                                <td class='table-cell table-title'>TITLE</td>
+                                <td class='table-cell table-author'>AUTHOR</td>
+                                <td class='table-cell table-year'>YEAR</td>
+                                <td class='table-cell table-journal'>PUBLICATION</td>
+                            </thead>
+                        </table>
+                    </div>
+                    <div class="table-body">
+                        <table>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                    <button class='add-selected-items large-secondary-button'>
+                        <span>Add selected as seed papers</span>
+                    </button>
                 </div>
             </div>
         </div>
