@@ -6,7 +6,8 @@ body {
     display: flex;
     flex-direction: column;
     margin:0em;
-    height:100%; 
+    height:100%;
+    overflow:hidden; 
 }
 
 .main {
