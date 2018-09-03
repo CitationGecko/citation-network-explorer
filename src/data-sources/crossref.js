@@ -1,4 +1,4 @@
-import {eventResponse,triggerEvent,addPaper,addEdge} from 'core'
+import {eventResponse,triggerEvent,addPaper,addEdge,merge} from 'core'
 import {printTable} from 'ui/visualisations/table-view' 
 
 eventResponse(true,'newSeed',async function(paper){
@@ -26,13 +26,12 @@ eventResponse(true,'newSeed',async function(paper){
 eventResponse(true,'newPaper',function(paper){
     if(paper.doi){
         console.log("querying crossRef for " +paper.doi)
-        let url = `https://api.crossref.org/works?${paper.doi}`
+        let url = `https://api.crossref.org/works/${paper.doi}`
         paper.crossref = fetch(url).then((resp)=>resp.json()).then(json=>{
             console.log("CrossRef data found for "+paper.doi)
             paper.crossref = 'Complete'
-            merge(paper,parsePaper(response))
+            merge(paper,parsePaper(json.message))
             triggerEvent('paperUpdate')
-            resolve('CrossRef info found')
         })   
     };  
 })
@@ -43,7 +42,7 @@ export function titleSearch(input){
     let url = `https://api.crossref.org/works?query.title=${query}`
     fetch(url).then((resp)=>resp.json()).then(json=>{
         
-        items = json.message.items.map(a=>{
+        const items = json.message.items.map(a=>{
             return {
                 doi: a.DOI,
                 title: a.title[0],

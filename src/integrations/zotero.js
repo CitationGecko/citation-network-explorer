@@ -79,7 +79,7 @@ export function displayCollections(collections){
                 .html(c=>`<img src='/images/zotero/zotero-collection.png'>${c.name}`)
                 .on('click',c=>{
                     d3.select('.dropbtn').html(`<img src='/images/zotero/zotero-collection.png'>${c.name}`)
-                    document.getElementById("zoteroDropdown").classList.toggle("hide")
+                    document.getElementById("zoteroDropdown").classList.toggle("show")
                     console.log(`adding papers from collection ${c.key}`)
                     getItems(c.key)
                 })
