@@ -1,7 +1,9 @@
 {
     "name": "citationgecko",
     "version": "0.1.0",
+    "private": true,
     "scripts": {
+        "build": "webpack",
         "start": "node server.js",
         "lint": "./node_modules/.bin/eslint .",
         "postinstall": "gulp scripts && gulp styles",
@@ -16,9 +18,11 @@
         "async": "^2.6.1",
         "aws-sdk": "^2.236.1",
         "body-parser": "^1.18.2",
+        "d3": "^5.7.0",
         "dotenv": "^6.0.0",
         "express": "^4.16.3",
         "express-session": "^1.15.6",
+        "glob": "^7.1.3",
         "lodash": "^4.17.10",
         "oauth": "^0.9.15",
         "request": "^2.85.0"
@@ -29,6 +33,8 @@
         "eslint-plugin-import": "2.8.0",
         "gulp": "^3.9.1",
         "gulp-concat": "^2.6.1",
-        "gulp-exec": "^3.0.1"
+        "gulp-exec": "^3.0.1",
+        "webpack": "^4.17.1",
+        "webpack-cli": "^3.1.0"
     }
 }
