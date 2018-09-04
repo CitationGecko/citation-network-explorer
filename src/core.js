@@ -71,7 +71,11 @@ export function addPaper(paper,asSeed){
         paper = merge(match,paper)
         //triggerEvent('paperUpdated',paper) // Ideally only triggers if there is new info.
     }
-    if(asSeed&!paper.seed){makeSeed(paper)}
+    if(asSeed&!paper.seed){
+        makeSeed(paper)
+    }else{
+        paper.seed=false
+    }
     return(paper)
 }
 // Add a new edge to the database.

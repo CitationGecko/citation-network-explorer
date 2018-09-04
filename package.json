@@ -19,6 +19,7 @@
         "aws-sdk": "^2.236.1",
         "body-parser": "^1.18.2",
         "d3": "^5.7.0",
+        "directory-named-webpack-plugin": "^4.0.0",
         "dotenv": "^6.0.0",
         "express": "^4.16.3",
         "express-session": "^1.15.6",
