@@ -9,21 +9,17 @@ eventResponse(true,'newSeed',async function(paper){
         triggerEvent('seedUpdate',paper);
     }
     if(paper.references){
-        paper.references.forEach((ref)=>{
-            let cited = addPaper(parseReference(ref))
-            addEdge({
-                source: paper,
-                target: cited,
-                crossref: true,
-                hide: false
-            });
-        })
+
+        let newpapers = paper.references.map(parseReference)
+
+        getMetadata(newpapers)
+
         console.log('CrossRef found ' + paper.references.length + " citations")
         triggerEvent('newEdges')
     }
 })
 
-eventResponse(true,'newPaper',function(paper){
+/* eventResponse(true,'newPaper',function(paper){
     if(paper.doi){
         console.log("querying crossRef for " +paper.doi)
         let url = `https://api.crossref.org/works/${paper.doi}`
@@ -34,7 +30,17 @@ eventResponse(true,'newPaper',function(paper){
             triggerEvent('paperUpdate')
         })   
     };  
-})
+}) */
+
+export function getMetadata(papers){
+
+    let query = papers.filter((p)=>p.doi).map((p)=>`doi:${p.doi}`).join()
+    let base = 'https://api.crossref.org/works?rows=1000&filter='
+    fetch(base+query).then((resp)=>resp.json()).then(json=>{
+        //json.message.items.forEach()
+    })
+
+}
 
 export function titleSearch(input){
 

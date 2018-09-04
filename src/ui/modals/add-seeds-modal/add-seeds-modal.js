@@ -2,8 +2,6 @@ import * as d3 from 'vendor/d3.v4.js'
 import {getCollections} from 'integrations/zotero'
 import {authInfo} from 'core'
 
-
-console.log('Add seeds ')
 d3.selectAll(".doi-input-button").on('click', function() {
     document.getElementById('add-seeds-modal').style.display = "none";
     document.getElementById('onboarding-2').style.display = "none";
