@@ -17,8 +17,8 @@ eventResponse(true,'newSeed',async function(paper){
                 crossref: true,
                 hide: false
             });
-            console.log('CrossRef found ' + paper.references.length + " citations")
         })
+        console.log('CrossRef found ' + paper.references.length + " citations")
         triggerEvent('newEdges')
     }
 })

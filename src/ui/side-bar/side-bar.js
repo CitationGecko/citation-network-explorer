@@ -1,5 +1,5 @@
 import * as d3 from 'vendor/d3.v4.js'
-import {connectedList} from 'ui/visualisations/list-view/list-view'
+import {connectedList} from 'ui/visualisations/list-view'
 
 //For paper details panel switching. 
 document.getElementById('connected-list').style.display = 'none';

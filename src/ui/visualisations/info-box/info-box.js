@@ -1,6 +1,6 @@
 import * as d3 from 'vendor/d3.v4.js'
-import {linkoutsvg} from 'ui/visualisations/list-view/list-view'
-import {forceGraph} from 'ui/visualisations/network-view/forceGraph'
+import {linkoutsvg} from 'ui/visualisations/list-view'
+import {forceGraph} from 'ui/visualisations/network-view'
 import {deleteSeed,makeSeed} from 'core'
 
 //Functions for paper details panel

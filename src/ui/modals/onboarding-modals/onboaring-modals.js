@@ -1,5 +1,6 @@
-import {forceGraph} from 'ui/visualisations/network-view/forceGraph'
-import {connectedList} from 'ui/visualisations/list-view/list-view'
+import {forceGraph} from 'ui/visualisations/network-view'
+import {connectedList} from 'ui/visualisations/list-view'
+import { importExampleBibTex } from 'integrations/bibtex'
 import * as d3 from 'vendor/d3.v4.js'
 
 var onboarding = true;
@@ -24,6 +25,11 @@ export function showAddInitialSeed() {
 
 document.querySelector('#start-discovery').onclick = showAddInitialSeed;
 document.querySelector('.pick-again').onclick = showAddInitialSeed;
+document.querySelector('#demo-button').onclick = ()=>{
+  importExampleBibTex();
+  document.getElementById('onboarding-1').style.display = 'none';
+}
+
 
 function showSeedType() {
   document.getElementById('onboarding-1').style.display = 'none';

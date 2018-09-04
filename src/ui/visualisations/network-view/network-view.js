@@ -1,4 +1,5 @@
 import { eventResponse, Edges, Papers , updateMetrics } from "core";
+import { updateInfoBox } from 'ui/visualisations/info-box'
 import * as d3 from 'vendor/d3.v4.js' 
 
 eventResponse(true,'newEdges',function(){
