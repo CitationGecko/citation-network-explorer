@@ -41,7 +41,7 @@ defineEvent('seedUpdate'); //Event triggered when more info is found on a seed i
 defineEvent('newPaper'); //Event triggered when a new (non-seed) paper is added.
 defineEvent('paperUpdate') //Event trigger when non-seed paper is updated with more info. 
 defineEvent('newEdges') //Event triggered when new edges are added.
-defineEvent('seedDeleted')
+defineEvent('seedDeleted') //Event triggered when seeds are deleted.
 
 export function triggerEvent(name,subject){
     for(let i=0;i<events[name].responses.length;i++){
@@ -56,25 +56,34 @@ export function eventResponse(listening,name,action){
     }
 }
 // Convert a paper to a seed paper.
-export function makeSeed(paper){
-    paper.seed = true;
-    triggerEvent('newSeed',paper)
+export function makeSeed(papers){
+    papers.forEach(p=>{
+        p.seed = true;
+    })
+    triggerEvent('newSeed',papers)
 }
 // Add a new paper to the database
-export function addPaper(paper,asSeed){
-    let match = matchPapers(paper,Papers)
-    if(!match){
-        paper.ID = Papers.length;
-        Papers.push(paper)
-        triggerEvent('newPaper',paper)
-    } else {
-        paper = merge(match,paper)
-        //triggerEvent('paperUpdated',paper) // Ideally only triggers if there is new info.
-    }
-    if(asSeed&!paper.seed){
-        makeSeed(paper)
-    }else{
-        paper.seed=false
+export function addPapers(papers,asSeed){
+    
+    let newpapers = [];
+    papers.forEach(paper=>{
+        let match = matchPapers(paper,Papers)
+        if(!match){
+            paper.ID = Papers.length;
+            paper.seed = asSeed || false;
+            Papers.push(paper);
+            newpapers.push(paper);
+        } else {
+            paper = merge(match,paper)
+            //triggerEvent('paperUpdated',paper) // Ideally only triggers if there is new info.
+        }
+    })
+    if(newpapers.length){
+        if(asSeed){
+            triggerEvent('newSeed',newpapers)
+        } else {
+            triggerEvent('newPaper',newpapers)
+        }
     }
     return(paper)
 }

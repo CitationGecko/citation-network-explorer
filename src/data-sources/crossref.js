@@ -1,30 +1,27 @@
 import {eventResponse,triggerEvent,addPaper,addEdge,merge} from 'core'
 import {printTable} from 'ui/visualisations/table-view' 
 
-eventResponse(true,'newSeed',async function(paper){
-     
-    if(paper.doi){
-        console.log("querying crossRef for " +paper.doi)
-        let url = `https://api.crossref.org/works/${paper.doi}`
-        let newseed = await fetch(url).then((resp)=>resp.json()).then(json=>{
-            console.log("CrossRef data found for "+paper.doi)
-            return merge(paper,parsePaper(json.message))
-        })
-        triggerEvent('seedUpdate',paper);
-        if(newseed.references){
-            let newpapers = paper.references.map(parseReference)
-            newpapers = await getMetadata(newpapers);
-            newpapers.forEach(p=>{
-                addEdge({
-                    source:paper,
-                    target:addPaper(parsePaper(p)),
-                    crossref:true
-                })
+eventResponse(true,'newSeed',async function(papers){
+    
+    console.log("querying crossRef for seed papers")
+    let newseeds = await getMetadata(papers);
+    newseeds = newseeds.map(parsePaper);
+    triggerEvent('seedUpdate',paper);
+
+    newseeds.filter(paper=>paper.references).forEach(paper=>{
+        let newpapers = paper.references.map(parseReference)
+        newpapers = await getMetadata(newpapers);
+        newpapers.forEach(p=>{
+            addEdge({
+                source:paper,
+                target:addPaper(parsePaper(p)),
+                crossref:true
             })
-            console.log(`CrossRef found ${paper.references.length} citations for ${paper.doi}`)
-            triggerEvent('newEdges')
-        }
-    };
+        })
+    })
+        
+        console.log(`CrossRef found ${paper.references.length} citations for ${paper.doi}`)
+        triggerEvent('newEdges')
 })
 
 /* eventResponse(true,'newPaper',function(paper){
