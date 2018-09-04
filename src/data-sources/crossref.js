@@ -19,7 +19,7 @@ eventResponse(true,'newSeed',async function(paper){
                 addEdge({
                     source:paper,
                     target:addPaper(parsePaper(p)),
-                    source:'crossref'
+                    origin:'crossref'
                 })
             })
             console.log(`CrossRef found ${paper.references.length} citations for ${paper.doi}`)
