@@ -1,6 +1,6 @@
 import {eventResponse,triggerEvent,addPaper,addEdge} from 'core'
 
-eventResponse(false,'newSeed',function(paper){
+eventResponse(true,'newSeed',function(paper){
     /*  let url = 'https://w3id.org/oc/index/coci/api/v1/references/'+paper.doi
      fetch(url).then(resp=>resp.json()).then(data => {
          coci.parseResponse(data,paper);

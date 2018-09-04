@@ -8,10 +8,9 @@ eventResponse(true,'newSeed',async function(paper){
         let url = `https://api.crossref.org/works/${paper.doi}`
         let newseed = await fetch(url).then((resp)=>resp.json()).then(json=>{
             console.log("CrossRef data found for "+paper.doi)
-            triggerEvent('seedUpdate',paper);
             return merge(paper,parsePaper(json.message))
         })
-
+        triggerEvent('seedUpdate',paper);
         if(newseed.references){
             let newpapers = paper.references.map(parseReference)
             newpapers = await getMetadata(newpapers);
@@ -19,7 +18,7 @@ eventResponse(true,'newSeed',async function(paper){
                 addEdge({
                     source:paper,
                     target:addPaper(parsePaper(p)),
-                    origin:'crossref'
+                    crossref:true
                 })
             })
             console.log(`CrossRef found ${paper.references.length} citations for ${paper.doi}`)

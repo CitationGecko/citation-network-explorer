@@ -2,6 +2,10 @@ import { eventResponse, Edges, Papers , updateMetrics } from "core";
 import { updateInfoBox } from 'ui/visualisations/info-box'
 import * as d3 from 'vendor/d3.v4.js' 
 
+eventResponse(true,'newSeed',function(){
+    updateMetrics(Papers,Edges); // update citation metrics
+    forceGraph.refresh()
+})
 eventResponse(true,'newEdges',function(){
     updateMetrics(Papers,Edges); // update citation metrics
     forceGraph.refresh()
@@ -25,16 +29,16 @@ export const forceGraph = {
             forceGraph.sizeMetric = 'seedsCited';    
             break;
         }
+        forceGraph.nodeIDs = forceGraph.edges.map(function(e){return(e.source)}).concat(forceGraph.edges.map(function(e){return(e.target)}));
         //Pick only Papers that are connected to something
         forceGraph.nodes = Papers.filter(function(p){
-            let ids = forceGraph.edges.map(function(e){return(e.source)}).concat(forceGraph.edges.map(function(e){return(e.target)}));
-            return(ids.includes(p.ID))
+            return(forceGraph.nodeIDs.includes(p.ID)||p.seed)
         }); 
         forceGraph.circles = forceGraph.circles.data(forceGraph.nodes,function(d){return d.ID});
         forceGraph.circles.exit().remove();
         forceGraph.circles = forceGraph.circles.enter().append("circle")
                             .merge(forceGraph.circles)
-                            .attr("r", function(d){return d.seed ? 7 : 5*d[forceGraph.sizeMetric]})
+                            .attr("r", function(d){return d.seed ? 10 : 5*d[forceGraph.sizeMetric]})
                             .attr("class", function(d) { 
                                 if(d.seed){return 'seed-node node'} else {return 'node'}
                             })                                            
