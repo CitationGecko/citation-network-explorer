@@ -3,11 +3,10 @@
     position: absolute;
     font-size: 70%;
     right:0em;
-    bottom:.2em;
+    top:.2em;
     max-width:50%;
     background-color: rgb(255, 199, 0);
-    padding:2em;
-    
+    padding:2em;   
 }
 
 .add-seed {

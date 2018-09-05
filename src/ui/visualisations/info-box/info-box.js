@@ -10,7 +10,6 @@ export function updateInfoBox(p){
     paperbox.select('.paper-title').html(`${p.title}<a target='_blank' href='https://doi.org/${p.doi}'>${linkoutIcon}</a>`)
     paperbox.select('.author-year').html((p.author ? p.author:'')+' ('+p.year+')')
     paperbox.select('.journal').html(p.journal)
-
     paperbox.select('.add-seed').html(p.seed ? 'Delete Seed':'Add as seed')
             .on('click', function(){p.seed ? deleteSeed(p) : makeSeed([p])})
     forceGraph.selectednode = p;

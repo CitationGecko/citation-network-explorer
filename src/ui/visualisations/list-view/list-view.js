@@ -2,6 +2,7 @@ import { eventResponse, Papers } from "core";
 import { forceGraph, highlightNode } from 'ui/visualisations/network-view'
 import * as d3 from 'vendor/d3.v4.js'
 import { linkoutIcon } from 'ui/icons'
+import { updateInfoBox } from 'ui/visualisations/info-box'
 
 export const seedList = {}
 export const connectedList = {}
@@ -112,17 +113,22 @@ connectedList.print = function(metric,pageNum,replot,extraPaper){
 };
 
 export function surfacePaperBox(p){
-    var paperbox = d3.selectAll('.paper-box').filter(d=>d==p)
-    if(!paperbox.node()){
-        connectedList.print(forceGraph.sizeMetric,1,false,p)
-        paperbox = d3.selectAll('.paper-box').filter(d=>d==p)
-    }
-    d3.selectAll('.paper-box').classed('selected-paper',false)
-    paperbox.classed('selected-paper',true)
-    if(p.seed){
-        document.getElementById('seed-list-button').click()
+
+    if(document.getElementById('list-panel').classList.contains('hide')){
+        updateInfoBox(p)
     } else {
-        document.getElementById('connected-list-button').click()
+        var paperbox = d3.selectAll('.paper-box').filter(d=>d==p)
+        if(!paperbox.node()){
+            connectedList.print(forceGraph.sizeMetric,1,false,p)
+            paperbox = d3.selectAll('.paper-box').filter(d=>d==p)
+        }
+        d3.selectAll('.paper-box').classed('selected-paper',false)
+        paperbox.classed('selected-paper',true)
+        if(p.seed){
+            document.getElementById('seed-list-button').click()
+        } else {
+            document.getElementById('connected-list-button').click()
+        }
+        paperbox.node().scrollIntoView()
     }
-    paperbox.node().scrollIntoView()
 }
