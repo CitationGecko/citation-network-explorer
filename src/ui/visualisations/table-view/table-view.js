@@ -45,7 +45,7 @@ export function printTable(tableID,items){
     
     d3.select(`${tableID} .add-selected-items`).on('click',()=>{
         var papers = d3.selectAll(`${tableID} .item-select:checked`).data()
-        updatePapers(papers)
+        papers = updatePapers(papers)
         makeSeed(papers)
     })
 }

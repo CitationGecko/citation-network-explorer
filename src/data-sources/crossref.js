@@ -42,11 +42,17 @@ eventResponse(true,'newPaper',function(papers){
 
 export function getMetadata(papers){
 
-    let query = papers.filter((p)=>p.doi).map((p)=>`doi:${p.doi}`).join()
-    let base = 'https://api.crossref.org/works?rows=1000&filter='
-    return fetch(base+query).then((resp)=>resp.json()).then(json=>{
-        return json.message.items
-    })
+    let dois =  papers.filter((p)=>p.doi)
+    if(dois.length){
+        let query = dois.map((p)=>`doi:${p.doi}`).join()
+        let base = 'https://api.crossref.org/works?rows=1000&filter='
+        return fetch(base+query).then((resp)=>resp.json()).then(json=>{
+            return json.message.items
+        })
+    } else {
+        return []
+    }
+    
 }
 
 export function titleSearch(input){
@@ -54,17 +60,7 @@ export function titleSearch(input){
     let query = input.replace(' ','+')
     let url = `https://api.crossref.org/works?query.title=${query}`
     fetch(url).then((resp)=>resp.json()).then(json=>{
-        const items = json.message.items.map(a=>{
-            return {
-                doi: a.DOI,
-                title: a.title[0],
-                author: a.author ? a.author[0].family : 'n.a',
-                month: a.created['date-parts'][0][1],
-                year: a.created['date-parts'][0][0],
-                timestamp: a.created.timestamp,
-                journal: a['container-title'] ? a['container-title'][0] : 'n.a'
-            }
-        })
+        const items = json.message.items.map(parsePaper)
         printTable('#title-search-table',items)
     })
 }
