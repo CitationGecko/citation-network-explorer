@@ -52,7 +52,6 @@ export function getMetadata(papers){
     } else {
         return []
     }
-    
 }
 
 export function titleSearch(input){
@@ -72,7 +71,7 @@ function parsePaper(response){
             author: response.author ? response.author[0].family : '',
             month: response.created['date-parts'][0][1],
             year: response.created['date-parts'][0][0],
-            timestamp: response.created.timestamp,
+            timestamp: new Date(response.created['date-time']),
             journal: response['container-title'][0],
             citationCount: response['is-referenced-by-count'],
             references: response['reference'] ? response['reference'] : false,
