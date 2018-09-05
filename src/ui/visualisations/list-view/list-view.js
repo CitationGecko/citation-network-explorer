@@ -20,24 +20,14 @@ eventResponse(true,'newSeed',function(){
 })
 eventResponse(true,'seedDeleted',function(){
     seedList.refresh()
+    connectedList.print(forceGraph.sizeMetric,1)
 })
 
 seedList.refresh = function(){
     var seedpapers = Papers.filter(function(p){return p.seed});
     var paperboxes = d3.select('#seed-paper-container').selectAll('.paper-box')
-                    .data(seedpapers,function(d){return d.ID})
-    paperboxes.exit().remove()
-    var oldpapers = d3.select('#seed-paper-container').selectAll('.paper-box')
-    
-    oldpapers.select('.paper-title').html(function(p){
-        return(`${p.title}<a target='_blank' href='https://doi.org/${p.doi}'>${linkoutIcon}</a>`)
-    })
-    oldpapers.select('.author-year').html(function(p){
-        if(p.author) {return p.author+' ('+p.year+')'}else{return(p.year)}
-    })
-    oldpapers.select('.journal').html(function(p){
-        if(p.journal) {return p.journal}else{return('')}
-    })
+        .data(seedpapers,function(d){return d.ID})
+    paperboxes.exit().remove()    
     var newpapers = paperboxes.enter()
         .append('div')
         .attr('class','paper-box')
@@ -47,16 +37,20 @@ seedList.refresh = function(){
             d3.select(this).classed('selected-paper',true)
         })
     newpapers.append('div').attr('class','paper-title')
-        .html(function(p){
-            return(`${p.title}<a target='_blank' href='https://doi.org/${p.doi}'>${linkoutIcon}</a>`)
-        })
     newpapers.append('div').attr('class','author-year')
-        .html(function(p){
-            if(p.author) {return p.author+' ('+p.year+')'}else{return(p.year)}
-        })  
-    newpapers.append('div').attr('class','journal').html(function(p){
-            if(p.journal) {return p.journal}else{return('')}
-        })   
+    newpapers.append('div').attr('class','journal')
+    
+    paperboxes = d3.select('#seed-paper-container').selectAll('.paper-box')
+        .data(seedpapers,function(d){return d.ID})
+    paperboxes.select('.paper-title').html(function(p){
+        return(`${p.title}<a target='_blank' href='https://doi.org/${p.doi}'>${linkoutIcon}</a>`)
+    })
+    paperboxes.select('.author-year').html(function(p){
+        if(p.author) {return p.author+' ('+p.year+')'}else{return(p.year)}
+    })
+    paperboxes.select('.journal').html(function(p){
+        if(p.journal) {return p.journal}else{return('')}
+    })
 };
 
 connectedList.print = function(metric,pageNum,replot){
@@ -68,29 +62,9 @@ connectedList.print = function(metric,pageNum,replot){
         d3.select('#connected-paper-container').selectAll('.paper-box').remove();
     }
     let paperboxes = d3.select('#connected-paper-container').selectAll('.paper-box')
-                        .data(nonSeeds,function(d){return d.ID});
-                        //.sort((a,b)=>b.seedsCitedBy<a.seedsCitedBy)
-    paperboxes.exit().remove();
-    var oldpapers = d3.select('#connected-paper-container').selectAll('.paper-box')
-    oldpapers.select('.paper-title').html(function(p){
-        return(`${p.title}<a target='_blank' href='https://doi.org/${p.doi}'>${linkoutIcon}</a>`)
-    })
-    oldpapers.select('.metric').html(function(p){
-        if(!p[metric]){return('')}  
-        if(metric=='seedsCitedBy'){
-            return('cited by <span class="metric-count">'+p[metric]+'</span> seed papers')
-        } 
-        if(metric=='seedsCited'){
-            return('cites <span class="metric-count">'+p[metric]+'</span> seed papers')
-        }
-    })
-    oldpapers.select('.author-year').html(function(p){
-        if(p.author) {return p.author+' ('+p.year+')'}else{return(p.year)}
-    })
-    oldpapers.select('.journal').html(function(p){
-        if(p.journal) {return p.journal}else{return('')}
-    })
+        .data(nonSeeds,function(d){return d.ID});
     
+    paperboxes.exit().remove();
     var newpapers = paperboxes.enter()
         .append('div')
         .attr('class','paper-box')
@@ -101,27 +75,31 @@ connectedList.print = function(metric,pageNum,replot){
             d3.select('#make-seed').on('click',function(){makeSeed([p])})
         })
     newpapers.append('div').attr('class','paper-title')
-        .html(function(p){
-            return(`${p.title}<a target='_blank' href='https://doi.org/${p.doi}'>${linkoutIcon}</a>`)
-        })
-    newpapers.append('div').attr('class','author-year')
-        .html(function(p){
-            if(p.author) {return p.author+' ('+p.year+')'}else{return(p.year)}
-        })  
+    newpapers.append('div').attr('class','author-year')  
     newpapers.append('div').attr('class','metric')
-        .html(function(p){
+    newpapers.append('div').attr('class','journal')
 
-            if(!p[metric]){return('')}  
-            if(metric=='seedsCitedBy'){
-                return('cited by <span class="metric-count">'+p[metric]+'</span> seed papers')
-            } 
-            if(metric=='seedsCited'){
-                return('cites <span class="metric-count">'+p[metric]+'</span> seed papers')
-            }
-        })
-    newpapers.append('div').attr('class','journal').html(function(p){
-            if(p.journal) {return p.journal}else{return('')}
-        })     
+    paperboxes = d3.select('#connected-paper-container').selectAll('.paper-box')
+        .data(nonSeeds,function(d){return d.ID});
+    paperboxes.select('.paper-title').html(function(p){
+        return(`${p.title}<a target='_blank' href='https://doi.org/${p.doi}'>${linkoutIcon}</a>`)
+    })
+    paperboxes.select('.metric').html(function(p){
+        if(!p[metric]){return('')}  
+        if(metric=='seedsCitedBy'){
+            return('cited by <span class="metric-count">'+p[metric]+'</span> seed papers')
+        } 
+        if(metric=='seedsCited'){
+            return('cites <span class="metric-count">'+p[metric]+'</span> seed papers')
+        }
+    })
+    paperboxes.select('.author-year').html(function(p){
+        if(p.author) {return p.author+' ('+p.year+')'}else{return(p.year)}
+    })
+    paperboxes.select('.journal').html(function(p){
+        if(p.journal) {return p.journal}else{return('')}
+    })
+
     d3.select('#more-button').remove();
     d3.select('#connected-paper-container')
         .append('div')
