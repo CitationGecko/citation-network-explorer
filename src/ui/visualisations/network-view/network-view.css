@@ -1,7 +1,10 @@
 #network-view, #force-graph {
     width:100%;
     height:100%;
+    display: none;
 }
+
+
 .node {
     stroke: #fff;
     stroke-width: 1px;
