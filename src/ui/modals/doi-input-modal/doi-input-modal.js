@@ -1,4 +1,5 @@
-import {addPaper} from 'core'
+import {updatePapers} from 'core'
+import { makeSeed } from '../../../core';
 
 var doiQuery; //Place holder for the user input field.
 
@@ -8,8 +9,10 @@ var doiInput = document.querySelector("#doi-input").addEventListener("input",fun
 });
 
 document.getElementById("doi-input").onkeydown = function(event){
-    if (event.keyCode == 13){   
-        addPaper({doi:doiQuery},true)
+    if (event.keyCode == 13){
+        let paper = {doi:doiQuery};  
+        updatePapers([paper])
+        makeSeed([paper])
         //document.getElementById('doi-input-loader').style.display = 'inline-block';
     }
 }

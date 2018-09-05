@@ -63,40 +63,42 @@ export function makeSeed(papers){
     triggerEvent('newSeed',papers)
 }
 // Add a new paper to the database
-export function addPapers(papers,asSeed){
+export function updatePapers(papers){
     
     let newpapers = [];
-    papers.forEach(paper=>{
+    papers = papers.map(paper=>{
         let match = matchPapers(paper,Papers)
         if(!match){
             paper.ID = Papers.length;
-            paper.seed = asSeed || false;
             Papers.push(paper);
             newpapers.push(paper);
         } else {
             paper = merge(match,paper)
             //triggerEvent('paperUpdated',paper) // Ideally only triggers if there is new info.
         }
+        return(paper)
     })
-    if(newpapers.length){
-        if(asSeed){
-            triggerEvent('newSeed',newpapers)
-        } else {
-            triggerEvent('newPaper',newpapers)
-        }
-    }
-    return(paper)
+    triggerEvent('newPaper',newpapers)
+    return(papers)
 }
 // Add a new edge to the database.
-export function addEdge(newEdge){
-    let edge = Edges.filter(function(e){
-        return e.source == newEdge.source & e.target == newEdge.target;
-    })
-    if(edge.length==0){
-        Edges.push(newEdge);
-    } else {
-        merge(edge[0],newEdge)
-    };
+export function updateEdges(edges){
+
+    let trigger = false;
+    edges.forEach(newEdge=>{
+        let edge = Edges.filter(function(e){
+            return e.source == newEdge.source & e.target == newEdge.target;
+        })
+        if(edge.length==0){
+            Edges.push(newEdge);
+            trigger = true;
+        } else {
+            merge(edge[0],newEdge)
+        };
+    }) 
+    if(trigger){
+        triggerEvent('newEdges')
+    }
 }
 
 //For a new paper this function tries to find a match in the existing database

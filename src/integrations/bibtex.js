@@ -1,5 +1,6 @@
 import bibtexParse from 'vendor/bibtexParse'
-import {addPaper} from 'core'
+import {updatePapers} from 'core'
+import { makeSeed } from '../core';
 //Importing user uploaded Bibtex
 export function importBibTex(evt) {
     let files = evt.target.files; // FileList object
@@ -7,17 +8,12 @@ export function importBibTex(evt) {
         var reader = new FileReader();
         reader.onload = function(e){
             var papers = bibtexParse.toJSON(e.target.result);
-            if(papers.filter(function(p){
-                return p.entryTags.doi;
-            }).length==0){
-                alert("We couldn't find any DOIs in the BibTex you uploaded please check your export settings");
-            };
-            for(let i=0;i<papers.length;i++){
-                if(papers[i].entryTags.doi){
-                    let newSeed = {doi: papers[i].entryTags.doi}
-                    addPaper(newSeed,true);
-                }; 
-            };
+            let newPapers = papers.filter(p=>p.entryTags.doi).map(p=>{
+                return {doi: p.entryTags.doi}
+            })
+            if(!newPapers.length){alert("We couldn't find any DOIs in the BibTex you uploaded please check your export settings")};
+            updatePapers(newPapers)
+            makeSeed(newPapers)
         };
         reader.readAsText(f);       
     };
@@ -31,10 +27,11 @@ export function importExampleBibTex(){
     let url = window.location.href+'examples/exampleBibTex.bib'
     fetch(url).then((resp) => resp.text()).then((data)=> {
             var papers = bibtexParse.toJSON(data);
-            for(let i=0;i<papers.length;i++){
-                let newSeed = {doi: papers[i].entryTags.doi}
-                addPaper(newSeed,true);
-            };
+            let newPapers = papers.filter(p=>p.entryTags.doi).map(p=>{
+                return {doi: p.entryTags.doi,seed:true}
+            })
+            newPapers = updatePapers(newPapers);
+            makeSeed(newPapers);
         }
     )
 }

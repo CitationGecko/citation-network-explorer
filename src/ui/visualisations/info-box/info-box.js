@@ -12,6 +12,6 @@ export function updateInfoBox(p){
     paperbox.select('.journal').html(p.journal)
 
     paperbox.select('.add-seed').html(p.seed ? 'Delete Seed':'Add as seed')
-            .on('click', function(){p.seed ? deleteSeed(p) : makeSeed(p)})
+            .on('click', function(){p.seed ? deleteSeed(p) : makeSeed([p])})
     forceGraph.selectednode = p;
 }

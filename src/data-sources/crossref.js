@@ -1,41 +1,44 @@
-import {eventResponse,triggerEvent,addPaper,addEdge,merge} from 'core'
+import {eventResponse,triggerEvent,updatePapers,updateEdges,merge} from 'core'
 import {printTable} from 'ui/visualisations/table-view' 
 
 eventResponse(true,'newSeed',async function(papers){
     
     console.log("querying crossRef for seed papers")
-    let newseeds = await getMetadata(papers);
-    newseeds = newseeds.map(parsePaper);
-    triggerEvent('seedUpdate',paper);
+    let newSeeds = await getMetadata(papers);
+    newSeeds = newSeeds.map(parsePaper);
+    newSeeds = updatePapers(newSeeds);
+    triggerEvent('seedUpdate',newSeeds);
 
-    newseeds.filter(paper=>paper.references).forEach(paper=>{
-        let newpapers = paper.references.map(parseReference)
-        newpapers = await getMetadata(newpapers);
-        newpapers.forEach(p=>{
-            addEdge({
+    newSeeds.filter(paper=>paper.references).forEach(async (paper)=>{
+        let newPapers = paper.references.map(parseReference)
+        newPapers = await getMetadata(newPapers);
+        newPapers = newPapers.map(parsePaper)
+        newPapers = updatePapers(newPapers);
+
+        let newEdges = newPapers.map(p=>{
+            return {
                 source:paper,
-                target:addPaper(parsePaper(p)),
+                target:p,
                 crossref:true
-            })
+            }
         })
-    })
-        
+        updateEdges(newEdges); 
         console.log(`CrossRef found ${paper.references.length} citations for ${paper.doi}`)
-        triggerEvent('newEdges')
+    })
+    triggerEvent('newEdges')
 })
 
-/* eventResponse(true,'newPaper',function(paper){
-    if(paper.doi){
-        console.log("querying crossRef for " +paper.doi)
-        let url = `https://api.crossref.org/works/${paper.doi}`
-        paper.crossref = fetch(url).then((resp)=>resp.json()).then(json=>{
-            console.log("CrossRef data found for "+paper.doi)
-            paper.crossref = 'Complete'
-            merge(paper,parsePaper(json.message))
+eventResponse(true,'newPaper',function(papers){
+    
+    papers = papers.filter(p=>!p.crossref && !p.seed);
+    if(papers.length){
+        getMetadata(papers).then(items=>{
+            console.log(`CrossRef data found`) 
+            updatePapers(items.map(parsePaper))
             triggerEvent('paperUpdate')
-        })   
-    };  
-}) */
+        })  
+    }
+})
 
 export function getMetadata(papers){
 

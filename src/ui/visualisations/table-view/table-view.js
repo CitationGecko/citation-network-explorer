@@ -1,5 +1,6 @@
 import * as d3 from 'vendor/d3.v4.js'
-import { addPaper } from 'core'
+import { updatePapers } from 'core'
+import { makeSeed } from '../../../core';
 
 export function printTable(tableID,items){
 
@@ -44,8 +45,7 @@ export function printTable(tableID,items){
     
     d3.select(`${tableID} .add-selected-items`).on('click',()=>{
         var papers = d3.selectAll(`${tableID} .item-select:checked`).data()
-        papers.forEach(paper=>{
-            addPaper(paper,true);
-        });
+        updatePapers(papers)
+        makeSeed(papers)
     })
 }

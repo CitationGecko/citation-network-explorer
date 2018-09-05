@@ -1,4 +1,4 @@
-import {eventResponse,triggerEvent,addPaper,addEdge} from 'core'
+import {eventResponse,triggerEvent,updatePapers,updateEdges} from 'core'
 
 eventResponse(true,'newSeed',function(papers){
     /*  let url = 'https://w3id.org/oc/index/coci/api/v1/references/'+paper.doi
@@ -6,36 +6,36 @@ eventResponse(true,'newSeed',function(papers){
          coci.parseResponse(data,paper);
      }) */
      papers.forEach(paper=>{
-        console.log('Querying COCI for '+paper.doi)
-        let url = 'https://w3id.org/oc/index/coci/api/v1/citations/'+paper.doi
+        console.log(`Querying COCI for ${paper.doi}`)
+        let url = `https://w3id.org/oc/index/coci/api/v1/citations/${paper.doi}`
         fetch(url, {headers: {
             'Accept': 'application/sparql-results+json'
         }}).then(resp=>resp.json()).then(data => {
            parseResponse(data,paper);
-           triggerEvent('newEdges')
         })
      })
 })
 
 function parseResponse(response, paper){
-    let ne = 0; //For bean counting only
-    let cited = paper;
-    let newpapers = [];
-    for(let i=0;i<response.length;i++){
-        let citer = {
-            doi: response[i].citing
-        };
-        newpapers.push(citer);
-        let newEdge = {
-            source: citer,
-            target: cited,
-            coci: true,
-            hide: false
+
+    let newPapers = response.map(edge=>{
+        return{
+            doi:edge.citing
         }
-        addEdge(newEdge);
-        ne++;//bean counting
-    }; 
-    addPapers(newpapers)  
-    console.log('COCI found ' + ne + " citations")
-    return(cited)
+    })
+
+    newPapers = updatePapers(newPapers)
+
+    let newEdges = newPapers.map(p=>{
+        return {
+            source: p,
+            target: paper,
+            coci: true
+        }
+    })
+
+    updateEdges(newEdges)  
+    triggerEvent('newEdges')    
+    console.log(`COCI found ${newEdges.length} citations`)
+    return(paper)
 }
