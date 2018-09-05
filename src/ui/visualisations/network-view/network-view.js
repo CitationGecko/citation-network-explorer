@@ -2,15 +2,15 @@ import { eventResponse, Edges, Papers , updateMetrics } from "core";
 import { updateInfoBox } from 'ui/visualisations/info-box'
 import * as d3 from 'vendor/d3.v4.js' 
 
-eventResponse(true,'newSeed',function(){
+eventResponse(false,'newSeed',function(){
     updateMetrics(Papers,Edges); // update citation metrics
     forceGraph.refresh()
 })
-eventResponse(true,'newEdges',function(){
+eventResponse(false,'newEdges',function(){
     updateMetrics(Papers,Edges); // update citation metrics
     forceGraph.refresh()
 })
-eventResponse(true,'seedDeleted',function(){
+eventResponse(false,'seedDeleted',function(){
     updateMetrics(Papers,Edges); // update citation metrics
     forceGraph.refresh()
 })

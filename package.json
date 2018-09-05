@@ -3,7 +3,7 @@
     "version": "0.1.0",
     "private": true,
     "scripts": {
-        "build": "webpack",
+        "build": "webpack & gulp styles",
         "start": "node server.js",
         "lint": "./node_modules/.bin/eslint .",
         "postinstall": "gulp scripts && gulp styles",

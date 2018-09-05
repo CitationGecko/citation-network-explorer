@@ -48,61 +48,28 @@ timeline.refresh = function(){
     timeline.circles.exit().remove();
     timeline.circles = timeline.circles.enter().append("circle")
                         .merge(timeline.circles)
-                        .attr("r", function(d){return d.seed ? 10 : 5*d[timeline.sizeMetric]})
-                        .attr("cx",function(d){d.xposition})
-                        .attr("cy",function(d){d.yposition})
+                        .attr("r", function(d){return d.seed ? 10 : 5*Math.max(d.seedsCited,d.seedsCitedBy)})
+                        .attr("cx",function(d){
+                            return(timeline.width*timeline.nodes.indexOf(d)/timeline.nodes.length)
+                        })
+                        .attr("cy",function(d){
+                            return(timeline.width*timeline.nodes.indexOf(d)/timeline.nodes.length)
+                        })
                         .attr("class", function(d){d.seed ? 'seed-node node':'node'})                                            
                         .style("visibility", function (d) {return d.hide == 1 ? "hidden" : "visible";})
                         .on("click",p=>timeline.highlightNode(p))
-                        .on("mouseover",p=>updateInfoBox(p))
-                        
+                        .on("mouseover",p=>updateInfoBox(p))                    
     timeline.circles.append("title").text(function(d) { return d.title; }); //Label nodes with title on hover
     
     timeline.lines = timeline.lines.data(timeline.edges, function(d) { return d.source.ID + "-" + d.target.ID; })
     timeline.lines.exit().remove();
     timeline.lines = timeline.lines.enter().append("line").attr("marker-end", "url(#end)").merge(timeline.lines);
-    // Update and restart the simulation.
-    timeline.simulation.nodes(timeline.nodes).on("tick", timeline.ticked);
-    timeline.simulation.force("link").links(timeline.edges);
-    timeline.simulation.force("collide").initialize(timeline.simulation.nodes());
-    timeline.simulation.alpha(1).restart();
+
     timeline.threshold(timeline.minconnections);   
     timeline.circles.style("opacity", 1);
     timeline.lines.style("opacity",1);   
 };
 
-timeline.dragstarted = function(d) {
-    if (!d3.event.active) timeline.simulation.alphaTarget(0.3).restart();
-    d.fx = d.x;
-    d.fy = d.y;
-};
-timeline.dragged = function(d) {
-    d.fx = d3.event.x;
-    d.fy = d3.event.y;
-};
-timeline.dragended =  function(d) {
-    if (!d3.event.active) timeline.simulation.alphaTarget(0);
-    d.fx = null;
-    d.fy = null;
-};
-timeline.hideSingles =  function(){
-    let nodeid = this.__data__.ID;
-    childrenids = findUniqueChildren(nodeid);
-    Papers.filter(function(p){return childrenids.includes(p.ID)}).forEach(function(p){p.hide= !p.hide;});
-    Edges.filter(function(e){
-        let hiddenPapers = Papers.filter(function(p){return p.hide}).map(function(p){return p.ID});
-        return hiddenPapers.includes(e.source.ID) | hiddenPapers.includes(e.target.ID);
-    }).forEach(function(e){
-        e.hide=true
-    })
-    timeline.circles.style("visibility", function (p) {
-        return p.hide ? "hidden" : "visible" ;
-    });
-    timeline.lines.style("visibility", function(e){
-        var hiddenPapers = Papers.filter(function(p){return p.hide}).map(function(p){return p.ID});
-        return hiddenPapers.includes(e.source.ID) | hiddenPapers.includes(e.target.ID) ? "hidden":"visible";
-    })  
-};
 timeline.neighboring = function(a, b) {
     return (
         timeline.edges.filter(function(e){
@@ -112,6 +79,7 @@ timeline.neighboring = function(a, b) {
         }).length
     )
 };
+
 timeline.highlightNode = function(d){
     timeline.circles.style("opacity", 1);
     timeline.lines.style("opacity",1);
@@ -125,18 +93,7 @@ timeline.highlightNode = function(d){
     timeline.circles.on('mouseover',null)
     d3.event.stopPropagation();
 };
-timeline.ticked = function() {
-    
-        timeline.lines
-            .attr("x1", function(d) { return d.source.x; })
-            .attr("y1", function(d) { return d.source.y; })
-            .attr("x2", function(d) { return d.target.x; })
-            .attr("y2", function(d) { return d.target.y; });
 
-        timeline.circles
-            .attr("cx", function(d) { return d.x; })
-            .attr("cy", function(d) { return d.y; });
-},
 timeline.threshold = function(value){
     let metric;
     switch(timeline.mode){
@@ -158,20 +115,6 @@ timeline.threshold = function(value){
         return hiddenPapers.includes(e.source.ID) | hiddenPapers.includes(e.target.ID) ? "hidden":"visible";  
     })
 }
-
-timeline.xpositions = getXPositions
-
-function getXPosition(ID){
-
-
-
-}
-
-function getYPosition(ID){
-
-
-}
-
 
 
 
