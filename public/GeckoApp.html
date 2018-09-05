@@ -22,7 +22,7 @@
                     <div id='seed-paper-container'>
                     </div>
                     <div class='list-footer'>
-                        <button id='add-seeds-button' class='add-seed-button' onclick=''>Add more seed papers...</button>
+                        <button id='add-seeds-button' class='add-seed-button'>Add more seed papers...</button>
                     </div>
                 </div>
                 <div id='connected-list' class='list' style='display:none'>
@@ -91,7 +91,7 @@
             <div class='modal-content'>
                     Coming soon...
                     <div class='modal-footer'>
-                        <button class='pick-again modal-btn' onClick='showAddInitialSeed()'>
+                        <button class='pick-again modal-btn'>
                             <span> Use another method </span>
                         </button>
                     </div>
@@ -221,9 +221,9 @@
                 <h1><img src='/images/zotero/new-logo.svg'></h1>
                 <div><span>Filter by Collection:</span> 
                     <div class="dropdown">
-                        <button onclick="zotero.dropdown()" class="dropbtn"><img src='/images/zotero/zotero-library.png'>My Library</button>
+                        <button class="dropbtn"><img src='/images/zotero/zotero-library.png'>My Library</button>
                     <div id="zoteroDropdown" class="dropdown-content">
-                      <input type="text" placeholder="Search.." id="zoteroInput" onkeyup="zotero.filterCollections()">
+                      <input type="text" placeholder="Search.." id="zoteroInput">
                     </div>
                   </div> 
                 </div>
@@ -261,7 +261,7 @@
                     Start from a small set of 'seed papers' that define an area you are interested. Gecko will search the citation network for connected papers allowing you to quickly identify important papers you may have missed.
                 </p>
                 <div class='modal-footer'>
-                    <button class='modal-btn' onClick='showAddInitialSeed()'>
+                    <button id='start-discovery' class='modal-btn'>
                         <span> Start discovering papers! </span>
                     </button>
                 </div>
@@ -340,10 +340,6 @@
             </div>
         </div>
 
-        <script src="vendor/d3.v4.js"></script>
-        <script src="vendor/bibtexParse.js"></script>
-        <script src="vendor/crossref.min.js"></script>
-        <script src="vendor/js.cookie.min.js"></script>
         <script src="main.js"></script>
         <link href="https://fonts.googleapis.com/css?family=Roboto:300,400" rel="stylesheet">
         <script defer src="https://use.fontawesome.com/releases/v5.0.4/js/all.js"></script>
