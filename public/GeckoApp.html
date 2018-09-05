@@ -6,6 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Citation Gecko</title>
         <link rel="stylesheet" type="text/css" href='styles.css'/>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplebar@latest/dist/simplebar.css">
     </head>
     <body>
         <div class='main'>
@@ -19,7 +20,9 @@
                     <div class='list-header'>
                         <h1>My Seed Papers</h1>
                     </div>
-                    <div id='seed-paper-container'>
+                    <div class='list-body' data-simplebar>
+                        <div id='seed-paper-container'>
+                        </div>
                     </div>
                     <div class='list-footer'>
                         <button id='add-seeds-button' class='add-seed-button'>Add more seed papers...</button>
@@ -36,7 +39,9 @@
                                 <option value="seedsCited">Seeds Cited</option>
                             </select>
                     </div>
-                    <div id='connected-paper-container'>
+                    <div class='list-body' data-simplebar>
+                        <div id='connected-paper-container'>
+                        </div>
                     </div>
                     <div class='list-footer'>
                         <!-- <div>
@@ -71,7 +76,7 @@
 
                     </div>
                 </div>
-                <div id='timeline-view'>
+                <div id='timeline-view' data-simplebar>
                     <svg id="timeline-graph"></svg>
                 </div>
                 <img id='logo'src='images/gecko-logo/geckologo.svg'>
@@ -197,7 +202,7 @@
                         </thead>
                     </table>
                 </div>
-                <div class="table-body">
+                <div class="table-body" data-simplebar>
                     <table>
                         <tbody></tbody>
                     </table>
@@ -239,7 +244,7 @@
                             </thead>
                         </table>
                     </div>
-                    <div class="table-body">
+                    <div class="table-body" data-simplebar>
                         <table>
                             <tbody></tbody>
                         </table>

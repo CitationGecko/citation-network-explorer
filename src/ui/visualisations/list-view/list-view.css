@@ -17,13 +17,12 @@
     margin:0   
 }
 
-#seed-paper-container, #connected-paper-container {   
+.list-body {
     overflow: auto;
-    font-size: 70%;
+    overflow-x:hidden;
     flex:auto;
     height:75%;
     box-sizing: border-box;
-    cursor: pointer;
 }
 
 .list-footer{

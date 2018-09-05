@@ -40,8 +40,7 @@ seedList.refresh = function(){
     newpapers.append('div').attr('class','author-year')
     newpapers.append('div').attr('class','journal')
     
-    paperboxes = d3.select('#seed-paper-container').selectAll('.paper-box')
-        .data(seedpapers,function(d){return d.ID})
+    paperboxes = newpapers.merge(paperboxes)
     paperboxes.select('.paper-title').html(function(p){
         return(`${p.title}<a target='_blank' href='https://doi.org/${p.doi}'>${linkoutIcon}</a>`)
     })
@@ -79,8 +78,7 @@ connectedList.print = function(metric,pageNum,replot){
     newpapers.append('div').attr('class','metric')
     newpapers.append('div').attr('class','journal')
 
-    paperboxes = d3.select('#connected-paper-container').selectAll('.paper-box')
-        .data(nonSeeds,function(d){return d.ID});
+    paperboxes = newpapers.merge(paperboxes)
     paperboxes.select('.paper-title').html(function(p){
         return(`${p.title}<a target='_blank' href='https://doi.org/${p.doi}'>${linkoutIcon}</a>`)
     })
