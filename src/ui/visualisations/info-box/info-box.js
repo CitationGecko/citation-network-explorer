@@ -1,5 +1,5 @@
 import * as d3 from 'vendor/d3.v4.js'
-import {linkoutsvg} from 'ui/visualisations/list-view'
+import { linkoutIcon } from 'ui/icons'
 import {forceGraph} from 'ui/visualisations/network-view'
 import {deleteSeed,makeSeed} from 'core'
 
@@ -7,7 +7,7 @@ import {deleteSeed,makeSeed} from 'core'
 export function updateInfoBox(p){
     document.getElementById('selected-paper-box').style.display ='block';
     var paperbox = d3.select('#selected-paper-box');
-    paperbox.select('.paper-title').html(`${p.title}<a target='_blank' href='https://doi.org/${p.doi}'>${linkoutsvg}</a>`)
+    paperbox.select('.paper-title').html(`${p.title}<a target='_blank' href='https://doi.org/${p.doi}'>${linkoutIcon}</a>`)
     paperbox.select('.author-year').html((p.author ? p.author:'')+' ('+p.year+')')
     paperbox.select('.journal').html(p.journal)
 

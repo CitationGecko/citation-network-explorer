@@ -77,7 +77,8 @@ forceGraph.refresh = function(){
         .on("dblclick",p=>hideSingles(p))
         .on("click",p=>highlightNode(p))
         .on("mouseover",p=>updateInfoBox(p))
-        .append("title").text(function(d) { return d.title; }); //Label nodes with title on hover
+
+    forceGraph.circles.append("title").text(function(d) { return d.title; }); //Label nodes with title on hover
 
     forceGraph.lines = forceGraph.lines.data(forceGraph.edges, function(d) { return d.source.ID + "-" + d.target.ID; })
     forceGraph.lines.exit().remove();
@@ -136,17 +137,17 @@ function neighboring(a, b, edges) {
     )
 };
 
-function highlightNode(d){
-    forceGraph.circles.style("opacity", 1);
-    forceGraph.lines.style("opacity",1);
-    forceGraph.circles.style("opacity", function (o) {
-        return neighboring(d, o,forceGraph.edges) | neighboring(o, d,forceGraph.edges) ? 1 : 0.15;
+export function highlightNode(d,graph){
+    graph.circles.style("opacity", 1);
+    graph.lines.style("opacity",1);
+    graph.circles.style("opacity", function (o) {
+        return neighboring(d, o,graph.edges) | neighboring(o, d,graph.edges) ? 1 : 0.15;
     });
-    forceGraph.lines.style("opacity", function(o) {
+    graph.lines.style("opacity", function(o) {
         return o.source === d || o.target === d ? 1 : 0.15;
     });
     updateInfoBox(d);
-    forceGraph.circles.on('mouseover',null)
+    graph.circles.on('mouseover',null)
     d3.event.stopPropagation();
 };
 
