@@ -21,10 +21,11 @@ body {
     background-color: rgb(255, 255, 255);
  }
 #logo-panel {
-    width: 200px;
+    width: 65px;
     position: relative;
     margin: 0;
     flex-grow:0;
+    flex-shrink: 0;
 }
 #list-panel {
     width: 80em;
@@ -47,3 +48,11 @@ body {
     margin:2em;
     max-width:40%;
 }
+
+.hide {
+    display:none;
+}
+
+.show{
+    display:block;
+} 

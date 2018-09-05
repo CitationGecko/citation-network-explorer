@@ -14,6 +14,14 @@ document.getElementById('seed-list-button').onclick = function(){
     document.getElementById('seed-list').style.display = 'block';
 }
 
+d3.select('#seed-list-button').on('dblclick',()=>{
+    document.getElementById('list-panel').classList.toggle("hide")
+})
+
+d3.select('#connected-list-button').on('dblclick',()=>{
+    document.getElementById('list-panel').classList.toggle("hide")
+})
+
 document.getElementById('connected-list-button').onclick = function(){
     d3.select('#seed-list-button').attr('class','side-bar-button box-toggle-off');
     d3.select('#connected-list-button').attr('class','side-bar-button box-toggle-on');

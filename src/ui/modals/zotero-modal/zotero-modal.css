@@ -86,52 +86,8 @@
     z-index: 1;
 }
 
-/* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */
-.show{display:block;} 
-
 #zotero-import-table {
     height:95%;
-}
-
-.table-item{
-    background-color: #eaeaea;
-    padding: 2em 0;
-    transition: background .3s;
-}
-
-.table-item:hover {
-    background: #FFC700;
-}
-
-.table-cell{
-    padding: 1em;
-}
-
-.table-title{
-    width: 80em;
-}
-.table-author{
-    width: 15em;
-}
-.table-year{
-    width: 5em;
-}
-.table-journal{
-    width:20em
-}
-
-table{
-    height:100%;
-    border-spacing: 0 0.1em;
-}
-
-.table-body {
-    max-height: 70%;
-    overflow: auto;
-}
-
-td {
-    font-size: 12px;
 }
 
 #zotero-import-modal .modal-content {
