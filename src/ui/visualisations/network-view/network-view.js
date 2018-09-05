@@ -1,4 +1,5 @@
 import { eventResponse, Edges, Papers , updateMetrics } from "core";
+import { surfacePaperBox } from 'ui/visualisations/list-view'
 import { updateInfoBox } from 'ui/visualisations/info-box'
 import * as d3 from 'vendor/d3.v4.js' 
 
@@ -27,7 +28,7 @@ forceGraph.osvg =  d3.select('#force-graph')
     .on('click',function(){
         forceGraph.circles.style("opacity", 1);
         forceGraph.lines.style("opacity",1);
-        forceGraph.circles.on('mouseover',p=>updateInfoBox(p))
+        //forceGraph.circles.on('mouseover',p=>{surfacePaperBox(p)})
         d3.selectAll('.paper-box').classed('selected-paper',false)
         document.getElementById('selected-paper-box').style.display ='none';
     })
@@ -77,8 +78,14 @@ forceGraph.refresh = function(){
             .on("drag", (d)=>dragged(d))
             .on("end", (d)=>dragended(d,this.simulation)))
         .on("dblclick",p=>(p)) // Display abstract?
-        .on("click",p=>highlightNode(p,this))
-        .on("mouseover",p=>updateInfoBox(p))
+        .on("click",p=>{
+            surfacePaperBox(p)
+            highlightNode(p,this)
+        })
+        .on("mouseover",p=>{
+            surfacePaperBox(p)
+            //updateInfoBox(p)
+        })
 
     this.circles.append("title").text(function(d) { return d.title; }); //Label nodes with title on hover
 
@@ -130,8 +137,7 @@ export function highlightNode(d,graph){
     graph.lines.style("opacity", function(o) {
         return o.source === d || o.target === d ? 1 : 0.15;
     });
-    updateInfoBox(d);
-    graph.circles.on('mouseover',null)
+    //graph.circles.on('mouseover',null)
     d3.event.stopPropagation();
 };
 
@@ -158,6 +164,8 @@ export function threshold(value,metric,graph){
         return hiddenPapers.includes(e.source.ID) | hiddenPapers.includes(e.target.ID) ? "hidden":"visible";  
     })
 }
+
+
 
 
 

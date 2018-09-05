@@ -53,9 +53,11 @@ seedList.refresh = function(){
     })
 };
 
-connectedList.print = function(metric,pageNum,replot){
+connectedList.print = function(metric,pageNum,replot,extraPaper){
     let pageSize = 100;
     let nonSeeds = Papers.filter(function(p){return(!p.seed)}).sort((a,b)=>b[metric]-a[metric]).slice(0,pageNum*pageSize)
+    
+    if(extraPaper){nonSeeds.push(extraPaper)}
     //Select all non-seeds and sort by metric.
     //Clear old table
     if(replot){
@@ -108,3 +110,19 @@ connectedList.print = function(metric,pageNum,replot){
         .text('more...')
         .on('click',()=>connectedList.print(metric,pageNum+1))
 };
+
+export function surfacePaperBox(p){
+    var paperbox = d3.selectAll('.paper-box').filter(d=>d==p)
+    if(!paperbox.node()){
+        connectedList.print(forceGraph.sizeMetric,1,false,p)
+        paperbox = d3.selectAll('.paper-box').filter(d=>d==p)
+    }
+    d3.selectAll('.paper-box').classed('selected-paper',false)
+    paperbox.classed('selected-paper',true)
+    if(p.seed){
+        document.getElementById('seed-list-button').click()
+    } else {
+        document.getElementById('connected-list-button').click()
+    }
+    paperbox.node().scrollIntoView()
+}
