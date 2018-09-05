@@ -35,19 +35,10 @@ timeline.height =  document.getElementById('timeline-view').offsetHeight;
 timeline.svg =  timeline.osvg.append('g');
 timeline.lines =  timeline.svg.append("g").attr("class", "link").selectAll("line");
 timeline.circles =  timeline.svg.append("g").attr("class", "node").selectAll("circle");
-timeline.simulation =  d3.forceSimulation()
-                            .force("link", d3.forceLink().id(function(d){return d.ID;}))
-                            .force("charge", d3.forceManyBody().strength(-100))
-                            .force("center", d3.forceCenter(timeline.width / 2, timeline.height / 2))
-                            .force("xattract",d3.forceX())
-                            .force("yattract",d3.forceY())
-                            .force("collide",d3.forceCollide().radius(function(d){return (d.seed ? 7 : 5*d[timeline.sizeMetric])}));
                     
 timeline.refresh = function(){                
     //Pick only edges that you want to display i.e. citedBy vs references
-    
-    timeline.edges = Edges;
-    
+    timeline.edges = Edges.map(e=>{return {source:e.source.ID,target:e.target.ID}});
     timeline.nodeIDs = timeline.edges.map(function(e){return(e.source)}).concat(timeline.edges.map(function(e){return(e.target)}));
     //Pick only Papers that are connected to something
     timeline.nodes = Papers.filter(function(p){
@@ -58,18 +49,15 @@ timeline.refresh = function(){
     timeline.circles = timeline.circles.enter().append("circle")
                         .merge(timeline.circles)
                         .attr("r", function(d){return d.seed ? 10 : 5*d[timeline.sizeMetric]})
-                        .attr("class", function(d) { 
-                            if(d.seed){return 'seed-node node'} else {return 'node'}
-                        })                                            
+                        .attr("cx",function(d){d.xposition})
+                        .attr("cy",function(d){d.yposition})
+                        .attr("class", function(d){d.seed ? 'seed-node node':'node'})                                            
                         .style("visibility", function (d) {return d.hide == 1 ? "hidden" : "visible";})
-                        .call(d3.drag()
-                            .on("start", timeline.dragstarted)
-                            .on("drag", timeline.dragged)
-                            .on("end", timeline.dragended))
-                        .on("dblclick",timeline.hideSingles)
                         .on("click",p=>timeline.highlightNode(p))
                         .on("mouseover",p=>updateInfoBox(p))
+                        
     timeline.circles.append("title").text(function(d) { return d.title; }); //Label nodes with title on hover
+    
     timeline.lines = timeline.lines.data(timeline.edges, function(d) { return d.source.ID + "-" + d.target.ID; })
     timeline.lines.exit().remove();
     timeline.lines = timeline.lines.enter().append("line").attr("marker-end", "url(#end)").merge(timeline.lines);
@@ -171,6 +159,18 @@ timeline.threshold = function(value){
     })
 }
 
+timeline.xpositions = getXPositions
+
+function getXPosition(ID){
+
+
+
+}
+
+function getYPosition(ID){
+
+
+}
 
 
 
