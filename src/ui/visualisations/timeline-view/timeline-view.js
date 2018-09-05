@@ -171,7 +171,23 @@ function getYPosition(ID){
 
 }
 
-
-
+function getY(nodes){
+  let pos = [];
+  nodes.sort(function(a, b) {
+  	return a - b;
+	})
+  let minYear = nodes[0].year
+  let maxYear = nodes[nodes.length - 1].year
+  let diff = maxYear - minYear
+  if(diff == 0) {
+  	nodes.forEach(function(node) {
+  		node.yPos = 0.5
+  	})
+  } else {
+  	nodes.forEach(function(node) {
+  		node.yPos = (node.year - minYear)/diff
+  	})
+  }
+}
 
   
