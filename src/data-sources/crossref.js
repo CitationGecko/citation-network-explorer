@@ -24,6 +24,7 @@ eventResponse(true,'newSeed',async function(papers){
         newPapers = await getMetadata(newPapers);
         newPapers = newPapers.map(parsePaper)
         newPapers = updatePapers(newPapers);
+        triggerEvent('paperUpdate',newPapers);
     })
 })
 

@@ -2,15 +2,17 @@ import { eventResponse, Edges, Papers , updateMetrics } from "core";
 import { updateInfoBox } from 'ui/visualisations/info-box'
 import * as d3 from 'vendor/d3.v4.js' 
 
-eventResponse(true,'newSeed',function(){
+var listening = true;
+
+eventResponse(listening,'newSeed',function(){
     updateMetrics(Papers,Edges); // update citation metrics
     forceGraph.refresh()
 })
-eventResponse(true,'newEdges',function(){
+eventResponse(listening,'newEdges',function(){
     updateMetrics(Papers,Edges); // update citation metrics
     forceGraph.refresh()
 })
-eventResponse(true,'seedDeleted',function(){
+eventResponse(listening,'seedDeleted',function(){
     updateMetrics(Papers,Edges); // update citation metrics
     forceGraph.refresh()
 })
@@ -46,51 +48,51 @@ forceGraph.simulation =  d3.forceSimulation()
 
 forceGraph.refresh = function(){                
     //Pick only edges that you want to display i.e. citedBy vs references
-    switch(forceGraph.mode){     
+    switch(this.mode){     
         case 'ref':
-        forceGraph.edges = Edges.filter(function(e){return(e.source.seed)}).map(function(e){return {source: e.source.ID, target: e.target.ID}});
-        forceGraph.sizeMetric = 'seedsCitedBy';
+        this.edges = Edges.filter(function(e){return(e.source.seed)}).map(function(e){return {source: e.source.ID, target: e.target.ID}});
+        this.sizeMetric = 'seedsCitedBy';
         break;
         case 'citedBy':
-        forceGraph.edges = Edges.filter(function(e){return(e.target.seed)}).map(function(e){return {source: e.source.ID, target: e.target.ID}});       
-        forceGraph.sizeMetric = 'seedsCited';    
+        this.edges = Edges.filter(function(e){return(e.target.seed)}).map(function(e){return {source: e.source.ID, target: e.target.ID}});       
+        this.sizeMetric = 'seedsCited';    
         break;
     }
-    forceGraph.nodeIDs = forceGraph.edges.map(function(e){return(e.source)}).concat(forceGraph.edges.map(function(e){return(e.target)}));
+    this.nodeIDs = this.edges.map(function(e){return(e.source)}).concat(this.edges.map(function(e){return(e.target)}));
     //Pick only Papers that are connected to something
-    forceGraph.nodes = Papers.filter(function(p){
-        return(forceGraph.nodeIDs.includes(p.ID)||p.seed)
+    this.nodes = Papers.filter((p)=>{
+        return(this.nodeIDs.includes(p.ID)||p.seed)
     }); 
-    forceGraph.circles = forceGraph.circles.data(forceGraph.nodes,function(d){return d.ID});
-    forceGraph.circles.exit().remove();
-    forceGraph.circles = forceGraph.circles.enter().append("circle")
-        .merge(forceGraph.circles)
-        .attr("r", function(d){return d.seed ? 10 : 5*d[forceGraph.sizeMetric]})
+    this.circles = this.circles.data(this.nodes,d=>d.ID);
+    this.circles.exit().remove();
+    this.circles = this.circles.enter().append("circle")
+        .merge(this.circles)
+        .attr("r", d=>{return d.seed ? 10 : 5*d[this.sizeMetric]})
         .attr("class", function(d) { 
             if(d.seed){return 'seed-node node'} else {return 'node'}
         })                                            
         .style("visibility", function (d) {return d.hide == 1 ? "hidden" : "visible";})
         .call(d3.drag()
-            .on("start", (d)=>dragstarted(d,forceGraph.simulation))
+            .on("start", (d)=>dragstarted(d,this.simulation))
             .on("drag", (d)=>dragged(d))
-            .on("end", (d)=>dragended(d,forceGraph.simulation)))
-        .on("dblclick",p=>hideSingles(p))
-        .on("click",p=>highlightNode(p,forceGraph))
+            .on("end", (d)=>dragended(d,this.simulation)))
+        .on("dblclick",p=>(p)) // Display abstract?
+        .on("click",p=>highlightNode(p,this))
         .on("mouseover",p=>updateInfoBox(p))
 
-    forceGraph.circles.append("title").text(function(d) { return d.title; }); //Label nodes with title on hover
+    this.circles.append("title").text(function(d) { return d.title; }); //Label nodes with title on hover
 
-    forceGraph.lines = forceGraph.lines.data(forceGraph.edges, function(d) { return d.source.ID + "-" + d.target.ID; })
-    forceGraph.lines.exit().remove();
-    forceGraph.lines = forceGraph.lines.enter().append("line").attr("marker-end", "url(#end)").merge(forceGraph.lines);
+    this.lines = this.lines.data(this.edges, function(d) { return d.source.ID + "-" + d.target.ID; })
+    this.lines.exit().remove();
+    this.lines = this.lines.enter().append("line").attr("marker-end", "url(#end)").merge(this.lines);
     // Update and restart the simulation.
-    forceGraph.simulation.nodes(forceGraph.nodes).on("tick", ()=>tick(forceGraph));
-    forceGraph.simulation.force("link").links(forceGraph.edges);
-    forceGraph.simulation.force("collide").initialize(forceGraph.simulation.nodes());
-    forceGraph.simulation.alpha(1).restart();   
-    forceGraph.circles.style("opacity", 1);
-    forceGraph.lines.style("opacity",1);
-    threshold(forceGraph.minconnections,forceGraph.sizeMetric,forceGraph);   
+    this.simulation.nodes(this.nodes).on("tick", ()=>tick(this));
+    this.simulation.force("link").links(this.edges);
+    this.simulation.force("collide").initialize(this.simulation.nodes());
+    this.simulation.alpha(1).restart();   
+    this.circles.style("opacity", 1);
+    this.lines.style("opacity",1);
+    threshold(this.minconnections,this.sizeMetric,this);   
 }  
 
 function dragstarted(d,simulation) {
@@ -109,25 +111,7 @@ function dragended(d,simulation) {
     d.fy = null;
 };
 
-function hideSingles(d){
-    let nodeid = d.ID;
-    childrenids = findUniqueChildren(nodeid);
-    Papers.filter(function(p){return childrenids.includes(p.ID)}).forEach(function(p){p.hide= !p.hide;});
-    Edges.filter(function(e){
-        let hiddenPapers = Papers.filter(function(p){return p.hide}).map(function(p){return p.ID});
-        return hiddenPapers.includes(e.source.ID) | hiddenPapers.includes(e.target.ID);
-    }).forEach(function(e){
-        e.hide=true
-    })
-    forceGraph.circles.style("visibility", function (p) {
-        return p.hide ? "hidden" : "visible" ;
-    });
-    forceGraph.lines.style("visibility", function(e){
-        var hiddenPapers = Papers.filter(function(p){return p.hide}).map(function(p){return p.ID});
-        return hiddenPapers.includes(e.source.ID) | hiddenPapers.includes(e.target.ID) ? "hidden":"visible";
-    })  
-};
-function neighboring(a, b, edges) {
+export function neighboring(a, b, edges) {
     return (
         edges.filter(function(e){
             return e.source == a | e.target == a
