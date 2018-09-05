@@ -75,7 +75,7 @@ forceGraph.refresh = function(){
             .on("drag", (d)=>dragged(d))
             .on("end", (d)=>dragended(d,forceGraph.simulation)))
         .on("dblclick",p=>hideSingles(p))
-        .on("click",p=>highlightNode(p))
+        .on("click",p=>highlightNode(p,forceGraph))
         .on("mouseover",p=>updateInfoBox(p))
 
     forceGraph.circles.append("title").text(function(d) { return d.title; }); //Label nodes with title on hover
@@ -87,10 +87,10 @@ forceGraph.refresh = function(){
     forceGraph.simulation.nodes(forceGraph.nodes).on("tick", ()=>tick(forceGraph));
     forceGraph.simulation.force("link").links(forceGraph.edges);
     forceGraph.simulation.force("collide").initialize(forceGraph.simulation.nodes());
-    forceGraph.simulation.alpha(1).restart();
-    threshold(forceGraph.minconnections);   
+    forceGraph.simulation.alpha(1).restart();   
     forceGraph.circles.style("opacity", 1);
-    forceGraph.lines.style("opacity",1);   
+    forceGraph.lines.style("opacity",1);
+    threshold(forceGraph.minconnections,forceGraph.sizeMetric,forceGraph);   
 }  
 
 function dragstarted(d,simulation) {
@@ -162,24 +162,15 @@ function tick(graph){
         .attr("cy", function(d) { return d.y; });
 };
 
-function threshold(value){
-    let metric;
-    switch(forceGraph.mode){
-        case 'ref':
-            metric = 'seedsCitedBy';
-            break;
-        case 'citedBy':
-            metric = 'seedsCited';
-            break;
-    } 
+export function threshold(value,metric,graph){
     Papers.forEach(function(p){
         p.hide = (p[metric]>=value || p.seed) ? false : true ;
     });
-    forceGraph.circles.style("visibility", function (p) {
+    graph.circles.style("visibility", function (p) {
         return p.hide ? "hidden" : "visible" ;
     });
     var hiddenPapers = Papers.filter(function(p){return p.hide}).map(function(p){return p.ID});        
-    forceGraph.lines.style("visibility", function(e){     
+    graph.lines.style("visibility", function(e){     
         return hiddenPapers.includes(e.source.ID) | hiddenPapers.includes(e.target.ID) ? "hidden":"visible";  
     })
 }
