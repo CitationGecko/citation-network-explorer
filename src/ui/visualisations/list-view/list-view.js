@@ -1,4 +1,4 @@
-import { eventResponse, Papers } from "core";
+import { eventResponse, Papers, makeSeed } from "core";
 import { forceGraph, highlightNode } from 'ui/visualisations/network-view'
 import * as d3 from 'vendor/d3.v4.js'
 import { linkoutIcon } from 'ui/icons'
@@ -73,9 +73,10 @@ connectedList.print = function(metric,pageNum,replot,extraPaper){
         .attr('class','paper-box')
         .on('click',function(p){
             highlightNode(p,forceGraph)
+            selectPaper(p)
             d3.selectAll('.paper-box').classed('selected-paper',false)
             d3.select(this).classed('selected-paper',true)
-            d3.select('#make-seed').on('click',function(){makeSeed([p])})
+            d3.select('#make-seed').on('click',()=>makeSeed([p]))
         })
     newpapers.append('div').attr('class','paper-title')
     newpapers.append('div').attr('class','author-year')  
@@ -130,5 +131,6 @@ export function surfacePaperBox(p){
             document.getElementById('connected-list-button').click()
         }
         paperbox.node().scrollIntoView()
+        d3.select('#make-seed').on('click',()=>makeSeed([p]))
     }
 }
