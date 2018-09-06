@@ -28,7 +28,7 @@ forceGraph.osvg =  d3.select('#force-graph')
     .on('click',function(){
         forceGraph.circles.style("opacity", 1);
         forceGraph.lines.style("opacity",1);
-        //forceGraph.circles.on('mouseover',p=>{surfacePaperBox(p)})
+        forceGraph.circles.on('mouseover',p=>{surfacePaperBox(p)})
         d3.selectAll('.paper-box').classed('selected-paper',false)
         document.getElementById('selected-paper-box').style.display ='none';
     })
@@ -137,7 +137,7 @@ export function highlightNode(d,graph){
     graph.lines.style("opacity", function(o) {
         return o.source === d || o.target === d ? 1 : 0.15;
     });
-    //graph.circles.on('mouseover',null)
+    graph.circles.on('mouseover',null)
     d3.event.stopPropagation();
 };
 

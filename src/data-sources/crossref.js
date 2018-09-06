@@ -4,12 +4,12 @@ import {printTable} from 'ui/visualisations/table-view'
 eventResponse(true,'newSeed',async function(papers){
     
     console.log("querying crossRef for seed papers")
-    let newSeeds = await getMetadata(papers);
+    let newSeeds = await getMetadata(papers.filter(p=>!p.crossref));
     newSeeds = newSeeds.map(parsePaper);
     newSeeds = updatePapers(newSeeds);
     triggerEvent('seedUpdate',newSeeds);
 
-    newSeeds.filter(paper=>paper.references).forEach(async (paper)=>{
+    papers.filter(paper=>paper.references).forEach(async (paper)=>{
         console.log(`CrossRef found ${paper.references.length} citations for ${paper.doi}`)
         let newPapers = paper.references.map(parseReference)
         newPapers = updatePapers(newPapers);
@@ -26,6 +26,7 @@ eventResponse(true,'newSeed',async function(papers){
         newPapers = updatePapers(newPapers);
         triggerEvent('paperUpdate',newPapers);
     })
+    
 })
 
 eventResponse(true,'newPaper',function(papers){

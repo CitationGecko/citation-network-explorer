@@ -28,7 +28,12 @@ export function importExampleBibTex(){
     fetch(url).then((resp) => resp.text()).then((data)=> {
             var papers = bibtexParse.toJSON(data);
             let newPapers = papers.filter(p=>p.entryTags.doi).map(p=>{
-                return {doi: p.entryTags.doi,seed:true}
+                return {
+                    doi: p.entryTags.doi,
+                    title: p.entryTags.title || null,
+                    year: p.entryTags.year || null,
+                    journal: p.entryTags.journal || null,
+                }
             })
             newPapers = updatePapers(newPapers);
             makeSeed(newPapers);
