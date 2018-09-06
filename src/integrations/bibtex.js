@@ -30,7 +30,7 @@ export function importExampleBibTex(){
             let newPapers = papers.filter(p=>p.entryTags.doi).map(p=>{
                 return {
                     doi: p.entryTags.doi,
-                    title: p.entryTags.title || null,
+                    title: p.entryTags.title.replace(/[{}]/g, "") || null,
                     year: p.entryTags.year || null,
                     journal: p.entryTags.journal || null,
                 }

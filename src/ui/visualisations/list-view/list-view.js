@@ -8,12 +8,9 @@ export const seedList = {}
 export const connectedList = {}
 export var selectedPaper = {}
 
-eventResponse(true,'newEdges',function(){
-    connectedList.print(forceGraph.sizeMetric,1,true)
-    document.getElementById('connected-list-button').click()
-})
 eventResponse(true,'paperUpdate',function(){
     connectedList.print(forceGraph.sizeMetric,1)
+    //document.getElementById('connected-list-button').click()
 })
 eventResponse(true,'seedUpdate',function(){
     seedList.refresh()
