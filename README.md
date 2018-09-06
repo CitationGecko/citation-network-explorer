@@ -21,39 +21,28 @@ The tool allows the user to view these highly connected papers either in a table
 
 ## Running Citation Gecko locally
 
-1. Clone the repo
-2. Inside of repo directory run `npm install`
-3. Start server with `npm start` or `node server.js`
-4. The application will start at http://localhost:3000
-
-To be able to use the Microsoft Academic Graph you'll need an API key for the Microsoft Academic Knowledge API from [here](https://azure.microsoft.com/en-gb/try/cognitive-services/?api=academic-knowledge-api).
-
-Set it as an environment variable (`API_KEY_MICROSOFT`) when running the application ([more details on Wiki](https://github.com/CitationGecko/citation-network-explorer/wiki#config--credentials)).
-
-You can use the tool without one but the title search functionality won't work
-and the coverage of the Open Citation Corpus isn't as good yet (though it is growing every day).
-
-## API
-
-Citation Gecko exposes an API that serves the data used to drive the visualisations.
-
-Currently visible endpoints:
-
-- **GET** `/api/v1/getCitedBy?doi={articleDOI}`
-- **GET** `/api/v1/query/oadoi?doi={articleDOI}`
-- **POST** `/api/v1/query/microsoft/search` (proxies the request to MAG service)
+1. Clone the git repo:
+`git clone https://github.com/CitationGecko/citation-network-explorer.git`
+2. If you don't have it already install Node.js from https://nodejs.org/en/.
+3. Open a terminal and navigate to the repository folder.
+4. Run `npm install` from the command line to install all the package dependancies.
+5. Run `npm run build` from the command line to build the app. 
+6. Run `node server.js` to launch the server.
+7. The application will start at http://localhost:3000
 
 ## Instructions for use
 
 1. Go to [citationgecko.com](http://citationgecko.com) or [localhost:3000](http://localhost:3000) if you're running application locally
 2. Add some seed papers by clicking 'Add more seed papers' button in the left-hand panel.
-2. There are three ways of choosing seed papers to start with:
-    1. Add directly by DOI
+2. There are several ways of choosing seed papers to start with:
+    1. Add directly by entering a DOI
     2. Upload a bibTex file (NOTE: currently only entries with a DOI will be added)
         * There is an example BibTex in the repository (exampleBibTex.bib) which you can try importing as a test case.
     3. Search for seed papers by title
         * Papers with titles containing the query words are displayed in a table.
         * Choose which papers to add as seeds by clicking the Add buttons at the end of each row.
+    4. Import from Zotero
+        * This will redirect you to Zotero in order to authenticate the app allow you to add papers in your zotero collections. 
 3. The seed papers added are listed in the left-hand panel and connections between them shown graphically in the right hand panel.
 4. For a list of the papers connected to these seed papers click the 'Connected' tab in the left-hand panel. Papers can sorted by "Seeds Cited" or "Seeds Cited-By" in order to find highly connected papers.
 5. In order to hide less well connected papers from the Network View use the Threshold Slide to select the minimum number of connections to be displayed.
