@@ -6,6 +6,7 @@ import { updateInfoBox } from 'ui/visualisations/info-box'
 
 export const seedList = {}
 export const connectedList = {}
+export var selectedPaper = {}
 
 eventResponse(true,'newEdges',function(){
     connectedList.print(forceGraph.sizeMetric,1,true)
@@ -73,10 +74,8 @@ connectedList.print = function(metric,pageNum,replot,extraPaper){
         .attr('class','paper-box')
         .on('click',function(p){
             highlightNode(p,forceGraph)
-            selectPaper(p)
             d3.selectAll('.paper-box').classed('selected-paper',false)
             d3.select(this).classed('selected-paper',true)
-            d3.select('#make-seed').on('click',()=>makeSeed([p]))
         })
     newpapers.append('div').attr('class','paper-title')
     newpapers.append('div').attr('class','author-year')  
@@ -131,6 +130,5 @@ export function surfacePaperBox(p){
             document.getElementById('connected-list-button').click()
         }
         paperbox.node().scrollIntoView()
-        d3.select('#make-seed').on('click',()=>makeSeed([p]))
     }
 }
