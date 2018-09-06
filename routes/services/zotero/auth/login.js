@@ -20,7 +20,7 @@ function AuthZoteroLoginRoute(req, res) {
     _.set(req.session, 'auth.zotero.requestToken', token);
     _.set(req.session, 'auth.zotero.requestSecret', tokenSecret);
 
-    const redirectUrl = `${ZoteroEndpoints.authorize}?oauth_token=${token}`;
+    const redirectUrl = `${ZoteroEndpoints.authorize}?oauth_token=${token}&write_access=1`;
 
     // redirect to Zotero to authenticate & authorise app
     return res.redirect(redirectUrl);
