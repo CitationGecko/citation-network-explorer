@@ -60,6 +60,8 @@ app.get('/services/zotero/auth/verify', require('./routes/services/zotero/auth/v
 
 app.get('/services/zotero/getCollections', require('./routes/services/zotero/getCollections'));
 app.get('/services/zotero/getItemsInCollection', require('./routes/services/zotero/getItemsInCollection'));
+app.post('/services/zotero/addItems', require('./routes/services/zotero/addItems'));
+
 
 app.get('/services/paper/getByDOI', require('./routes/services/paper/getByDOI'));
 app.get('/services/paper/getEdges', require('./routes/services/paper/getEdges'));

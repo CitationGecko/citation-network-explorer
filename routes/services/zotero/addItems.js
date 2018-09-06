@@ -2,8 +2,9 @@ const _ = require('lodash');
 const Zotero = require('../../../lib/zotero/collections');
 
 function ZoteroAddItemRoute(req, res) {
-  const collectionId = req.query.collectionId;
-  const item = req.query.data;
+  const body = JSON.parse(req.body)
+  const collectionId = body.collectionId;
+  const items = body.items;
 
   const opts = {
     userId: _.get(req.session, 'auth.zotero.userID'),
@@ -18,7 +19,7 @@ function ZoteroAddItemRoute(req, res) {
     return res.json({ success: false, message: 'Authenticate with Zotero through /services/zotero/auth/login' });
   }
 
-  Zotero.addItem(item,collectionId, opts, (err, data) => {
+  Zotero.addItems(items,collectionId, opts, (err, data) => {
     return res.json({ success: true, data: data });
   });
 }

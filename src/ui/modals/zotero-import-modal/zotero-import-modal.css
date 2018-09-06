@@ -76,9 +76,7 @@
     display: inline-block;
 }
 
-/* Dropdown Content (Hidden by Default) */
 .dropdown-content {
-    display: none;
     position: absolute;
     background-color: #f6f6f6;
     min-width: 230px;
