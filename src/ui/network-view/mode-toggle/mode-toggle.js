@@ -1,5 +1,5 @@
-import { forceGraph } from 'ui/visualisations/network-view'
-import { connectedList } from 'ui/visualisations/list-view'
+import { forceGraph } from 'ui/network-view'
+import { connectedList } from 'ui/list-view'
 
 //For forceGraph display mode toggling
 document.getElementById('mode-toggle').onchange = function(){

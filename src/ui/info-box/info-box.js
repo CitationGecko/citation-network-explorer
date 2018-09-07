@@ -1,6 +1,6 @@
 import * as d3 from 'vendor/d3.v4.js'
 import { linkoutIcon } from 'ui/icons'
-import {forceGraph} from 'ui/visualisations/network-view'
+import {forceGraph} from 'ui/network-view'
 import {deleteSeed,makeSeed} from 'core'
 
 //Functions for paper details panel

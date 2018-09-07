@@ -1,5 +1,5 @@
 import {eventResponse,triggerEvent,updatePapers,updateEdges,merge} from 'core'
-import {printTable} from 'ui/visualisations/table-view' 
+import {printTable} from 'ui/table-view' 
 
 eventResponse(true,'newSeed',async function(papers){
     

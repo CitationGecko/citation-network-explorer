@@ -1,5 +1,5 @@
 import * as d3 from 'vendor/d3.v4.js'
-import {connectedList} from 'ui/visualisations/list-view'
+import {connectedList} from 'ui/list-view'
 
 document.getElementById('connected-sort-by').style.display = 'none'
 document.getElementById('connected-sort-by').getElementsByTagName('select')[0].onchange = function(){

@@ -1,6 +1,5 @@
 import * as d3 from 'vendor/d3.v4.js'
-import { updatePapers } from 'core'
-import { makeSeed } from '../../../core';
+import { makeSeed, updatePapers } from 'core'
 
 export function printTable(tableID,items){
 

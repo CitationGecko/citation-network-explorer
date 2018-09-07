@@ -1,5 +1,5 @@
-import {forceGraph} from 'ui/visualisations/network-view'
-import {connectedList} from 'ui/visualisations/list-view'
+import {forceGraph} from 'ui/network-view'
+import {connectedList} from 'ui/list-view'
 import { importExampleBibTex } from 'integrations/bibtex'
 import * as d3 from 'vendor/d3.v4.js'
 

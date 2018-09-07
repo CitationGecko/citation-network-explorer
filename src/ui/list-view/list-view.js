@@ -1,8 +1,8 @@
 import { eventResponse, Papers, makeSeed } from "core";
-import { forceGraph, highlightNode } from 'ui/visualisations/network-view'
+import { forceGraph, highlightNode } from 'ui/network-view'
 import * as d3 from 'vendor/d3.v4.js'
 import { linkoutIcon } from 'ui/icons'
-import { updateInfoBox } from 'ui/visualisations/info-box'
+import { updateInfoBox } from 'ui/info-box'
 
 export const seedList = {}
 export const connectedList = {}

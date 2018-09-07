@@ -1,6 +1,6 @@
 import { eventResponse, Edges, Papers , updateMetrics } from "core";
-import { surfacePaperBox } from 'ui/visualisations/list-view'
-import { updateInfoBox } from 'ui/visualisations/info-box'
+import { surfacePaperBox } from 'ui/list-view'
+import { updateInfoBox } from 'ui/info-box'
 import * as d3 from 'vendor/d3.v4.js' 
 
 var listening = true;

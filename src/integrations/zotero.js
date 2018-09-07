@@ -1,4 +1,4 @@
-import { printTable } from 'ui/visualisations/table-view'
+import { printTable } from 'ui/table-view'
 import { displayCollections } from 'ui/modals/zotero-import-modal'
 
 export var zotero = {
