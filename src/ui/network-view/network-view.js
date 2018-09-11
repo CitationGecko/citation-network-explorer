@@ -1,6 +1,5 @@
 import { eventResponse, Edges, Papers } from "core";
 import { surfacePaperBox } from 'ui/list-view'
-import { updateInfoBox } from 'ui/info-box'
 import * as d3 from 'vendor/d3.v4.js' 
 
 var listening = true;
@@ -84,7 +83,6 @@ function updateData(newNodes,newEdges){
     forceGraph.nodes = edges.map((e)=>{return(e.source)})
         .concat(edges.map((e)=>{return(e.target)}))
         .concat(Papers.filter(p=>p.seed));
-
 } 
 
 forceGraph.plot = function(){ 

@@ -1,4 +1,4 @@
-import {updatePapers} from 'core'
+import { updatePapers } from 'core'
 import { makeSeed } from '../../../core';
 
 var doiQuery; //Place holder for the user input field.

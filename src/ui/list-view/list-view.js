@@ -23,6 +23,12 @@ eventResponse(true,'seedDeleted',function(){
     connectedList.print(forceGraph.sizeMetric,1)
 })
 
+document.addEventListener('keypress', (event) => {
+    if(event.key == 8 || 46){
+        alert('delete pressed')
+    };
+});
+
 seedList.refresh = function(){
     var seedpapers = Papers.filter(function(p){return p.seed});
     var paperboxes = d3.select('#seed-paper-container').selectAll('.paper-box')
