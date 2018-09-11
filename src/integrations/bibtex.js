@@ -1,6 +1,6 @@
 import bibtexParse from 'vendor/bibtexParse'
-import {updatePapers} from 'core'
-import { makeSeed } from '../core';
+import { updatePapers, makeSeed } from 'core'
+import { onboarding } from 'ui/modals/onboarding-modals'
 //Importing user uploaded Bibtex
 export function importBibTex(evt) {
     let files = evt.target.files; // FileList object
@@ -9,7 +9,12 @@ export function importBibTex(evt) {
         reader.onload = function(e){
             var papers = bibtexParse.toJSON(e.target.result);
             let newPapers = papers.filter(p=>p.entryTags.doi).map(p=>{
-                return {doi: p.entryTags.doi}
+                return { 
+                    doi: p.entryTags.doi,
+                    title: p.entryTags.title.replace(/[{}]/g, "") || null,
+                    year: p.entryTags.year || null,
+                    journal: p.entryTags.journal || null
+                }
             })
             if(!newPapers.length){alert("We couldn't find any DOIs in the BibTex you uploaded please check your export settings")};
             updatePapers(newPapers)
@@ -18,7 +23,7 @@ export function importBibTex(evt) {
         reader.readAsText(f);       
     };
     document.getElementById('upload-bibtex-modal').style.display = "none"; //Hide modal once file selected
-    if(onboarding){
+    if(!onboarding.complete){
         document.getElementById('onboarding-3').style.display = "block";
     }
 };
@@ -32,7 +37,7 @@ export function importExampleBibTex(){
                     doi: p.entryTags.doi,
                     title: p.entryTags.title.replace(/[{}]/g, "") || null,
                     year: p.entryTags.year || null,
-                    journal: p.entryTags.journal || null,
+                    journal: p.entryTags.journal || null
                 }
             })
             newPapers = updatePapers(newPapers);

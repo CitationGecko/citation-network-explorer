@@ -24,7 +24,7 @@ eventResponse(true,'seedDeleted',function(){
 })
 
 document.addEventListener('keypress', (event) => {
-    if(event.key == 8 || 46){
+    if(event.key == 'Delete' || event.key == 'Backspace'){
         alert('delete pressed')
     };
 });
