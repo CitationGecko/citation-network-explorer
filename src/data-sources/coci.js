@@ -23,7 +23,6 @@ function parseResponse(response, paper){
             doi:edge.citing
         }
     })
-
     newPapers = updatePapers(newPapers)
 
     let newEdges = newPapers.map(p=>{
@@ -33,9 +32,7 @@ function parseResponse(response, paper){
             coci: true
         }
     })
-
     updateEdges(newEdges)  
-    triggerEvent('newEdges')    
     console.log(`COCI found ${newEdges.length} citations`)
     return(paper)
 }

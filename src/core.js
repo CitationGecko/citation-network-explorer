@@ -65,39 +65,41 @@ export function deleteSeed(paper){
 // Add a new paper to the database
 export function updatePapers(papers){
     
-    let newpapers = [];
+    let newPapers = [];
     papers = papers.map(paper=>{
         let match = matchPapers(paper,Papers)
         if(!match){
             paper.ID = Papers.length;
             Papers.push(paper);
-            newpapers.push(paper);
+            newPapers.push(paper);
         } else {
             paper = merge(match,paper)
             //triggerEvent('paperUpdated',paper) // Ideally only triggers if there is new info.
         }
         return(paper)
     })
-    triggerEvent('newPaper',newpapers)
+    if(newPapers.length){
+        triggerEvent('newPaper',newPapers)
+    }
     return(papers)
 }
 // Add a new edge to the database.
 export function updateEdges(edges){
 
-    let trigger = false;
-    edges.forEach(newEdge=>{
-        let edge = Edges.filter(function(e){
-            return e.source == newEdge.source & e.target == newEdge.target;
-        })
-        if(edge.length==0){
-            Edges.push(newEdge);
-            trigger = true;
+    let newEdges = [];
+    edges.forEach(edge=>{
+        let matchedEdge = Edges.filter(function(e){
+            return e.source == edge.source & e.target == edge.target;
+        })[0];
+        if(!matchedEdge){
+            Edges.push(edge)
+            newEdges.push(edge);
         } else {
-            merge(edge[0],newEdge)
+            merge(matchedEdge,edge)
         };
     }) 
-    if(trigger){
-        triggerEvent('newEdges')
+    if(newEdges.length){
+        triggerEvent('newEdges',newEdges)
     }
 }
 
@@ -125,16 +127,12 @@ export function matchPapers(paper,Papers){
 };
 
 //Given two paper/edge objects that are deemed to be matching, this merges the info in the two.
-export function merge(oldrecord,newrecord){
-    for(let i in newrecord){
-        if(oldrecord[i]==undefined || oldrecord[i]==null || oldrecord[i]==0){
-            oldrecord[i]=newrecord[i];
-        }
+export function merge(oldRecord,newRecord){
+    for(let i in newRecord){
+        oldRecord[i] = oldRecord[i] ? oldRecord[i] : newRecord[i];
     }
-    if(newrecord.seed){
-        oldrecord.seed = true;
-    };//If either record is marked as a seed make the merged result a seed.
-    return(oldrecord)
+    oldRecord.seed = oldRecord.seed || newRecord.seed;//If either record is marked as a seed make the merged result a seed.
+    return(oldRecord)
 };
 
 ////  METRICS
@@ -160,8 +158,10 @@ export var metrics = {
 };    
 
 //Recalculates all metrics
-export function updateMetrics(Papers,Edges){                   
+export function updateMetrics(){                   
     for(let metric in metrics){
         Papers.forEach(function(p){p[metric] = metrics[metric](p,Edges)});
     }
 }
+
+eventResponse(true,'newEdges',updateMetrics)

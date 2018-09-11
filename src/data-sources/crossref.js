@@ -12,6 +12,9 @@ eventResponse(true,'newSeed',async function(papers){
     papers.filter(paper=>paper.references).forEach(async (paper)=>{
         console.log(`CrossRef found ${paper.references.length} citations for ${paper.doi}`)
         let newPapers = paper.references.map(parseReference)
+        //newPapers = updatePapers(newPapers);
+        newPapers = await getMetadata(newPapers);
+        newPapers = newPapers.map(parsePaper);
         newPapers = updatePapers(newPapers);
         let newEdges = newPapers.map(p=>{
             return {
@@ -21,9 +24,6 @@ eventResponse(true,'newSeed',async function(papers){
             }
         })
         updateEdges(newEdges);
-        newPapers = await getMetadata(newPapers);
-        newPapers = newPapers.map(parsePaper)
-        newPapers = updatePapers(newPapers);
         triggerEvent('paperUpdate',newPapers);
     })
     

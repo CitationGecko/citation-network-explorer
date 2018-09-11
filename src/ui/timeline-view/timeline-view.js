@@ -1,4 +1,4 @@
-import { eventResponse, Edges, Papers , updateMetrics } from "core";
+import { eventResponse, Edges, Papers } from "core";
 import { updateInfoBox } from 'ui/info-box';
 import { threshold, highlightNode} from 'ui/network-view'
 import * as d3 from 'vendor/d3.v4.js' 
@@ -6,19 +6,15 @@ import * as d3 from 'vendor/d3.v4.js'
 var listening = true;
 
 eventResponse(listening,'seedUpdate',function(){
-    updateMetrics(Papers,Edges); // update citation metrics
     timeline.refresh()
 })
 eventResponse(listening,'newEdges',function(){
-    updateMetrics(Papers,Edges); // update citation metrics
     timeline.refresh()
 })
 eventResponse(listening,'paperUpdate',function(){
-    updateMetrics(Papers,Edges); // update citation metrics
     timeline.refresh()
 })
 eventResponse(listening,'seedDeleted',function(){
-    updateMetrics(Papers,Edges); // update citation metrics
     timeline.refresh()
 })
 

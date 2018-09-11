@@ -1,21 +1,33 @@
-import { eventResponse, Edges, Papers , updateMetrics } from "core";
+import { eventResponse, Edges, Papers } from "core";
 import { surfacePaperBox } from 'ui/list-view'
 import { updateInfoBox } from 'ui/info-box'
 import * as d3 from 'vendor/d3.v4.js' 
 
 var listening = true;
+var allNodes = [];
+var allEdges = [];
 
-eventResponse(listening,'newSeed',function(){
-    updateMetrics(Papers,Edges); // update citation metrics
-    forceGraph.refresh()
-})
-eventResponse(listening,'newEdges',function(){
-    updateMetrics(Papers,Edges); // update citation metrics
-    forceGraph.refresh()
+/* eventResponse(false,'newSeed',function(newEdges){
+    forceGraph.refresh(newEdges)
+}) */
+eventResponse(listening,'newEdges',async function(newEdges){
+
+    let graphEdges = newEdges.filter((e)=>{return e[forceGraph.mode=='ref' ? 'source':'target'].seed})
+    
+    if(graphEdges.length){
+        updateData([],newEdges);
+        forceGraph.plot();
+        //Update after timeout
+        /* setTimeout(()=>{
+            forceGraph.refresh(newEdges);
+            forceGraph.queue.shift()
+        },2000*forceGraph.queue.length)
+        forceGraph.queue.push(newEdges) */
+    }
 })
 eventResponse(listening,'seedDeleted',function(){
-    updateMetrics(Papers,Edges); // update citation metrics
-    forceGraph.refresh()
+    updateData([],newEdges);
+    forceGraph.plot();
 })
 
 export const forceGraph = {};
@@ -46,24 +58,37 @@ forceGraph.simulation =  d3.forceSimulation()
     .force("xattract",d3.forceX())
     .force("yattract",d3.forceY())
     .force("collide",d3.forceCollide().radius(function(d){return (d.seed ? 7 : 5*d[forceGraph.sizeMetric])}));
+forceGraph.allEdges = [];
+forceGraph.queue = [];
 
-forceGraph.refresh = function(){                
+function updateData(newNodes,newEdges){
+
+    let edges = [];
+    let nodes = [];   
+    
+    allNodes = allNodes.concat(newNodes)
+    allEdges = allEdges.concat(newEdges)
     //Pick only edges that you want to display i.e. citedBy vs references
-    switch(this.mode){     
+    switch(forceGraph.mode){     
         case 'ref':
-        this.edges = Edges.filter(function(e){return(e.source.seed)}).map(function(e){return {source: e.source.ID, target: e.target.ID}});
-        this.sizeMetric = 'seedsCitedBy';
+        edges = allEdges.filter((e)=>{return(e.source.seed)});
+        forceGraph.sizeMetric = 'seedsCitedBy';
         break;
         case 'citedBy':
-        this.edges = Edges.filter(function(e){return(e.target.seed)}).map(function(e){return {source: e.source.ID, target: e.target.ID}});       
-        this.sizeMetric = 'seedsCited';    
+        edges = allEdges.filter((e)=>{return(e.target.seed)});       
+        forceGraph.sizeMetric = 'seedsCited';    
         break;
     }
-    this.nodeIDs = this.edges.map(function(e){return(e.source)}).concat(this.edges.map(function(e){return(e.target)}));
-    //Pick only Papers that are connected to something
-    this.nodes = Papers.filter((p)=>{
-        return(this.nodeIDs.includes(p.ID)||p.seed)
-    }); 
+
+    forceGraph.edges = edges.map((e)=>{return {source: e.source.ID, target: e.target.ID}});
+    forceGraph.nodes = edges.map((e)=>{return(e.source)})
+        .concat(edges.map((e)=>{return(e.target)}))
+        .concat(Papers.filter(p=>p.seed));
+
+} 
+
+forceGraph.plot = function(){ 
+
     this.circles = this.circles.data(this.nodes,d=>d.ID);
     this.circles.exit().remove();
     this.circles = this.circles.enter().append("circle")
@@ -84,7 +109,6 @@ forceGraph.refresh = function(){
         })
         .on("mouseover",p=>{
             surfacePaperBox(p)
-            //updateInfoBox(p)
         })
 
     this.circles.append("title").text(function(d) { return d.title; }); //Label nodes with title on hover
