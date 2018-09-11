@@ -3,11 +3,11 @@
     "version": "0.1.0",
     "private": true,
     "scripts": {
-        "build": "webpack",
+        "build": "webpack && gulp styles",
         "start": "node server.js",
         "lint": "./node_modules/.bin/eslint .",
-        "postinstall": "gulp scripts && gulp styles",
-        "launch": "gulp scripts && gulp styles && node server.js"
+        "postinstall": "npm run build",
+        "launch": "npm run build && npm run start"
     },
     "main": "server.js",
     "engine": {
