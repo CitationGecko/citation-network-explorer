@@ -1,10 +1,9 @@
 import { eventResponse, Edges, Papers } from "core";
-import { surfacePaperBox } from 'ui/list-view'
-import * as d3 from 'vendor/d3.v4.js' 
+import { surfacePaperBox } from 'ui/list-view';
+import * as d3 from 'vendor/d3.v4.js'; 
+import { selectedPapers } from "ui/list-view";
 
 var listening = true;
-
-export var selectedPapers = [];
 
 eventResponse(true,'newSeed',function(newSeeds){
     forceGraph.addNodes(newSeeds);
@@ -132,6 +131,8 @@ forceGraph.plot = function(){
             .on("end", (d)=>dragended(d,this.simulation)))
         .on("dblclick",p=>(p)) // Display abstract?
         .on("click",p=>{
+            selectedPapers.splice()
+            selectedPapers.push(p);
             surfacePaperBox(p)
             highlightNode(p,this)
         })
@@ -190,7 +191,6 @@ export function highlightNode(d,graph){
         return o.source === d || o.target === d ? 1 : 0.15;
     });
     graph.circles.on('mouseover',null)
-    selectedPapers = [d];
     d3.event.stopPropagation();
 };
 

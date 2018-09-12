@@ -6,7 +6,7 @@ import { updateInfoBox } from 'ui/info-box'
 
 export const seedList = {}
 export const connectedList = {}
-export var selectedPaper = {}
+export var selectedPapers = []
 
 eventResponse(true,'paperUpdate',function(){
     connectedList.print(forceGraph.sizeMetric,1)
@@ -32,9 +32,14 @@ seedList.refresh = function(){
         .append('div')
         .attr('class','paper-box')
         .on('click',function(p){
-            highlightNode(p,forceGraph);
-            d3.selectAll('.paper-box').classed('selected-paper',false)
+            highlightNode(p,forceGraph)
             d3.select(this).classed('selected-paper',true)
+            if (!d3.event.shiftKey) {
+                d3.selectAll('.paper-box').classed('selected-paper',false)
+                selectedPapers = [p];
+            } else {
+                selectedPapers.push(p)
+            }  
         })
     newpapers.append('div').attr('class','paper-title')
     newpapers.append('div').attr('class','author-year')
@@ -71,8 +76,13 @@ connectedList.print = function(metric,pageNum,replot,extraPaper){
         .attr('class','paper-box')
         .on('click',function(p){
             highlightNode(p,forceGraph)
-            d3.selectAll('.paper-box').classed('selected-paper',false)
             d3.select(this).classed('selected-paper',true)
+            if (!d3.event.shiftKey) {
+                d3.selectAll('.paper-box').classed('selected-paper',false)
+                selectedPapers = [p];
+            } else {
+                selectedPapers.push(p)
+            }      
         })
     newpapers.append('div').attr('class','paper-title')
     newpapers.append('div').attr('class','author-year')  

@@ -1,4 +1,4 @@
-import { selectedPapers } from "ui/network-view";
+import { selectedPapers } from "ui/list-view";
 import { deleteSeed } from "core";
 
 document.getElementById('delete-seed').onclick = function(){
