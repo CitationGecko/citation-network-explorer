@@ -4,6 +4,8 @@ import * as d3 from 'vendor/d3.v4.js'
 
 var listening = true;
 
+export var selectedPapers = [];
+
 eventResponse(true,'newSeed',function(newSeeds){
     forceGraph.addNodes(newSeeds);
     forceGraph.filterEdges();
@@ -20,6 +22,8 @@ eventResponse(listening,'newEdges',async function(newEdges){
     forceGraph.queue.push(newEdges) */
 })
 eventResponse(listening,'seedDeleted',function(){
+    forceGraph.allEdges = Edges;
+    forceGraph.allNodes = Papers;
     forceGraph.filterEdges();
 })
 
@@ -107,7 +111,7 @@ forceGraph.addEdges = function(newEdges){
     }).concat(newEdges.map((e)=>{
         return(e.target)
     }))
-    this.addNodes(newNodes) 
+    this.addNodes(newNodes); 
     this.filterEdges(newEdges);
 }
 
@@ -186,6 +190,7 @@ export function highlightNode(d,graph){
         return o.source === d || o.target === d ? 1 : 0.15;
     });
     graph.circles.on('mouseover',null)
+    selectedPapers = [d];
     d3.event.stopPropagation();
 };
 
