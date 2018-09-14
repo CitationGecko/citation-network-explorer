@@ -33,13 +33,13 @@ seedList.refresh = function(){
         .attr('class','paper-box')
         .on('click',function(p){
             highlightNode(p,forceGraph)
-            d3.select(this).classed('selected-paper',true)
             if (!d3.event.shiftKey) {
                 d3.selectAll('.paper-box').classed('selected-paper',false)
                 selectedPapers = [p];
             } else {
                 selectedPapers.push(p)
-            }  
+            }
+            d3.select(this).classed('selected-paper',true)
         })
     newpapers.append('div').attr('class','paper-title')
     newpapers.append('div').attr('class','author-year')
@@ -76,13 +76,13 @@ connectedList.print = function(metric,pageNum,replot,extraPaper){
         .attr('class','paper-box')
         .on('click',function(p){
             highlightNode(p,forceGraph)
-            d3.select(this).classed('selected-paper',true)
             if (!d3.event.shiftKey) {
                 d3.selectAll('.paper-box').classed('selected-paper',false)
                 selectedPapers = [p];
             } else {
                 selectedPapers.push(p)
             }      
+            d3.select(this).classed('selected-paper',true)
         })
     newpapers.append('div').attr('class','paper-title')
     newpapers.append('div').attr('class','author-year')  
