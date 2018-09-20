@@ -96,7 +96,7 @@ app.get('/api/v1/query/coci', require('./routes/api/v1/query/coci'));
 /**
  * API  | Proxy to Microsoft Academic Graph
  */
-app.post('/api/v1/query/microsoft/search', require('./routes/api/v1/query/microsoft/search'));
+//app.post('/api/v1/query/microsoft/search', require('./routes/api/v1/query/microsoft/search'));
 
 /**
  * API  | Proxy to OpenCitations sparql

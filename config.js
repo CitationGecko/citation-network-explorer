@@ -28,12 +28,6 @@ const config = {
   }
 };
 
-// check whether the required values are present
-if (!_.get(config, 'credentials.microsoft.key')) {
-  console.error('Missing Microsoft Academic API key.');
-  process.exit(1);
-}
-
 
 /**
  * Gets value from config
