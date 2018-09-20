@@ -58,7 +58,7 @@ export function deleteSeed(paper){
     Papers = Papers.filter(function(p){
         return (Edges.map(function(e){return e.source}).includes(p) || Edges.map(function(e){return e.target}).includes(p));         
     })
-    triggerEvent('seedDeleted')
+    triggerEvent('seedDeleted',paper)
 };
 
 
@@ -165,3 +165,4 @@ export function updateMetrics(){
 }
 
 eventResponse(true,'newEdges',updateMetrics)
+eventResponse(true,'seedDeleted',updateMetrics)

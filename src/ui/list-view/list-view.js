@@ -6,7 +6,7 @@ import { updateInfoBox } from 'ui/info-box'
 
 export const seedList = {}
 export const connectedList = {}
-export var selectedPaper = {}
+export var selectedPapers = []
 
 eventResponse(true,'paperUpdate',function(){
     connectedList.print(forceGraph.sizeMetric,1)
@@ -23,12 +23,6 @@ eventResponse(true,'seedDeleted',function(){
     connectedList.print(forceGraph.sizeMetric,1)
 })
 
-document.addEventListener('keypress', (event) => {
-    if(event.key == 8 || 46){
-        alert('delete pressed')
-    };
-});
-
 seedList.refresh = function(){
     var seedpapers = Papers.filter(function(p){return p.seed});
     var paperboxes = d3.select('#seed-paper-container').selectAll('.paper-box')
@@ -38,8 +32,13 @@ seedList.refresh = function(){
         .append('div')
         .attr('class','paper-box')
         .on('click',function(p){
-            highlightNode(p,forceGraph);
-            d3.selectAll('.paper-box').classed('selected-paper',false)
+            highlightNode(p,forceGraph)
+            if (!d3.event.shiftKey) {
+                d3.selectAll('.paper-box').classed('selected-paper',false)
+                selectedPapers = [p];
+            } else {
+                selectedPapers.push(p)
+            }
             d3.select(this).classed('selected-paper',true)
         })
     newpapers.append('div').attr('class','paper-title')
@@ -77,7 +76,12 @@ connectedList.print = function(metric,pageNum,replot,extraPaper){
         .attr('class','paper-box')
         .on('click',function(p){
             highlightNode(p,forceGraph)
-            d3.selectAll('.paper-box').classed('selected-paper',false)
+            if (!d3.event.shiftKey) {
+                d3.selectAll('.paper-box').classed('selected-paper',false)
+                selectedPapers = [p];
+            } else {
+                selectedPapers.push(p)
+            }      
             d3.select(this).classed('selected-paper',true)
         })
     newpapers.append('div').attr('class','paper-title')

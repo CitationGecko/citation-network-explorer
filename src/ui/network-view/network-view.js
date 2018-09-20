@@ -1,32 +1,29 @@
 import { eventResponse, Edges, Papers } from "core";
-import { surfacePaperBox } from 'ui/list-view'
-import * as d3 from 'vendor/d3.v4.js' 
+import { surfacePaperBox } from 'ui/list-view';
+import * as d3 from 'vendor/d3.v4.js'; 
+import { selectedPapers } from "ui/list-view";
 
 var listening = true;
-var allNodes = [];
-var allEdges = [];
 
-/* eventResponse(false,'newSeed',function(newEdges){
-    forceGraph.refresh(newEdges)
-}) */
+eventResponse(true,'newSeed',function(newSeeds){
+    forceGraph.addNodes(newSeeds);
+    forceGraph.filterEdges();
+    forceGraph.plot()
+})
 eventResponse(listening,'newEdges',async function(newEdges){
-
-    let graphEdges = newEdges.filter((e)=>{return e[forceGraph.mode=='ref' ? 'source':'target'].seed})
     
-    if(graphEdges.length){
-        updateData([],newEdges);
-        forceGraph.plot();
-        //Update after timeout
-        /* setTimeout(()=>{
-            forceGraph.refresh(newEdges);
-            forceGraph.queue.shift()
-        },2000*forceGraph.queue.length)
-        forceGraph.queue.push(newEdges) */
-    }
+    forceGraph.addEdges(newEdges);
+    //Update after timeout
+    /* setTimeout(()=>{
+        forceGraph.refresh(newEdges);
+        forceGraph.queue.shift()
+    },2000*forceGraph.queue.length)
+    forceGraph.queue.push(newEdges) */
 })
 eventResponse(listening,'seedDeleted',function(){
-    updateData([],newEdges);
-    forceGraph.plot();
+    forceGraph.allEdges = Edges;
+    forceGraph.allNodes = Papers;
+    forceGraph.filterEdges();
 })
 
 export const forceGraph = {};
@@ -57,33 +54,65 @@ forceGraph.simulation =  d3.forceSimulation()
     .force("xattract",d3.forceX())
     .force("yattract",d3.forceY())
     .force("collide",d3.forceCollide().radius(function(d){return (d.seed ? 7 : 5*d[forceGraph.sizeMetric])}));
+forceGraph.nodes = [];
+forceGraph.edges = [];
 forceGraph.allEdges = [];
+forceGraph.allNodes = [];
 forceGraph.queue = [];
 
-function updateData(newNodes,newEdges){
+forceGraph.filterEdges = function(newEdges){
 
     let edges = [];
-    let nodes = [];   
-    
-    allNodes = allNodes.concat(newNodes)
-    allEdges = allEdges.concat(newEdges)
-    //Pick only edges that you want to display i.e. citedBy vs references
-    switch(forceGraph.mode){     
+    let replot = true;
+    switch(this.mode){     
         case 'ref':
-        edges = allEdges.filter((e)=>{return(e.source.seed)});
-        forceGraph.sizeMetric = 'seedsCitedBy';
+            if(newEdges){
+                replot = !!(newEdges.filter((e)=>{return(e.source.seed)}).length)
+            }
+            edges = this.allEdges.filter((e)=>{return(e.source.seed)});
         break;
         case 'citedBy':
-        edges = allEdges.filter((e)=>{return(e.target.seed)});       
-        forceGraph.sizeMetric = 'seedsCited';    
+            if(newEdges){
+                replot = !!(newEdges.filter((e)=>{return(e.target.seed)}).length)
+            }    
+            edges = this.allEdges.filter((e)=>{return(e.target.seed)});       
         break;
     }
+    var nodes = edges.map((e)=>{
+        return(e.source.ID)
+    }).concat(edges.map((e)=>{
+        return(e.target.ID)
+    }))
+    this.edges = edges.map((e)=>{
+        return {source: e.source.ID, target: e.target.ID}
+    });
+    this.nodes = this.allNodes.filter(p=>{
+        return(nodes.includes(p.ID)||p.seed)
+    });
+    if(replot){this.plot()}
+}
 
-    forceGraph.edges = edges.map((e)=>{return {source: e.source.ID, target: e.target.ID}});
-    forceGraph.nodes = edges.map((e)=>{return(e.source)})
-        .concat(edges.map((e)=>{return(e.target)}))
-        .concat(Papers.filter(p=>p.seed));
-} 
+forceGraph.addNodes = function(newNodes){
+    for(let i in newNodes){
+        if(!this.allNodes.includes(newNodes[i])){
+            this.allNodes.push(newNodes[i])
+        }
+    }
+}
+
+forceGraph.addEdges = function(newEdges){
+    if(!newEdges){return}
+    
+    this.allEdges.push.apply(this.allEdges,newEdges)
+    //add any nodes
+    var newNodes = newEdges.map((e)=>{
+        return(e.source)
+    }).concat(newEdges.map((e)=>{
+        return(e.target)
+    }))
+    this.addNodes(newNodes); 
+    this.filterEdges(newEdges);
+}
 
 forceGraph.plot = function(){ 
 
@@ -102,6 +131,8 @@ forceGraph.plot = function(){
             .on("end", (d)=>dragended(d,this.simulation)))
         .on("dblclick",p=>(p)) // Display abstract?
         .on("click",p=>{
+            selectedPapers.splice()
+            selectedPapers.push(p);
             surfacePaperBox(p)
             highlightNode(p,this)
         })

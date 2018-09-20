@@ -3,7 +3,7 @@ import {connectedList} from 'ui/list-view'
 import { importExampleBibTex } from 'integrations/bibtex'
 import * as d3 from 'vendor/d3.v4.js'
 
-var onboarding = true;
+export var onboarding = {complete:false};
 
 document.addEventListener('DOMContentLoaded', function() {
   const hasViewedOnboarding = false ;//Cookies.get('viewed-onboarding');
@@ -28,6 +28,7 @@ document.querySelector('.pick-again').onclick = showAddInitialSeed;
 document.querySelector('#demo-button').onclick = ()=>{
   importExampleBibTex();
   document.getElementById('onboarding-1').style.display = 'none';
+  document.getElementById('onboarding-3').style.display = "block";
 }
 
 
@@ -40,9 +41,9 @@ function showSeedType() {
 d3.selectAll('.cited-by-mode').on('click',function(){
   document.getElementById("mode-toggle").checked = false;
   forceGraph.mode = 'ref';
-  forceGraph.refresh()
+  forceGraph.filterEdges()
   connectedList.print(forceGraph.sizeMetric,1,true)
-  onboarding = false;
+  onboarding.complete = true;
   document.getElementById('onboarding-3').style.display = 'none';
   document.getElementById('onboarding-4').style.display = 'block';
 })
@@ -50,9 +51,9 @@ d3.selectAll('.cited-by-mode').on('click',function(){
 d3.selectAll('.citing-mode').on('click',function(){
   document.getElementById("mode-toggle").checked = true;
   forceGraph.mode = 'citedBy';
-  forceGraph.refresh()
+  forceGraph.filterEdges();
   connectedList.print(forceGraph.sizeMetric,1,true)
-  onboarding = false;
+  onboarding.complete = true;
   document.getElementById('onboarding-3').style.display = 'none';
   document.getElementById('onboarding-4').style.display = 'block';
 })
@@ -64,7 +65,7 @@ document.getElementById('lets-go').onclick = function(){
 window.onclick = function(event) {
   if (event.target.classList.contains('modal')) {
       event.target.style.display = "none";
-      if(onboarding){
+      if(!onboarding.complete){
           document.getElementById('onboarding-3').style.display = "block";
       }
   }
