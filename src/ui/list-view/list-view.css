@@ -47,14 +47,14 @@
 
 }
 
-.list-footer-btn-group button {
+.primary-rounded-button, .secondary-rounded-button {
     margin: .5em;
     padding: .8em 1em;
     border-radius: 50px;
     outline: none;
 }
 
-.list-footer-btn-group button:nth-child(2) {
+.primary-rounded-button {
     background: #FFC700;
 }
 

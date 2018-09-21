@@ -26,8 +26,8 @@
                     </div>
                     <div class='list-footer'>
                         <div class='list-footer-btn-group'>
-                            <button id='delete-seed'>Delete</button>
-                            <button id='add-seeds-button'>Add more seeds</button>
+                            <button id='delete-seed' class='secondary-rounded-button'>Delete</button>
+                            <button id='add-seeds-button' class='primary-rounded-button'>Add more seeds</button>
                         </div>
                     </div>
                 </div>
@@ -51,8 +51,8 @@
                             <p>1 paper selected | Select all | Unselect all</p>
                         </div> -->
                         <div class='list-footer-btn-group'>
-                            <button id='export-button'>Export</button>
-                            <button id='make-seed-button'>Add as seed</button>
+                            <button id='export-button' class='secondary-rounded-button'>Export</button>
+                            <button id='make-seed-button' class='primary-rounded-button'>Add as seed</button>
                         </div>
                     </div>
                 </div>
@@ -225,7 +225,13 @@
             </div>
         </div>
         <div id='zotero-import-modal' class='modal'>
-            <div class='modal-content'>
+            <div id='zotero-login' class='modal-content'>
+                <div>
+                    <img src='/images/zotero/new-logo.svg'>
+                    <button id='zotero-login-button' class='secondary-rounded-button'>Connect to Zotero</button>
+                </div>
+            </div>
+            <div id='zotero-select' class='modal-content'>
                 <h1><img src='/images/zotero/new-logo.svg'></h1>
                 <div><span>Filter by Collection:</span> 
                     <div class="dropdown">

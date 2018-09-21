@@ -1,7 +1,7 @@
 import { getItems } from 'integrations/zotero'
 import * as d3 from 'vendor/d3.v4.js'
 
-
+document.querySelector('#zotero-login-button').onclick = ()=>{window.location.href = window.location.href+"services/zotero/auth/login"}
 document.querySelector('.dropbtn').onclick = dropdown;
 document.querySelector('#zoteroInput').onkeyup = filterCollections;
 
