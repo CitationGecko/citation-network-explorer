@@ -59,7 +59,7 @@ export function titleSearch(input){
 
     let query = input.replace(' ','+')
     let url = `https://api.crossref.org/works?query.title=${query}&rows=100`
-    fetch(url).then((resp)=>resp.json()).then(json=>{
+    return fetch(url).then((resp)=>resp.json()).then(json=>{
         const items = json.message.items.map(parsePaper)
         printTable('#title-search-table',items)
     })

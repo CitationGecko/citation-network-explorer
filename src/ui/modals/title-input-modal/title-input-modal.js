@@ -8,7 +8,12 @@ var titleInput = document.querySelector("#title-input").addEventListener("input"
 
 document.getElementById("title-input").onkeydown = function(event){
     if (event.keyCode == 13){
-        //microsoft.titleSearch(titleQuery)
-        titleSearch(titleQuery)
+
+        //start loading wheel
+        document.getElementById('title-input-loader').style.display = 'inline-block';
+        titleSearch(titleQuery).then(()=>{
+            //stop loading wheel       
+            document.getElementById('title-input-loader').style.display = 'none';
+        })
     }
 }
