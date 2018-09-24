@@ -92,6 +92,20 @@
     height: 90%;
 }
 
+#zotero-login {
+    display:none;
+}
+
+#zotero-login div img {
+    width:30%;
+    margin:10em 35% 5em 35%;
+}
+
+#zotero-login div button {
+    width:30%;
+    margin:0 35% 0 35%;
+}
+
 #add-zotero-items{
     transition: background 0.3s;
     position:absolute;

@@ -1,5 +1,6 @@
 import * as d3 from 'vendor/d3.v4.js'
 import { makeSeed, updatePapers } from 'core'
+import { onboarding } from 'ui/modals/onboarding-modals'
 
 export function printTable(tableID,items){
 
@@ -43,6 +44,7 @@ export function printTable(tableID,items){
     }
     
     d3.select(`${tableID} .add-selected-items`).on('click',()=>{
+        document.querySelectorAll('.modal').forEach(e=>e.style.display='none')
         var papers = d3.selectAll(`${tableID} .item-select:checked`).data()
         papers = updatePapers(papers)
         makeSeed(papers)

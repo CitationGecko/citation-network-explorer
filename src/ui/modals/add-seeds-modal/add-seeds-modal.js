@@ -20,7 +20,10 @@ d3.selectAll(".upload-bibtex-button").on('click', function() {
 
 d3.selectAll(".zotero-import-button").on('click', function() {
 
-    if(!authInfo.zotero.requestToken){window.location.href = window.location.href+"services/zotero/auth/login"}
+    if(!authInfo.zotero.requestToken){
+        document.getElementById('zotero-login').style.display = 'block';
+        document.getElementById('zotero-select').style.display = 'none';
+    }
 
     document.getElementById('add-seeds-modal').style.display = "none";
     document.getElementById('onboarding-2').style.display = "none";

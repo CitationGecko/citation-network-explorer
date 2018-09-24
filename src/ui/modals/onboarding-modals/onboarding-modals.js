@@ -2,6 +2,7 @@ import {forceGraph} from 'ui/network-view'
 import {connectedList} from 'ui/list-view'
 import { importExampleBibTex } from 'integrations/bibtex'
 import * as d3 from 'vendor/d3.v4.js'
+import { eventResponse } from 'core'
 
 export var onboarding = {complete:false};
 
@@ -11,6 +12,12 @@ document.addEventListener('DOMContentLoaded', function() {
     showOnboardingModal();
   }
 });
+
+eventResponse(true,'newSeed',function(){
+  if(!onboarding.complete){
+    document.getElementById('onboarding-3').style.display = "block";
+  }
+})
 
 function showOnboardingModal() {
     document.getElementById('onboarding-1').style.display = 'block';
@@ -65,8 +72,5 @@ document.getElementById('lets-go').onclick = function(){
 window.onclick = function(event) {
   if (event.target.classList.contains('modal')) {
       event.target.style.display = "none";
-      if(!onboarding.complete){
-          document.getElementById('onboarding-3').style.display = "block";
-      }
   }
 }
