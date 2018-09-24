@@ -73,7 +73,7 @@ function parsePaper(response){
             month: response.created['date-parts'][0][1],
             year: response.created['date-parts'][0][0],
             timestamp: new Date(response.created['date-time']),
-            journal: response['container-title'][0],
+            journal: response['container-title'] ? response['container-title'][0] : '',
             citationCount: response['is-referenced-by-count'],
             references: response['reference'] ? response['reference'] : false,
             crossref: true
