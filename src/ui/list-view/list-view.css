@@ -18,8 +18,6 @@
 }
 
 .list-body {
-    overflow: auto;
-    overflow-x:hidden;
     flex:auto;
     height:75%;
     box-sizing: border-box;
