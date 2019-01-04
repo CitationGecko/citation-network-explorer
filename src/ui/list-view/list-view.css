@@ -21,6 +21,7 @@
     flex:auto;
     height:75%;
     box-sizing: border-box;
+    overflow: auto;
 }
 
 .list-footer{
