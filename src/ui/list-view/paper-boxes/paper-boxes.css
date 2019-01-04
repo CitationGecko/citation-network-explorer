@@ -19,6 +19,15 @@
     color:#BE2121;
     font-weight:400;
 }
+
+.delete-seed{
+    height:1em;
+    cursor: pointer;
+    float:right;
+    position: relative;
+    right: 0em;
+    padding:.2em;
+}
 .author-year {
     text-align: left;
     padding:.2em 0em;

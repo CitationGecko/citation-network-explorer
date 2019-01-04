@@ -2,7 +2,9 @@ import { eventResponse, Papers, makeSeed } from "core";
 import { forceGraph, highlightNode } from 'ui/network-view'
 import * as d3 from 'vendor/d3.v4.js'
 import { linkoutIcon } from 'ui/icons'
+import { deleteIcon } from 'ui/icons'
 import { updateInfoBox } from 'ui/info-box'
+import { deleteSeed } from "../../core";
 
 export const seedList = {}
 export const connectedList = {}
@@ -43,7 +45,12 @@ seedList.refresh = function(){
         })
     newpapers.append('div').attr('class','paper-title')
     newpapers.append('div').attr('class','author-year')
+    newpapers.append('div').attr('class','delete-seed').html(`${deleteIcon}`).on('click',p=>{
+        deleteSeed(p)
+    })
     newpapers.append('div').attr('class','journal')
+    
+
     
     paperboxes = newpapers.merge(paperboxes)
     paperboxes.select('.paper-title').html(function(p){

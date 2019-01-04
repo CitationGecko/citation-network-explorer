@@ -45,3 +45,39 @@ export function importExampleBibTex(){
         }
     )
 }
+
+export function exportBibtex(name,papers){
+
+    papers = papers.map(p=>{
+        return (
+            { citationKey: p.author+p.year,
+                entryType: 'ARTICLE',
+                entryTags:  {
+                    title:p.title,
+                    year: p.year,
+                    author: p.author,
+                    doi: p.doi,
+                    journal: p.journal
+                } 
+            }
+        )
+    })
+
+    let bibtex = bibtexParse.toBibtex(papers);
+    download(name,bibtex);
+
+}
+
+function download(filename, text) {
+    var element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+    element.setAttribute('download', filename);
+  
+    element.style.display = 'none';
+    document.body.appendChild(element);
+  
+    element.click();
+  
+    document.body.removeChild(element);
+  }
+    
