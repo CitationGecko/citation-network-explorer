@@ -61,7 +61,7 @@ forceGraph.allNodes = [];
 forceGraph.queue = [];
 
 forceGraph.filterEdges = function(newEdges){
-
+    this.sizeMetric = (forceGraph.mode=='ref') ? 'seedsCitedBy' : 'seedsCited';
     let edges = [];
     let replot = true;
     switch(this.mode){     
