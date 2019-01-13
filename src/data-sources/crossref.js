@@ -55,10 +55,10 @@ export function getMetadata(papers){
     }
 }
 
-export function titleSearch(input){
+export function crossrefSearch(input){
 
     let query = input.replace(' ','+')
-    let url = `https://api.crossref.org/works?query.title=${query}&rows=100`
+    let url = `https://api.crossref.org/works?query=${query}`
     return fetch(url).then((resp)=>resp.json()).then(json=>{
         const items = json.message.items.map(parsePaper)
         printTable('#title-search-table',items)
@@ -66,13 +66,16 @@ export function titleSearch(input){
 }
 
 function parsePaper(response){
+
+    let date = response['published-print'] ? response['published-print'] : response['created']
+
     return {
             doi: response.DOI,
             title: response.title ? response.title[0] : 'unavailable',
             author: response.author ? response.author[0].family : '',
-            month: response.created['date-parts'][0][1],
-            year: response.created['date-parts'][0][0],
-            timestamp: new Date(response.created['date-time']),
+            month: date['date-parts'][0][1],
+            year: date['date-parts'][0][0],
+            timestamp: new Date(date['date-time']),
             journal: response['container-title'] ? response['container-title'][0] : '',
             citationCount: response['is-referenced-by-count'],
             references: response['reference'] ? response['reference'] : false,

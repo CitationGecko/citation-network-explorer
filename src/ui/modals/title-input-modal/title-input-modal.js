@@ -1,9 +1,10 @@
-import {titleSearch} from 'data-sources/crossref'
+import {crossrefSearch} from 'data-sources/crossref'
 
-var titleQuery; //Place holder for the user input field.
+var query;
+
 //Update request based on title query inputted by the user.
-var titleInput = document.querySelector("#title-input").addEventListener("input", function() {
-    titleQuery = this.value;
+document.querySelector("#title-input").addEventListener("input", function() {
+    query = this.value;
 });
 
 document.getElementById("title-input").onkeydown = function(event){
@@ -11,7 +12,7 @@ document.getElementById("title-input").onkeydown = function(event){
 
         //start loading wheel
         document.getElementById('title-input-loader').style.display = 'inline-block';
-        titleSearch(titleQuery).then(()=>{
+        crossrefSearch(query).then(()=>{
             //stop loading wheel       
             document.getElementById('title-input-loader').style.display = 'none';
         })

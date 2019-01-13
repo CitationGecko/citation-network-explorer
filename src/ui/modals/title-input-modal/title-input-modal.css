@@ -26,8 +26,13 @@
     color:white;
 }
 
-#title-search-bar > input{
+.search-input > input{
     border:solid 1px;
+    margin-left:1em;
+}
+
+.search-input{
+    display: inline;
     margin-left:1em;
 }
 
